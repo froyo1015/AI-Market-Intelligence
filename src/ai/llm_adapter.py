@@ -6,6 +6,7 @@ import json
 from typing import Any, Dict, Mapping, Optional, Protocol, Sequence, Tuple
 
 from src.ai.prompt_builder import INPUT_END_MARKER, INPUT_START_MARKER
+from src.data.data_quality import format_age, format_quality_counts
 
 
 class LLMAdapterError(RuntimeError):
@@ -37,14 +38,33 @@ class MockLLMAdapter:
         payload = _extract_input_payload(prompt)
         snapshot = payload.get("market_snapshot")
         context = payload.get("market_context")
-        if not isinstance(snapshot, dict) or not isinstance(context, dict):
+        quality = payload.get("data_quality")
+        if (
+            not isinstance(snapshot, dict)
+            or not isinstance(context, dict)
+            or not isinstance(quality, dict)
+        ):
             raise LLMAdapterError("prompt input must contain both JSON objects")
 
         records = _index_records(snapshot.get("records"))
+        quality_records = quality.get("records")
+        indexed_quality = quality_records if isinstance(quality_records, dict) else {}
+        quality_summary = quality.get("summary")
+        summary = quality_summary if isinstance(quality_summary, dict) else {}
         lines = [
             "# 今日市場焦點",
             "",
             "📌 以下為 Mock Analyst 根據輸入快照整理的測試簡報。",
+            f"報告生成時間：{_text(snapshot.get('generated_at'))}。",
+            (
+                "資料時間範圍："
+                f"{_text(summary.get('earliest_data_time'))} → "
+                f"{_text(summary.get('latest_data_time'))}。"
+            ),
+            (
+                "資料新鮮度："
+                f"{format_quality_counts(_mapping(summary.get('counts')))}。"
+            ),
             *_render_context(context),
             "",
         ]
@@ -52,11 +72,17 @@ class MockLLMAdapter:
         for heading, symbols in self._SECTIONS:
             lines.extend((f"## {heading}", ""))
             for symbol in symbols:
-                lines.append(_render_record(symbol, records.get(symbol)))
+                lines.append(
+                    _render_record(
+                        symbol,
+                        records.get(symbol),
+                        _mapping(indexed_quality.get(symbol)),
+                    )
+                )
             lines.append("")
 
         lines.extend(("## 今日風險", ""))
-        lines.extend(_render_risks(records, context))
+        lines.extend(_render_risks(records, context, indexed_quality))
         lines.append("")
         lines.append("本簡報只供研究與流程測試，不構成投資建議。")
         return "\n".join(lines).rstrip() + "\n"
@@ -95,9 +121,30 @@ def _index_records(value: Any) -> Dict[str, Mapping[str, Any]]:
 def _render_record(
     symbol: str,
     record: Optional[Mapping[str, Any]],
+    quality: Mapping[str, Any],
 ) -> str:
+    metadata = _mapping(quality.get("metadata"))
+    freshness = _mapping(quality.get("freshness"))
+    session = _text(metadata.get("market_session"))
+    name = _text(metadata.get("name"))
+    provider_symbol = _text(metadata.get("provider_symbol"))
+    price_basis = _text(metadata.get("price_basis"))
+    data_time = _text(freshness.get("data_timestamp"))
+    indicator = _text(freshness.get("indicator"))
+    level = _text(freshness.get("level"))
+    age = format_age(_optional_number(freshness.get("age_hours")))
+    quality_text = (
+        f"資產 {name}；provider symbol {provider_symbol}；"
+        f"價格基準 {price_basis}；資料時間 {data_time}；"
+        f"新鮮度 {indicator} {level}（{age}）；"
+        f"市場時段 {session}"
+    )
+
     if record is None:
-        return f"- {symbol}：資料未知。[來源: 未知; timestamp: 未知]"
+        return (
+            f"- {symbol}：資料未知；{quality_text}。"
+            "[來源: 未知; timestamp: 未知]"
+        )
 
     source = _text(record.get("source"))
     timestamp = _text(record.get("timestamp"))
@@ -108,18 +155,19 @@ def _render_record(
 
     if status == "failed" or price is None:
         return (
-            f"- {symbol}：價格未知，資料狀態為 {status or 'failed'}。"
+            f"- {symbol}：價格未知，資料狀態為 "
+            f"{status or 'failed'}；{quality_text}。"
             f"[來源: {source}; timestamp: {timestamp}]"
         )
 
-    stale_note = "；⚠️ 資料已過期" if status == "stale" else ""
     change_text = (
         f"{daily_change}%"
         if isinstance(daily_change, (int, float)) and not isinstance(daily_change, bool)
         else "未知"
     )
     return (
-        f"- {symbol}：價格 {price}，日變動 {change_text}，{trend}{stale_note}。"
+        f"- {symbol}：價格 {price}，日變動 {change_text}，"
+        f"{trend}；{quality_text}。"
         f"[來源: {source}; timestamp: {timestamp}]"
     )
 
@@ -155,6 +203,7 @@ def _render_context(context: Mapping[str, Any]) -> Sequence[str]:
 def _render_risks(
     records: Mapping[str, Mapping[str, Any]],
     context: Mapping[str, Any],
+    quality_records: Mapping[str, Any],
 ) -> Sequence[str]:
     lines = []
     stale = sorted(
@@ -171,6 +220,20 @@ def _render_risks(
         lines.append(f"- 過期資料：{', '.join(stale)}。")
     if failed:
         lines.append(f"- 未知／失敗資料：{', '.join(failed)}。")
+    delayed = sorted(
+        symbol
+        for symbol, quality in quality_records.items()
+        if _mapping(_mapping(quality).get("freshness")).get("level") == "delayed"
+    )
+    quality_stale = sorted(
+        symbol
+        for symbol, quality in quality_records.items()
+        if _mapping(_mapping(quality).get("freshness")).get("level") == "stale"
+    )
+    if delayed:
+        lines.append(f"- 延遲資料：{', '.join(delayed)}；請先核對資料時間。")
+    if quality_stale:
+        lines.append(f"- 過期資料：{', '.join(quality_stale)}；不宜作即時判斷。")
 
     risks = context.get("risks")
     if isinstance(risks, list):
@@ -208,3 +271,12 @@ def _text(value: Any) -> str:
         return "未知"
     return str(value)
 
+
+def _mapping(value: Any) -> Mapping[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def _optional_number(value: Any) -> Optional[float]:
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return float(value)
+    return None

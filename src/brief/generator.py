@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Sequence
 
 from src.brief.templates import BRIEF_SECTIONS, render_instrument
+from src.data.data_quality import build_data_quality_context, format_quality_counts
 
 
 OUTPUT_DIRECTORY = Path(__file__).resolve().parents[1] / "output"
@@ -50,11 +51,20 @@ def generate_brief(snapshot: Mapping[str, Any]) -> str:
         records.get(symbol, _missing_record(symbol))
         for symbol in selected_symbols
     ]
+    quality_context = build_data_quality_context(snapshot)
+    quality_summary = quality_context["summary"]
 
     lines = [
         "# AI Market Brief",
         "",
         f"日期: {_report_date(snapshot.get('generated_at'))}",
+        f"報告生成時間: {snapshot.get('generated_at', 'N/A')}",
+        (
+            "資料時間範圍: "
+            f"{quality_summary['earliest_data_time']} → "
+            f"{quality_summary['latest_data_time']}"
+        ),
+        f"資料新鮮度: {format_quality_counts(quality_summary['counts'])}",
         "",
         "## Market Overview",
         "",
@@ -66,7 +76,16 @@ def generate_brief(snapshot: Mapping[str, Any]) -> str:
         lines.extend((f"## {section}", ""))
         for display_symbol, source_symbol in instruments:
             record = records.get(source_symbol, _missing_record(source_symbol))
-            lines.extend((render_instrument(display_symbol, record), ""))
+            lines.extend(
+                (
+                    render_instrument(
+                        display_symbol,
+                        record,
+                        snapshot.get("generated_at"),
+                    ),
+                    "",
+                )
+            )
 
     return "\n".join(lines).rstrip() + "\n"
 
@@ -193,4 +212,3 @@ def _number(value: Any) -> Optional[float]:
 
 if __name__ == "__main__":
     cli()
-

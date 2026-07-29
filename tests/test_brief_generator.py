@@ -62,7 +62,18 @@ def test_generates_required_sections_and_fields() -> None:
         "## Forex",
     ):
         assert section in markdown
-    for symbol in ("SPY", "QQQ", "BTC", "ETH", "Gold", "EURUSD", "USDJPY"):
+    for symbol in (
+        "SPY",
+        "QQQ",
+        "NVDA",
+        "AAPL",
+        "TSLA",
+        "BTC",
+        "ETH",
+        "Gold",
+        "EURUSD",
+        "USDJPY",
+    ):
         assert f"### {symbol}:" in markdown
     for field in (
         "- Price:",
@@ -74,6 +85,12 @@ def test_generates_required_sections_and_fields() -> None:
         assert field in markdown
     assert "strong positive move" in markdown
     assert "above short-term trend" in markdown
+    assert "報告生成時間: 2026-07-29T12:00:00Z" in markdown
+    assert "資料時間範圍:" in markdown
+    assert "資料新鮮度:" in markdown
+    assert "- Market session:" in markdown
+    assert "- Data time: 2026-07-29T00:00:00Z" in markdown
+    assert "- Freshness: 🟢 current" in markdown
 
 
 def test_missing_symbol_renders_failed_instead_of_crashing() -> None:
@@ -88,4 +105,3 @@ def test_missing_symbol_renders_failed_instead_of_crashing() -> None:
     assert "- Price: N/A" in gold_block
     assert "- Status: failed" in gold_block
     assert "daily move unavailable" in gold_block
-

@@ -10,6 +10,8 @@ from pathlib import Path
 from string import Template
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
+from src.data.data_quality import build_data_quality_context, format_quality_counts
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BRIEF_PATH = PROJECT_ROOT / "src" / "output" / "ai_market_brief.md"
@@ -60,6 +62,12 @@ def generate_page(markdown: str, snapshot: Mapping[str, Any]) -> str:
 
     generated_at = _text(snapshot.get("generated_at"))
     report_date = generated_at[:10] if len(generated_at) >= 10 else "未知"
+    quality_context = build_data_quality_context(snapshot)
+    quality_summary = quality_context["summary"]
+    data_time_range = (
+        f"{quality_summary['earliest_data_time']} → "
+        f"{quality_summary['latest_data_time']}"
+    )
     sources = _collect_sources(markdown, snapshot)
     source_html = "".join(
         f"<li><span class=\"source-dot\" aria-hidden=\"true\"></span>"
@@ -79,6 +87,10 @@ def generate_page(markdown: str, snapshot: Mapping[str, Any]) -> str:
     return PAGE_TEMPLATE.substitute(
         report_date=html.escape(report_date),
         generated_at=html.escape(generated_at),
+        data_time_range=html.escape(data_time_range),
+        freshness_summary=html.escape(
+            format_quality_counts(quality_summary["counts"])
+        ),
         summary_html=_render_lines(summary_lines),
         sections_html=sections_html,
         source_html=source_html,
@@ -360,6 +372,38 @@ PAGE_TEMPLATE = Template(
 
     .summary p { margin: 8px 0 0; }
 
+    .quality-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .quality-item {
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid rgba(94, 226, 208, 0.17);
+      border-radius: 12px;
+      background: rgba(5, 14, 22, 0.32);
+    }
+
+    .quality-item span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .quality-item strong {
+      display: block;
+      color: #dff7f2;
+      font-size: 0.82rem;
+      overflow-wrap: anywhere;
+    }
+
     .nav {
       display: flex;
       gap: 8px;
@@ -511,6 +555,7 @@ PAGE_TEMPLATE = Template(
       .market-card:last-child { grid-column: auto; }
       .footer { grid-template-columns: 1fr; }
       .eyebrow { align-items: flex-start; flex-direction: column; }
+      .quality-grid { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -527,6 +572,20 @@ PAGE_TEMPLATE = Template(
       </div>
       <h1>今日市場焦點</h1>
       <div class="summary">$summary_html</div>
+      <div class="quality-grid" aria-label="資料品質">
+        <div class="quality-item">
+          <span>報告生成時間</span>
+          <strong>$generated_at</strong>
+        </div>
+        <div class="quality-item">
+          <span>資料時間範圍</span>
+          <strong>$data_time_range</strong>
+        </div>
+        <div class="quality-item">
+          <span>資料新鮮度</span>
+          <strong>$freshness_summary</strong>
+        </div>
+      </div>
     </header>
 
     <nav class="nav" aria-label="市場分類">
@@ -558,4 +617,3 @@ PAGE_TEMPLATE = Template(
 
 if __name__ == "__main__":
     cli()
-

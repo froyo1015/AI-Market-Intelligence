@@ -4,9 +4,21 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Optional, Sequence, Tuple
 
+from src.data.asset_metadata import get_asset_metadata
+from src.data.data_quality import assess_record_freshness
+
 
 BRIEF_SECTIONS: Sequence[Tuple[str, Sequence[Tuple[str, str]]]] = (
-    ("Equity Market", (("SPY", "SPY"), ("QQQ", "QQQ"))),
+    (
+        "Equity Market",
+        (
+            ("SPY", "SPY"),
+            ("QQQ", "QQQ"),
+            ("NVDA", "NVDA"),
+            ("AAPL", "AAPL"),
+            ("TSLA", "TSLA"),
+        ),
+    ),
     ("Crypto", (("BTC", "BTC-USD"), ("ETH", "ETH-USD"))),
     ("Commodities", (("Gold", "GOLD"),)),
     ("Forex", (("EURUSD", "EURUSD"), ("USDJPY", "USDJPY"))),
@@ -57,7 +69,11 @@ def volatility_label(volatility: Optional[float]) -> str:
     return "high volatility"
 
 
-def render_instrument(display_symbol: str, record: Mapping[str, Any]) -> str:
+def render_instrument(
+    display_symbol: str,
+    record: Mapping[str, Any],
+    report_generated_at: Any = None,
+) -> str:
     """Render one stable Markdown block with all required values."""
     price = _number(record.get("price"))
     daily_change = _number(record.get("daily_change"))
@@ -65,10 +81,29 @@ def render_instrument(display_symbol: str, record: Mapping[str, Any]) -> str:
     sma20 = _number(record.get("sma20"))
     volatility = _number(record.get("volatility_20d"))
     status = str(record.get("status", "failed"))
+    symbol = str(record.get("symbol", display_symbol))
+    try:
+        metadata = get_asset_metadata(symbol)
+    except KeyError:
+        metadata = None
+    freshness = assess_record_freshness(record, report_generated_at)
 
     return "\n".join(
         (
-            f"### {display_symbol}:",
+            (
+                f"### {display_symbol}: {metadata.name}"
+                if metadata is not None
+                else f"### {display_symbol}:"
+            ),
+            f"- Market: {metadata.market if metadata is not None else 'N/A'}",
+            (
+                "- Market session: "
+                f"{metadata.market_session if metadata is not None else 'N/A'}"
+            ),
+            (
+                "- Price basis: "
+                f"{metadata.price_basis if metadata is not None else 'N/A'}"
+            ),
             f"- Price: {_format_price(price)}",
             (
                 f"- Daily change: {_format_percent(daily_change)}"
@@ -85,7 +120,8 @@ def render_instrument(display_symbol: str, record: Mapping[str, Any]) -> str:
                 f" — {volatility_label(volatility)}"
             ),
             f"- Status: {status}",
-            f"- Timestamp: {record.get('timestamp', 'N/A')}",
+            f"- Data time: {record.get('timestamp', 'N/A')}",
+            f"- Freshness: {freshness.display}",
             f"- Source: {record.get('source', 'N/A')}",
         )
     )

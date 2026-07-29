@@ -48,6 +48,9 @@ def test_page_contains_required_content_and_metadata() -> None:
         assert label in page
     assert "生成時間" in page
     assert "資料來源" in page
+    assert "資料時間範圍" in page
+    assert "資料新鮮度" in page
+    assert "🟢 0 current" in page
     assert "market_source" in page
     assert "2026-07-29T12:00:00Z" in page
 
@@ -64,4 +67,3 @@ def test_page_escapes_untrusted_markdown_html() -> None:
     assert "&lt;script&gt;" in page
     assert "default-src &#x27;none&#x27;" not in page
     assert "default-src 'none'" in page
-

@@ -65,6 +65,8 @@ def test_prompt_contains_grounding_rules_and_input_metadata() -> None:
     assert '"price": 123.45' in prompt
     assert "test_market_source" in prompt
     assert "2026-07-29T04:00:00Z" in prompt
+    assert '"data_quality": {' in prompt
+    assert "美股核心交易時段 09:30–16:00 ET" in prompt
 
 
 def test_mock_adapter_generates_required_chinese_sections_and_citations() -> None:
@@ -77,6 +79,12 @@ def test_mock_adapter_generates_required_chinese_sections_and_citations() -> Non
     assert "[來源: test_market_source; timestamp: 2026-07-29T04:00:00Z]" in response
     assert "BTC-USD：價格未知" in response
     assert "宏觀／新聞背景未知" in response
+    assert "報告生成時間：2026-07-29T12:00:00Z" in response
+    assert "資料時間範圍：" in response
+    assert "新鮮度 🟢 current" in response
+    assert "市場時段 美股核心交易時段 09:30–16:00 ET" in response
+    assert "provider symbol SPY" in response
+    assert "Yahoo Finance 調整後日線價格（非即時報價）" in response
 
 
 def test_analyst_pipeline_reads_two_inputs_and_writes_markdown(tmp_path) -> None:
