@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-market-brief"
+version = "0.1.0"
+description = "Phase 1.1 market snapshot pipeline for the AI Market Brief MVP"
+requires-python = ">=3.9"
+dependencies = [
+    "pandas>=2.0,<3",
+    "yfinance>=0.2.40,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4,<9",
+]
+
+[project.scripts]
+market-brief-snapshot = "src.main:cli"
+market-brief-generate = "src.brief.generator:cli"
+market-brief-analyst = "src.ai.analyst:cli"
+market-brief-pages = "src.pages.generator:cli"
+market-brief-telegram = "src.telegram.bot:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

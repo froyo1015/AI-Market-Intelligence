@@ -1,0 +1,2 @@
+"""Generated market snapshot output."""
+

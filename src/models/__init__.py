@@ -1,0 +1,2 @@
+"""Canonical snapshot models."""
+

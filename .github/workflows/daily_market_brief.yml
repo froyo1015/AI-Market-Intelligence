@@ -1,0 +1,104 @@
+name: Daily Market Brief
+
+on:
+  schedule:
+    - cron: "30 8 * * *"
+      timezone: "Asia/Taipei"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-market-brief
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Test and generate daily outputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Generate market snapshot
+        run: python -m src.main
+
+      - name: Generate deterministic brief
+        run: python -m src.brief.generator
+
+      - name: Generate mock analyst brief
+        run: python -m src.ai.analyst
+
+      - name: Generate static GitHub Pages site
+        run: python -m src.pages.generator
+
+      - name: Verify generated outputs
+        run: |
+          test -s src/output/market_snapshot.json
+          test -s src/output/daily_brief.md
+          test -s src/output/ai_market_brief.md
+          test -s docs/index.html
+
+      - name: Send Telegram market brief
+        if: ${{ success() }}
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python -m src.telegram.bot --skip-if-unconfigured
+
+      - name: Upload daily market brief artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: daily-market-brief-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            src/output/market_snapshot.json
+            src/output/market_context.json
+            src/output/daily_brief.md
+            src/output/ai_market_brief.md
+            docs/index.html
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
+
+  deploy:
+    name: Deploy GitHub Pages
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

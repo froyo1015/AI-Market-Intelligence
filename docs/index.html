@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'"
+  >
+  <meta
+    name="description"
+    content="每日跨資產 AI Market Brief，涵蓋美股、Crypto、黃金與外匯。"
+  >
+  <title>AI Market Brief · 2026-07-29</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071019;
+      --surface: rgba(15, 28, 40, 0.88);
+      --surface-strong: #122536;
+      --line: rgba(153, 190, 216, 0.15);
+      --text: #eef7fb;
+      --muted: #9eb3c2;
+      --cyan: #5ee2d0;
+      --blue: #70a7ff;
+      --violet: #ab8cff;
+      --gold: #f3c969;
+      --teal: #55d6be;
+      --red: #ff7e86;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family:
+        Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang TC", "Noto Sans TC", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(28, 116, 132, 0.25), transparent 30rem),
+        radial-gradient(circle at 90% 15%, rgba(58, 77, 137, 0.23), transparent 34rem),
+        var(--bg);
+      line-height: 1.65;
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    .masthead {
+      padding: clamp(26px, 5vw, 54px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(130deg, rgba(20, 47, 62, 0.96), rgba(12, 24, 37, 0.92));
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--cyan);
+      font-size: 0.78rem;
+      font-weight: 750;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .date-pill {
+      padding: 6px 11px;
+      border: 1px solid rgba(94, 226, 208, 0.3);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(94, 226, 208, 0.08);
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      max-width: 720px;
+      margin: 22px 0 12px;
+      font-size: clamp(2.15rem, 6vw, 4.35rem);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+    }
+
+    .summary {
+      max-width: 820px;
+      color: #c7d9e4;
+      font-size: clamp(1rem, 2vw, 1.14rem);
+    }
+
+    .summary p { margin: 8px 0 0; }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+      margin: 22px 0;
+      overflow-x: auto;
+      padding-bottom: 3px;
+      scrollbar-width: thin;
+    }
+
+    .nav a {
+      flex: 0 0 auto;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(9, 20, 30, 0.75);
+      text-decoration: none;
+      font-size: 0.88rem;
+    }
+
+    .nav a:hover,
+    .nav a:focus-visible {
+      color: var(--text);
+      border-color: rgba(94, 226, 208, 0.45);
+      outline: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .market-card {
+      min-width: 0;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+    }
+
+    .market-card:last-child { grid-column: 1 / -1; }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 14px;
+    }
+
+    .accent-bar {
+      width: 4px;
+      height: 24px;
+      border-radius: 4px;
+      background: var(--blue);
+    }
+
+    .accent-violet .accent-bar { background: var(--violet); }
+    .accent-gold .accent-bar { background: var(--gold); }
+    .accent-teal .accent-bar { background: var(--teal); }
+    .accent-red .accent-bar { background: var(--red); }
+
+    h2 {
+      margin: 0;
+      font-size: 1.18rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brief-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .brief-list li {
+      padding: 13px 14px;
+      border: 1px solid rgba(153, 190, 216, 0.1);
+      border-radius: 12px;
+      color: #d7e6ee;
+      background: rgba(5, 14, 22, 0.38);
+      overflow-wrap: anywhere;
+    }
+
+    .citation {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.72rem;
+    }
+
+    .unknown { color: var(--muted); }
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      margin-top: 20px;
+      padding: 20px 4px 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .footer strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #cfe0e9;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .sources li {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .source-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100% - 20px, 1100px);
+        padding-top: 18px;
+      }
+
+      .masthead, .market-card { border-radius: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .market-card:last-child { grid-column: auto; }
+      .footer { grid-template-columns: 1fr; }
+      .eyebrow { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="eyebrow">
+        <span>AI Market Brief · Daily Research Snapshot</span>
+        <time class="date-pill" datetime="2026-07-29">2026-07-29</time>
+      </div>
+      <h1>今日市場焦點</h1>
+      <div class="summary"><p>📌 以下為 Mock Analyst 根據輸入快照整理的測試簡報。</p><p>宏觀／新聞背景未知；現階段只可確認市場快照。<span class="citation"><span>phase_2_1_mock_context</span><span aria-hidden="true">·</span><time datetime="2026-07-29T10:55:42.091144Z">2026-07-29T10:55:42.091144Z</time></span></p></div>
+    </header>
+
+    <nav class="nav" aria-label="市場分類">
+      <a href="#equities">美股</a>
+      <a href="#crypto">Crypto</a>
+      <a href="#gold">黃金</a>
+      <a href="#forex">外匯</a>
+      <a href="#risk">風險提示</a>
+    </nav>
+
+    <div class="grid"><section class="market-card accent-blue" id="equities"><div class="section-heading"><span class="accent-bar" aria-hidden="true"></span><h2>美股</h2></div><ul class="brief-list"><li>SPY：價格 740.859985，日變動 0.2395%，價格低於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T04:00:00Z">2026-07-28T04:00:00Z</time></span></li><li>QQQ：價格 675.48999，日變動 -0.972%，價格低於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T04:00:00Z">2026-07-28T04:00:00Z</time></span></li><li>NVDA：價格 197.009995，日變動 0.2544%，價格低於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T04:00:00Z">2026-07-28T04:00:00Z</time></span></li><li>AAPL：價格 340.079987，日變動 0.9409%，價格高於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T04:00:00Z">2026-07-28T04:00:00Z</time></span></li><li>TSLA：價格 307.440002，日變動 -0.5756%，價格低於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T04:00:00Z">2026-07-28T04:00:00Z</time></span></li></ul></section><section class="market-card accent-violet" id="crypto"><div class="section-heading"><span class="accent-bar" aria-hidden="true"></span><h2>Crypto</h2></div><ul class="brief-list"><li>BTC-USD：價格 64351.640625，日變動 0.7519%，價格低於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-29T00:00:00Z">2026-07-29T00:00:00Z</time></span></li><li>ETH-USD：價格 1910.689941，日變動 -0.4822%，價格高於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-29T00:00:00Z">2026-07-29T00:00:00Z</time></span></li></ul></section><section class="market-card accent-gold" id="gold"><div class="section-heading"><span class="accent-bar" aria-hidden="true"></span><h2>黃金</h2></div><ul class="brief-list"><li>GOLD：價格 4091.600098，日變動 1.3701%，價格高於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-29T04:00:00Z">2026-07-29T04:00:00Z</time></span></li></ul></section><section class="market-card accent-teal" id="forex"><div class="section-heading"><span class="accent-bar" aria-hidden="true"></span><h2>外匯</h2></div><ul class="brief-list"><li>EURUSD：價格 1.138822，日變動 0.1651%，價格低於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T23:00:00Z">2026-07-28T23:00:00Z</time></span></li><li>USDJPY：價格 163.664001，日變動 -0.0653%，價格高於 SMA20。<span class="citation"><span>yahoo_finance</span><span aria-hidden="true">·</span><time datetime="2026-07-28T23:00:00Z">2026-07-28T23:00:00Z</time></span></li></ul></section><section class="market-card accent-red" id="risk"><div class="section-heading"><span class="accent-bar" aria-hidden="true"></span><h2>今日風險</h2></div><ul class="brief-list"><li>宏觀／新聞背景未知，無法確認價格變動原因；免費市場資料亦可能延遲。</li></ul><p>本簡報只供研究與流程測試，不構成投資建議。</p></section></div>
+
+    <footer class="footer">
+      <div>
+        <strong>資料來源</strong>
+        <ul class="sources"><li><span class="source-dot" aria-hidden="true"></span>phase_2_1_mock_context</li><li><span class="source-dot" aria-hidden="true"></span>yahoo_finance</li></ul>
+      </div>
+      <div>
+        <strong>生成時間</strong>
+        <time datetime="2026-07-29T11:42:06.939442Z">2026-07-29T11:42:06.939442Z</time>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
