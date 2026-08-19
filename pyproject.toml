@@ -24,6 +24,7 @@ market-brief-analyst = "src.ai.analyst:cli"
 market-brief-pages = "src.pages.generator:cli"
 market-brief-telegram = "src.telegram.bot:cli"
 market-brief-evidence = "src.evidence.pipeline:cli"
+market-brief-macro = "src.macro_pipeline:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]

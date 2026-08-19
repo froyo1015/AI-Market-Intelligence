@@ -22,6 +22,7 @@ OUTPUT_DIRECTORY = Path(__file__).resolve().parents[1] / "output"
 DEFAULT_SNAPSHOT_PATH = OUTPUT_DIRECTORY / "market_snapshot.json"
 DEFAULT_OBSERVATIONS_PATH = OUTPUT_DIRECTORY / "observations.json"
 DEFAULT_EVIDENCE_PATH = OUTPUT_DIRECTORY / "evidence.json"
+DEFAULT_MACRO_SNAPSHOT_PATH = OUTPUT_DIRECTORY / "macro_snapshot.json"
 
 
 def load_snapshot(path: Path) -> Dict[str, Any]:
@@ -40,9 +41,15 @@ def run_evidence_pipeline(
     snapshot_path: Path = DEFAULT_SNAPSHOT_PATH,
     observations_path: Path = DEFAULT_OBSERVATIONS_PATH,
     evidence_path: Path = DEFAULT_EVIDENCE_PATH,
+    macro_snapshot_path: Optional[Path] = None,
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     snapshot = load_snapshot(snapshot_path)
-    observations = build_observation_artifact(snapshot)
+    macro_snapshot = (
+        load_snapshot(macro_snapshot_path)
+        if macro_snapshot_path is not None
+        else None
+    )
+    observations = build_observation_artifact(snapshot, macro_snapshot)
     evidence = build_evidence_artifact(observations)
     validate_observation_artifact(observations)
     validate_evidence_artifact(evidence, observations)
@@ -60,6 +67,15 @@ def build_parser() -> argparse.ArgumentParser:
         "--observations", type=Path, default=DEFAULT_OBSERVATIONS_PATH
     )
     parser.add_argument("--evidence", type=Path, default=DEFAULT_EVIDENCE_PATH)
+    parser.add_argument(
+        "--macro-snapshot",
+        type=Path,
+        default=None,
+        help=(
+            "Optional macro snapshot to merge into observations; "
+            f"normally generated at {DEFAULT_MACRO_SNAPSHOT_PATH}"
+        ),
+    )
     return parser
 
 
@@ -69,6 +85,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         snapshot_path=args.snapshot,
         observations_path=args.observations,
         evidence_path=args.evidence,
+        macro_snapshot_path=args.macro_snapshot,
     )
     print(
         f"Wrote {len(observations['observations'])} observations "

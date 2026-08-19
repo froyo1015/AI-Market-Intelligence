@@ -1,11 +1,22 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "artifact_type": "evidence",
-  "run_id": "run_2026_07_29t11_42_06_939442z",
-  "report_date": "2026-07-29",
-  "generated_at": "2026-07-29T11:42:06.939442Z",
-  "status": "complete",
-  "warnings": [],
+  "run_id": "run_2026_08_19t10_32_38_672932z",
+  "report_date": "2026-08-19",
+  "generated_at": "2026-08-19T10:32:38.672932Z",
+  "status": "partial",
+  "warnings": [
+    "SPY observations are stale",
+    "QQQ observations are stale",
+    "NVDA observations are stale",
+    "AAPL observations are stale",
+    "TSLA observations are stale",
+    "BTC-USD observations are stale",
+    "ETH-USD observations are stale",
+    "GOLD observations are stale",
+    "EURUSD observations are stale",
+    "USDJPY observations are stale"
+  ],
   "evidence": [
     {
       "evidence_id": "evd_aapl_market_move_2026_07_28t04_00_00z",
@@ -21,10 +32,14 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "AAPL"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
       ]
     },
     {
@@ -41,10 +56,41 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "BTC-USD"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
+      ]
+    },
+    {
+      "evidence_id": "evd_dxy_market_move_2026_08_19t04_00_00z",
+      "claim_type": "macro_move",
+      "statement": "DXY decreased 0.287% over the latest daily interval.",
+      "relation": "observed",
+      "event_ids": [],
+      "observation_ids": [
+        "obs_dxy_daily_change_pct_2026_08_19t04_00_00z"
+      ],
+      "supporting_source_ids": [
+        "src_yahoo_finance_dxy"
+      ],
+      "contradicting_evidence_ids": [],
+      "confidence_score": 0.75,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "BTC-USD",
+        "EURUSD",
+        "GOLD",
+        "QQQ",
+        "SPY",
+        "USDJPY"
+      ],
+      "limitations": [
+        "Daily macro proxy observations do not identify the cause of the move."
       ]
     },
     {
@@ -61,10 +107,14 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "ETH-USD"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
       ]
     },
     {
@@ -81,10 +131,14 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "EURUSD"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
       ]
     },
     {
@@ -101,10 +155,14 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "GOLD"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
       ]
     },
     {
@@ -121,10 +179,39 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "NVDA"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
+      ]
+    },
+    {
+      "evidence_id": "evd_oil_market_move_2026_08_19t04_00_00z",
+      "claim_type": "macro_move",
+      "statement": "OIL was unchanged over the latest daily interval.",
+      "relation": "observed",
+      "event_ids": [],
+      "observation_ids": [
+        "obs_oil_daily_change_pct_2026_08_19t04_00_00z"
+      ],
+      "supporting_source_ids": [
+        "src_yahoo_finance_oil"
+      ],
+      "contradicting_evidence_ids": [],
+      "confidence_score": 0.75,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "DXY",
+        "GOLD",
+        "QQQ",
+        "SPY"
+      ],
+      "limitations": [
+        "Daily macro proxy observations do not identify the cause of the move."
       ]
     },
     {
@@ -141,10 +228,14 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "QQQ"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
       ]
     },
     {
@@ -161,10 +252,14 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "SPY"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
       ]
     },
     {
@@ -181,10 +276,40 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "TSLA"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
+      ]
+    },
+    {
+      "evidence_id": "evd_us10y_market_move_2026_08_18t05_00_00z",
+      "claim_type": "macro_move",
+      "statement": "US10Y decreased 1.8 basis points over the latest daily interval.",
+      "relation": "observed",
+      "event_ids": [],
+      "observation_ids": [
+        "obs_us10y_daily_change_bps_2026_08_18t05_00_00z"
+      ],
+      "supporting_source_ids": [
+        "src_yahoo_finance_us10y"
+      ],
+      "contradicting_evidence_ids": [],
+      "confidence_score": 0.75,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "DXY",
+        "GOLD",
+        "QQQ",
+        "SPY",
+        "USDJPY"
+      ],
+      "limitations": [
+        "Daily macro proxy observations do not identify the cause of the move."
       ]
     },
     {
@@ -201,10 +326,38 @@
         "src_yahoo_finance"
       ],
       "contradicting_evidence_ids": [],
-      "confidence_score": 0.95,
-      "confidence_label": "high",
+      "confidence_score": 0.65,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "USDJPY"
+      ],
       "limitations": [
-        "Daily market observations do not identify the cause of the move."
+        "Daily market observations do not identify the cause of the move.",
+        "One or more supporting observations are stale."
+      ]
+    },
+    {
+      "evidence_id": "evd_vix_market_move_2026_08_19t05_00_00z",
+      "claim_type": "macro_move",
+      "statement": "VIX increased 0.1894% over the latest daily interval.",
+      "relation": "observed",
+      "event_ids": [],
+      "observation_ids": [
+        "obs_vix_daily_change_pct_2026_08_19t05_00_00z"
+      ],
+      "supporting_source_ids": [
+        "src_yahoo_finance_vix"
+      ],
+      "contradicting_evidence_ids": [],
+      "confidence_score": 0.75,
+      "confidence_label": "medium",
+      "affected_assets": [
+        "BTC-USD",
+        "QQQ",
+        "SPY"
+      ],
+      "limitations": [
+        "Daily macro proxy observations do not identify the cause of the move."
       ]
     }
   ]

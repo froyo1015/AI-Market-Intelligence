@@ -55,6 +55,12 @@ def validate_observation_artifact(artifact: Mapping[str, Any]) -> None:
         quality_tier = source.get("quality_tier")
         if quality_tier not in {1, 2, 3}:
             raise EvidenceValidationError(f"{source_id} quality_tier is invalid")
+        if source.get("source_type") == "macro_market_data":
+            url = source.get("url")
+            if not isinstance(url, str) or not url.startswith(("http://", "https://")):
+                raise EvidenceValidationError(
+                    f"{source_id} macro source URL is invalid"
+                )
 
     observation_ids: Set[str] = set()
     for observation in raw_observations:
@@ -82,21 +88,38 @@ def validate_observation_artifact(artifact: Mapping[str, Any]) -> None:
         if observation.get("value") is None:
             raise EvidenceValidationError(f"{observation_id} value cannot be null")
         observation_type = observation.get("observation_type")
-        if observation_type not in {"market_price", "market_feature"}:
+        if observation_type not in {
+            "market_price",
+            "market_feature",
+            "macro_value",
+        }:
             raise EvidenceValidationError(
                 f"{observation_id} observation_type is invalid"
             )
         calculation = observation.get("calculation")
-        if observation_type == "market_feature":
-            if not isinstance(calculation, dict):
-                raise EvidenceValidationError(
-                    f"{observation_id} calculated feature lacks calculation metadata"
-                )
+        if observation_type == "market_feature" and not isinstance(
+            calculation, dict
+        ):
+            raise EvidenceValidationError(
+                f"{observation_id} calculated feature lacks calculation metadata"
+            )
+        if isinstance(calculation, dict):
             _required_string(calculation, "rule_id", observation_id)
             if not isinstance(calculation.get("input_ids"), list):
                 raise EvidenceValidationError(
                     f"{observation_id} calculation.input_ids must be a list"
                 )
+        if _schema_minor(artifact) >= 1:
+            asset_mapping = _string_sequence(
+                observation.get("asset_mapping"),
+                "asset_mapping",
+                observation_id,
+            )
+            if observation_type == "macro_value" and not asset_mapping:
+                raise EvidenceValidationError(
+                    f"{observation_id} macro observation has no asset mapping"
+                )
+            _validate_confidence(observation, observation_id)
 
 
 def validate_evidence_artifact(
@@ -108,6 +131,8 @@ def validate_evidence_artifact(
     _validate_envelope(artifact, "evidence")
     if artifact.get("run_id") != observation_artifact.get("run_id"):
         raise EvidenceValidationError("evidence and observations run_id mismatch")
+    if artifact.get("schema_version") != observation_artifact.get("schema_version"):
+        raise EvidenceValidationError("evidence and observations schema mismatch")
 
     raw_evidence = artifact.get("evidence")
     if not isinstance(raw_evidence, list):
@@ -226,11 +251,18 @@ def validate_evidence_artifact(
             raise EvidenceValidationError(
                 f"{evidence_id} limitations must be a list"
             )
+        if _schema_minor(artifact) >= 1:
+            _string_sequence(
+                bundle.get("affected_assets"),
+                "affected_assets",
+                evidence_id,
+            )
         _validate_claim_numbers(statement, referenced_observations, observations, evidence_id)
 
 
 def _validate_envelope(artifact: Mapping[str, Any], artifact_type: str) -> None:
-    if artifact.get("schema_version") != "1.0":
+    schema_version = artifact.get("schema_version")
+    if not isinstance(schema_version, str) or not re.fullmatch(r"1\.\d+", schema_version):
         raise EvidenceValidationError(f"{artifact_type} schema_version is unsupported")
     if artifact.get("artifact_type") != artifact_type:
         raise EvidenceValidationError(f"expected artifact_type {artifact_type}")
@@ -286,6 +318,28 @@ def _string_sequence(value: Any, field: str, context: str) -> Sequence[str]:
 
 def _is_number(value: Any) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _validate_confidence(value: Mapping[str, Any], context: str) -> None:
+    score = value.get("confidence_score")
+    if not _is_number(score) or not 0.0 <= float(score) <= 1.0:
+        raise EvidenceValidationError(
+            f"{context} confidence_score must be between 0 and 1"
+        )
+    if value.get("confidence_label") != confidence_label(float(score)).value:
+        raise EvidenceValidationError(
+            f"{context} confidence label does not match score"
+        )
+
+
+def _schema_minor(artifact: Mapping[str, Any]) -> int:
+    value = artifact.get("schema_version")
+    if not isinstance(value, str):
+        return 0
+    try:
+        return int(value.split(".", 1)[1])
+    except (IndexError, ValueError):
+        return 0
 
 
 def _validate_timestamp(value: str, context: str) -> None:

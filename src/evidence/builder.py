@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 from zoneinfo import ZoneInfo
 
+from src.data.data_quality import FreshnessLevel, assess_record_freshness
 from src.evidence.schema import (
     ArtifactStatus,
     EvidenceBundle,
@@ -21,7 +22,7 @@ from src.evidence.schema import (
 )
 
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 REPORT_TIMEZONE = ZoneInfo("Asia/Taipei")
 SOURCE_URLS = {
     "yahoo_finance": "https://finance.yahoo.com/",
@@ -59,9 +60,13 @@ class EvidenceBuildError(ValueError):
     """Raised when the existing snapshot cannot satisfy the v1 contract."""
 
 
-def build_observation_artifact(snapshot: Mapping[str, Any]) -> Dict[str, Any]:
+def build_observation_artifact(
+    snapshot: Mapping[str, Any],
+    macro_snapshot: Optional[Mapping[str, Any]] = None,
+) -> Dict[str, Any]:
     """Convert market snapshot records without changing the source pipeline."""
-    generated_at, records = _snapshot_header(snapshot)
+    market_generated_at, records = _snapshot_header(snapshot)
+    generated_at = _latest_generated_at(market_generated_at, macro_snapshot)
     run_id = _run_id(generated_at)
     warnings: List[str] = []
     observations: List[Observation] = []
@@ -92,6 +97,9 @@ def build_observation_artifact(snapshot: Mapping[str, Any]) -> Dict[str, Any]:
         if status not in {"success", "stale"}:
             warnings.append(f"{symbol} ignored: unsupported status {status!r}")
             continue
+        freshness = assess_record_freshness(raw_record, generated_at)
+        if freshness.level is FreshnessLevel.STALE:
+            status = "stale"
         if status == "stale":
             warnings.append(f"{symbol} observations are stale")
 
@@ -123,13 +131,25 @@ def build_observation_artifact(snapshot: Mapping[str, Any]) -> Dict[str, Any]:
                     source_id=source_id,
                     status=status,
                     calculation=calculation,
+                    asset_mapping=[symbol],
+                    confidence_score=0.65 if status == "stale" else 0.95,
+                    confidence_label=confidence_label(
+                        0.65 if status == "stale" else 0.95
+                    ),
                 )
             )
 
     sources = [
-        _build_source_reference(provider, generated_at, provider_records)
+        _build_source_reference(provider, market_generated_at, provider_records)
         for provider, provider_records in sorted(providers.items())
     ]
+    if macro_snapshot is not None:
+        macro_observations, macro_sources, macro_warnings = _macro_observations(
+            macro_snapshot
+        )
+        observations.extend(macro_observations)
+        sources.extend(macro_sources)
+        warnings.extend(macro_warnings)
     status = _artifact_status(observations, warnings)
     return {
         "schema_version": SCHEMA_VERSION,
@@ -165,7 +185,7 @@ def build_evidence_artifact(
     bundles: List[EvidenceBundle] = []
     for symbol in sorted(by_subject):
         indexed = by_subject[symbol]
-        daily = indexed.get("daily_change_pct")
+        daily = indexed.get("daily_change_pct") or indexed.get("daily_change_bps")
         if daily is None or not _is_number(daily.get("value")):
             warnings.append(f"{symbol} evidence omitted: daily change is unavailable")
             continue
@@ -177,17 +197,29 @@ def build_evidence_artifact(
         observation_ids = [str(item["observation_id"]) for item in referenced]
         source_ids = sorted({str(item["source_id"]) for item in referenced})
         stale = any(item.get("status") == "stale" for item in referenced)
-        confidence_score = 0.65 if stale else 0.95
+        input_confidence = [
+            float(item.get("confidence_score"))
+            for item in referenced
+            if _is_number(item.get("confidence_score"))
+        ]
+        confidence_score = min(input_confidence) if input_confidence else 0.0
+        is_macro = daily.get("observation_type") == ObservationType.MACRO_VALUE.value
         limitations = [
-            "Daily market observations do not identify the cause of the move."
+            "Daily macro proxy observations do not identify the cause of the move."
+            if is_macro
+            else "Daily market observations do not identify the cause of the move."
         ]
         if stale:
             limitations.append("One or more supporting observations are stale.")
         bundles.append(
             EvidenceBundle(
                 evidence_id=_evidence_id(symbol, str(daily.get("as_of"))),
-                claim_type="market_move",
-                statement=_market_move_statement(symbol, float(daily["value"])),
+                claim_type="macro_move" if is_macro else "market_move",
+                statement=_move_statement(
+                    symbol,
+                    float(daily["value"]),
+                    str(daily.get("unit")),
+                ),
                 relation=EvidenceRelation.OBSERVED,
                 event_ids=[],
                 observation_ids=observation_ids,
@@ -195,6 +227,13 @@ def build_evidence_artifact(
                 contradicting_evidence_ids=[],
                 confidence_score=confidence_score,
                 confidence_label=confidence_label(confidence_score),
+                affected_assets=sorted(
+                    {
+                        asset
+                        for item in referenced
+                        for asset in _string_list(item.get("asset_mapping"))
+                    }
+                ),
                 limitations=limitations,
             )
         )
@@ -207,7 +246,7 @@ def build_evidence_artifact(
     else:
         status = ArtifactStatus.PARTIAL
     return {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": observation_artifact.get("schema_version", SCHEMA_VERSION),
         "artifact_type": "evidence",
         "run_id": observation_artifact.get("run_id"),
         "report_date": observation_artifact.get("report_date"),
@@ -284,13 +323,158 @@ def _metric_unit(
     return default_unit
 
 
-def _market_move_statement(symbol: str, value: float) -> str:
+def _move_statement(symbol: str, value: float, unit: str) -> str:
     magnitude = _format_number(abs(value))
+    suffix = " basis points" if unit == "basis_points" else "%"
     if value > 0:
-        return f"{symbol} increased {magnitude}% over the latest daily interval."
+        return f"{symbol} increased {magnitude}{suffix} over the latest daily interval."
     if value < 0:
-        return f"{symbol} decreased {magnitude}% over the latest daily interval."
+        return f"{symbol} decreased {magnitude}{suffix} over the latest daily interval."
     return f"{symbol} was unchanged over the latest daily interval."
+
+
+def _macro_observations(
+    macro_snapshot: Mapping[str, Any],
+) -> Tuple[List[Observation], List[SourceReference], List[str]]:
+    generated_at = macro_snapshot.get("generated_at")
+    records = macro_snapshot.get("records")
+    if not isinstance(generated_at, str):
+        raise EvidenceBuildError("macro snapshot generated_at is missing")
+    if not isinstance(records, list):
+        raise EvidenceBuildError("macro snapshot records must be a list")
+
+    observations: List[Observation] = []
+    sources: List[SourceReference] = []
+    warnings: List[str] = []
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            warnings.append(f"macro record[{index}] ignored: record is not an object")
+            continue
+        symbol = record.get("symbol")
+        provider = record.get("source") or macro_snapshot.get("source")
+        timestamp = record.get("timestamp")
+        status = record.get("status")
+        if not isinstance(symbol, str) or not symbol:
+            warnings.append(f"macro record[{index}] ignored: symbol is missing")
+            continue
+        if not isinstance(provider, str) or not provider:
+            warnings.append(f"{symbol} macro record ignored: source is missing")
+            continue
+        source_id = _source_id(f"{provider}_{symbol}")
+        sources.append(
+            _build_macro_source_reference(source_id, provider, generated_at, record)
+        )
+        if status == "failed":
+            warnings.append(f"{symbol} macro observations omitted: status is failed")
+            continue
+        if status not in {"success", "stale"}:
+            warnings.append(f"{symbol} macro record ignored: unsupported status {status!r}")
+            continue
+        if not isinstance(timestamp, str) or not timestamp:
+            warnings.append(f"{symbol} macro record ignored: timestamp is missing")
+            continue
+        if status == "stale":
+            warnings.append(f"{symbol} macro observations are stale")
+
+        mapping = list(_string_list(record.get("asset_mapping")))
+        score = record.get("confidence_score")
+        confidence_score = float(score) if _is_number(score) else 0.0
+        metrics = (
+            (
+                str(record.get("metric")),
+                record.get("value"),
+                str(record.get("value_unit")),
+                "latest",
+                None,
+            ),
+            (
+                str(record.get("change_metric")),
+                record.get("daily_change"),
+                str(record.get("change_unit")),
+                "daily",
+                f"macro_{record.get('change_metric')}_v1",
+            ),
+            (
+                str(record.get("change_metric")).replace("daily_", "weekly_"),
+                record.get("weekly_change"),
+                str(record.get("change_unit")),
+                "weekly",
+                f"macro_weekly_{record.get('change_metric')}_v1",
+            ),
+        )
+        for metric, value, unit, period, rule_id in metrics:
+            if value is None:
+                warnings.append(f"{symbol}.{metric} omitted: value is missing")
+                continue
+            calculation = None
+            if rule_id is not None:
+                calculation = {
+                    "rule_id": rule_id,
+                    "input_ids": [],
+                    "source_artifact": "macro_snapshot.json",
+                }
+            observations.append(
+                Observation(
+                    observation_id=_observation_id(symbol, metric, timestamp),
+                    observation_type=ObservationType.MACRO_VALUE,
+                    subject=symbol,
+                    metric=metric,
+                    value=value,
+                    unit=unit,
+                    period=period,
+                    as_of=timestamp,
+                    source_id=source_id,
+                    status=status,
+                    calculation=calculation,
+                    asset_mapping=mapping,
+                    confidence_score=confidence_score,
+                    confidence_label=confidence_label(confidence_score),
+                )
+            )
+    return observations, sources, warnings
+
+
+def _build_macro_source_reference(
+    source_id: str,
+    provider: str,
+    generated_at: str,
+    record: Mapping[str, Any],
+) -> SourceReference:
+    canonical = json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    publisher = "Yahoo Finance" if provider == "yahoo_finance" else provider
+    url = record.get("source_url")
+    return SourceReference(
+        source_id=source_id,
+        provider=provider,
+        publisher=publisher,
+        source_type="macro_market_data",
+        quality_tier=3,
+        title=f"{record.get('name', record.get('symbol'))} macro proxy",
+        url=url if isinstance(url, str) else None,
+        published_at=None,
+        retrieved_at=generated_at,
+        content_hash=f"sha256:{digest}",
+    )
+
+
+def _latest_generated_at(
+    market_generated_at: str,
+    macro_snapshot: Optional[Mapping[str, Any]],
+) -> str:
+    if macro_snapshot is None:
+        return market_generated_at
+    macro_generated_at = macro_snapshot.get("generated_at")
+    if not isinstance(macro_generated_at, str):
+        raise EvidenceBuildError("macro snapshot generated_at is missing")
+    candidates = (market_generated_at, macro_generated_at)
+    try:
+        return max(
+            candidates,
+            key=lambda value: datetime.fromisoformat(value.replace("Z", "+00:00")),
+        )
+    except ValueError as exc:
+        raise EvidenceBuildError("snapshot generated_at is invalid") from exc
 
 
 def _format_number(value: float) -> str:

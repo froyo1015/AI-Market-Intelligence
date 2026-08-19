@@ -16,6 +16,7 @@ class ArtifactStatus(str, Enum):
 class ObservationType(str, Enum):
     MARKET_PRICE = "market_price"
     MARKET_FEATURE = "market_feature"
+    MACRO_VALUE = "macro_value"
 
 
 class EvidenceRelation(str, Enum):
@@ -62,10 +63,14 @@ class Observation:
     source_id: str
     status: str
     calculation: Optional[Dict[str, Any]]
+    asset_mapping: List[str]
+    confidence_score: float
+    confidence_label: ConfidenceLabel
 
     def to_dict(self) -> Dict[str, Any]:
         payload = asdict(self)
         payload["observation_type"] = self.observation_type.value
+        payload["confidence_label"] = self.confidence_label.value
         return payload
 
 
@@ -81,6 +86,7 @@ class EvidenceBundle:
     contradicting_evidence_ids: List[str]
     confidence_score: float
     confidence_label: ConfidenceLabel
+    affected_assets: List[str]
     limitations: List[str]
 
     def to_dict(self) -> Dict[str, Any]:

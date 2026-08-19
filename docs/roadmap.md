@@ -109,15 +109,17 @@ Prove the frozen observation and evidence contracts using only the existing mark
 
 Indicative duration: Week 2.
 
+Status: 6.2-A Macro Adapter implemented locally; Economic Calendar and News remain pending.
+
 ### Objective
 
 Add approved News, Macro and Calendar sources, then turn normalized source records into ranked event evidence.
 
 ### Work
 
-- Add one bounded News Adapter using an approved free/public source.
-- Add one official Macro Indicator Adapter.
-- Add one Economic Calendar Adapter.
+- 6.2-A: Add bounded DXY, US10Y, VIX and WTI proxy ingestion.
+- 6.2-B: Add one Economic Calendar Adapter.
+- 6.2-C: Add one bounded News Adapter using an approved free/public source.
 - Normalize source records into `events.json` and new observations.
 - Preserve canonical URL, publisher, publication time, retrieval time and content hash.
 - Exact and deterministic near-duplicate detection.
@@ -138,6 +140,8 @@ Add approved News, Macro and Calendar sources, then turn normalized source recor
 - Every eligible interpretation has evidence and source IDs.
 - Insufficient evidence is marked `unconfirmed`.
 - No LLM is used for facts, ranking or mapping.
+- A single macro instrument failure produces a partial artifact rather than a total pipeline failure.
+- Each macro observation has source, timestamp, asset mapping and confidence.
 
 ## 7. Phase 6.3 — Cross-Asset and Regime Engine
 

@@ -121,6 +121,27 @@ The existing schema remains authoritative for the current price pipeline:
 
 v2 does not require changes to this file. The Observation Normalizer converts its records into the canonical observation contract.
 
+## 3.1 `macro_snapshot.json`
+
+Phase 6.2-A adds a provider artifact for four bounded macro market proxies:
+
+| Field | Meaning |
+|---|---|
+| `symbol` / `provider_symbol` | Canonical and provider identifiers |
+| `metric` / `value` / `value_unit` | Current observed level and unit |
+| `daily_change` / `weekly_change` | Deterministic change values |
+| `change_metric` / `change_unit` | Percent for DXY/VIX/OIL; basis points for US10Y |
+| `timestamp` | Provider daily-bar timestamp |
+| `source` / `source_url` | Actual market-data provider provenance |
+| `semantic_reference_url` | Official benchmark/product definition; not the data source |
+| `asset_mapping` | Rule-based candidate affected assets |
+| `confidence_score` / `confidence_label` | Source confidence before interpretation |
+| `status` | `success`, `stale` or `failed` |
+| `price_basis` | Human-readable proxy and delay semantics |
+
+The artifact status becomes `partial` when any instrument is stale or failed.
+One record failure never removes successful records.
+
 ## 4. `events.json`
 
 Purpose: represent normalized news, official releases and future calendar events without asserting market impact.
@@ -197,6 +218,9 @@ Purpose: store directly observed or deterministically calculated market and macr
 | `source_id` | string | yes | Source reference ID |
 | `status` | enum | yes | Data status |
 | `calculation` | object/null | yes | Rule and input IDs for calculated values |
+| `asset_mapping` | array[string] | v1.1 | Candidate related assets; direct market observations map to themselves |
+| `confidence_score` | number | v1.1 | Source/data confidence from `0.0–1.0` |
+| `confidence_label` | enum | v1.1 | Label derived from the confidence score |
 
 Calculated observations must retain their formula version and inputs:
 
@@ -243,6 +267,7 @@ Purpose: group the minimum evidence required to support a market interpretation.
 | `contradicting_evidence_ids` | array[string] | yes | Explicit conflicts |
 | `confidence_score` | number | yes | `0.0–1.0` |
 | `confidence_label` | enum | yes | Derived confidence label |
+| `affected_assets` | array[string] | v1.1 | Union of mapped assets from supporting observations |
 | `limitations` | array[string] | yes | Missing or uncertain evidence |
 
 Rules:
@@ -419,3 +444,4 @@ An artifact is invalid if any of the following applies:
 - Writers must not silently convert an older major version.
 - Generated reports must record the exact schema and rule versions used.
 - `market_snapshot.json` remains version `1.x` until a separately approved migration is required.
+- Observation and evidence artifacts use `1.1` after macro mapping and confidence fields were added; validators continue to accept supported `1.x` artifacts.

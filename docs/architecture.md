@@ -147,6 +147,7 @@ src/
 ```text
 src/output/
 ├── market_snapshot.json       # existing; market observations
+├── macro_snapshot.json        # DXY, US10Y, VIX and WTI proxy records
 ├── events.json                # normalized news and scheduled events
 ├── observations.json          # normalized market and macro observations
 ├── evidence.json              # traceable evidence bundles
@@ -214,6 +215,20 @@ For every source item retain:
 - content hash for deduplication.
 
 The MVP must not republish full copyrighted articles.
+
+### Phase 6.2-A approved macro proxies
+
+| Internal symbol | Provider symbol | Meaning | Evidence caveat |
+|---|---|---|---|
+| DXY | `DX-Y.NYB` | U.S. Dollar Index level | Delayed Yahoo Finance proxy; ICE defines the benchmark |
+| US10Y | `^TNX` | U.S. 10-year yield level | Daily change is expressed in basis points |
+| VIX | `^VIX` | Cboe VIX Index level | Expected volatility benchmark, not observed market loss |
+| OIL | `CL=F` | Front-month WTI futures | Futures price, not physical spot oil |
+
+The Yahoo adapter is a zero-key Demo source with quality tier 3 and source
+confidence `0.75`. Each record retains its Yahoo source URL and a separate
+official semantic reference. Failure is isolated by instrument; there is no
+silent provider substitution.
 
 ## 11. LLM Boundary and Validation
 
