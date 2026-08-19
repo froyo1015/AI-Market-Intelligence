@@ -1,285 +1,284 @@
-# AI Market Brief MVP — 30-Day Roadmap
+# Market Intelligence Pipeline — Incremental Roadmap
 
-> 目標：一名開發者在 30 日內完成零固定平台成本、可公開展示的每日 AI Market Brief。  
-> 範圍：只建立每日排程、兩個資料 Adapter、特徵計算、AI Brief、Telegram 及 GitHub Pages。
+> 目標：在不破壞現有 AI Market Brief MVP 的前提下，用四個開發階段建立 Data → Evidence → Intelligence → Brief 流程。
 
-## 1. Demo 完成定義
+## 1. Current Baseline
 
-Day 30 時必須可以展示：
+目前已運作並必須保留：
 
-1. GitHub Actions 每日執行一次。
-2. 固定 8–12 個跨資產標的的最新可用數據。
-3. 每個標的的日變動、週變動、SMA20 趨勢及 20 日波動率。
-4. 少量宏觀／新聞標題、來源、時間及原文連結。
-5. 一份 AI Daily Market Brief。
-6. AI 不可用時的模板 Brief。
-7. GitHub Pages 最新報告頁面。
-8. Telegram 每日摘要及 Dashboard 連結。
-9. 最少 7 日 burn-in 記錄。
+- Yahoo Finance Market Data Adapter。
+- Market Data Normalizer。
+- Daily/Weekly change、SMA20 及 20-day volatility。
+- Asset metadata、market session 及 freshness indicator。
+- `market_snapshot.json`。
+- Deterministic Market Brief。
+- Mock Analyst Adapter。
+- GitHub Actions daily run、tests、artifacts 及 Pages deployment。
+- Static GitHub Pages renderer。
+- Optional Telegram delivery boundary。
 
-## 2. 30 日時序
+目前產品仍是價格摘要。以下 roadmap 的完成定義是加入可追溯的事件、證據、跨資產訊號及市場 regime，而不是增加更多價格卡或 UI。
 
-```mermaid
-gantt
-    title AI Market Brief MVP — 30 Days
-    dateFormat  YYYY-MM-DD
-    axisFormat  %m/%d
-    section Scope
-    Freeze scope and report format       :p0, 2026-08-03, 2d
-    section Data
-    Market and macro/news adapters       :p1, after p0, 6d
-    Feature calculator and base report   :p2, after p1, 5d
-    section Intelligence
-    AI brief and template fallback       :p3, after p2, 5d
-    section Delivery
-    GitHub Pages and Telegram            :p4, after p3, 5d
-    section Validation
-    Burn-in, fixes, demo preparation     :p5, after p4, 7d
+## 2. Scope Guardrails
+
+整個 v2 MVP 不加入：
+
+- 即時行情或串流。
+- 買賣訊號、價格預測或交易執行。
+- 回測。
+- Multi-agent workflow。
+- 複雜資料庫、queue 或常駐 server。
+- React dashboard。
+- 付費資料作為必要 dependency。
+- 新聞全文保存或重新發布。
+- 未經證據支持的因果結論。
+
+## 3. Delivery Strategy
+
+每一階段使用 feature-gated、artifact-first 方式加入現有 workflow：
+
+```text
+Existing market pipeline continues to publish
+                    +
+New v2 stage generates validated JSON artifacts
+                    ↓
+Only after acceptance does the next stage consume them
 ```
 
-總計：2 + 6 + 5 + 5 + 5 + 7 = 30 日。
+在新 intelligence report 完成驗收前，現有 GitHub Pages 報告繼續作為 production output。任何新階段失敗不得破壞原有 daily run。
 
-## 3. Day 1–2 — Scope Freeze
+## 4. Phase 6.0 — Architecture and Contract Freeze
 
-### 目標
+Status: documentation only.
 
-在開始開發前鎖定產品範圍及一份 Daily Brief 格式。
+### Deliverables
 
-### 決定
+- `docs/architecture.md` v2 target architecture。
+- `docs/data-schema.md` canonical contracts。
+- `docs/intelligence-engine.md` deterministic rules and guardrails。
+- Updated incremental roadmap。
 
-- 固定 8–12 個 Demo 標的。
-- 每日排程時間及報告時區。
-- 一個免費 Market Data Provider。
-- 一組官方宏觀／RSS 來源。
-- 一個 LLM Provider 及每日使用上限。
-- GitHub repo 是否保持 public。
-- Telegram 測試 channel。
-- 最新報告及歷史報告頁面 wireframe。
+### Decisions to approve before coding
 
-### 交付
-
-- 最終 symbol 清單。
-- Daily Brief 範例。
-- `market_snapshot.json` 及 `daily_brief.json` 欄位確認。
-- 免費 Provider 條款、配額及延遲限制記錄。
+- 第一批免費 News、Macro 及 Calendar sources。
+- Source licensing and metadata retention rules。
+- DXY、US10Y、VIX、Oil 及 breadth 的 exact instruments/providers。
+- Report timezone and daily data window。
+- Event ranking thresholds。
+- Cross-asset rule thresholds。
+- Source quality tier policy。
+- Whether v2 artifacts are retained in Actions only or committed as static history。
 
 ### Exit criteria
 
-- 產品負責人批准固定範圍。
-- 沒有未決 Provider 或資產清單。
-- 所有新需求進入 Demo 後 backlog。
+- Existing `market_snapshot.json` remains compatible。
+- Every new artifact has required fields, validation rules and versioning policy。
+- Evidence-to-claim traceability is defined。
+- CTO/product owner approves the architecture before implementation。
 
-## 4. Day 3–8 — Data Adapters
+## 5. Phase 6.1 — Evidence Foundation
 
-### 目標
+Indicative duration: Week 1.
 
-取得可追溯的市場、宏觀及新聞資料。
+Status: implemented locally; pending review and commit.
 
-### Market Data Adapter
+### Objective
 
-- 擷取固定標的所需的日線資料。
-- 統一 symbol、價格、日期及來源欄位。
-- 記錄 `as_of` 及 available／stale／unavailable 狀態。
-- 來源失敗時輸出部分結果。
+Prove the frozen observation and evidence contracts using only the existing market snapshot. Do not change the public report or add external dependencies.
 
-### Macro / News Adapter
+### Work
 
-- 擷取固定官方來源或 RSS。
-- 保存標題、來源、發布時間及 URL。
-- 使用簡單日期窗口、來源順序及固定關鍵字。
-- 不保存新聞全文。
-
-### Exit criteria
-
-- 固定標的能產生一份帶來源的 snapshot。
-- 缺失資料不會導致整個批次崩潰。
-- 新聞項目均有來源及原文連結。
-- 沒有加入第二個數據供應商。
-
-## 5. Day 9–13 — Feature Calculator and Base Report
-
-### 目標
-
-在沒有 AI 的情況下完成可閱讀報告。
-
-### 工作
-
-- 計算日變動。
-- 計算五個交易日變動。
-- 計算 SMA20 趨勢。
-- 計算 20 日波動率。
-- 處理資料窗口不足及缺失交易日。
-- 產生 `market_snapshot.json`。
-- 以固定模板產生 Markdown／HTML Brief。
-- 加入資料時間、來源、錯誤狀態及免責聲明。
+- Convert existing `market_snapshot.json` records into canonical `observations.json`.
+- Build deterministic `market_move` evidence bundles in `evidence.json`.
+- Preserve source, timestamp, status, metric unit and calculation metadata.
+- Add validation for unresolved IDs, unsupported numbers and causal language.
+- Mark failed records as unavailable and stale records with reduced confidence.
+- Add deterministic fixtures and unit tests.
+- Do not add News, Macro, Calendar, LLM, UI or external API integrations.
 
 ### Exit criteria
 
-- 不需要 LLM Key 亦能產生完整基礎報告。
-- 所有數字由輸入數據及固定公式產生。
-- 每個標的顯示 `as_of` 及狀態。
-- 固定測試資料可以重現同一計算結果。
+- Existing price records generate versioned observation and evidence artifacts.
+- Every evidence bundle resolves to observations and market source metadata.
+- A claim such as “Fed caused the market drop” is rejected without event evidence; Phase 6.1 publishes no causal claims.
+- Missing or stale market data produces partial artifacts and warnings.
+- Existing market pipeline and public Pages output remain unchanged.
+- All existing tests continue to pass.
 
-## 6. Day 14–18 — AI Brief Generator
+## 6. Phase 6.2 — Real Data Adapters and Event Evidence
 
-### 目標
+Indicative duration: Week 2.
 
-把基礎報告整理成一份五分鐘內看完的 AI Daily Market Brief。
+### Objective
 
-### 工作
+Add approved News, Macro and Calendar sources, then turn normalized source records into ranked event evidence.
 
-- 建立一個 Daily Brief prompt／輸出格式。
-- AI 只讀取已驗證 snapshot 及新聞 metadata。
-- 限制輸入新聞數量及輸出長度。
-- 驗證 AI 不增加輸入中不存在的市場數字。
-- 對服務失敗、超時及輸出無效切換到模板 Brief。
-- 在報告記錄 `generation_mode`。
+### Work
 
-### Exit criteria
-
-- AI Brief 包含市場概況、主要變化、新聞重點、風險及觀察項目。
-- 具體市場數字全部可由 snapshot 找到。
-- 不確認新聞因果時使用審慎語言。
-- 關閉 AI 後仍可完成相同發布流程。
-
-## 7. Day 19–23 — Publishing
-
-### 目標
-
-Day 23 前提供可分享的 Demo。
-
-### GitHub Pages
-
-- 顯示最新 Daily Brief。
-- 顯示固定市場 snapshot。
-- 顯示資料時間及來源連結。
-- 保留最近 7–30 份歷史報告。
-- 支援手機及桌面閱讀。
-
-### Telegram
-
-- 每日發送一則摘要。
-- 包含生成時間、重要市場變化及 GitHub Pages 連結。
-- 避免同一天重複發送。
-- 不發送事件或盤中通知。
-
-### Scheduler
-
-- 每日 GitHub Actions 排程。
-- 支援手動觸發。
-- 在 run summary 顯示各步驟狀態。
+- Add one bounded News Adapter using an approved free/public source.
+- Add one official Macro Indicator Adapter.
+- Add one Economic Calendar Adapter.
+- Normalize source records into `events.json` and new observations.
+- Preserve canonical URL, publisher, publication time, retrieval time and content hash.
+- Exact and deterministic near-duplicate detection.
+- Canonical event selection and merged source references.
+- Rule-based entity, topic and asset mapping.
+- Transparent event relevance scoring.
+- Extend `evidence.json` with event-linked bundles.
+- Record supporting, conflicting and missing evidence.
+- Select zero to three qualifying Top Events.
 
 ### Exit criteria
 
-- 公開連結可打開最新報告。
-- Telegram 可收到摘要。
-- Secret 不出現在頁面、產物或 log。
-- 手動重跑不會產生重複 Telegram 訊息。
+- Duplicate stories do not occupy multiple Top Event positions.
+- Every accepted event has at least one valid original or canonical source URL.
+- No full copyrighted article content is stored.
+- Ranking component scores are inspectable.
+- Low-confidence thematic mapping cannot independently promote an event.
+- Every eligible interpretation has evidence and source IDs.
+- Insufficient evidence is marked `unconfirmed`.
+- No LLM is used for facts, ranking or mapping.
 
-## 8. Day 24–30 — Burn-in and Demo Preparation
+## 7. Phase 6.3 — Cross-Asset and Regime Engine
 
-### 目標
+Indicative duration: Week 3.
 
-連續運行、修正高風險問題並準備展示。
+### Objective
 
-### 每日檢查
+Create deterministic market signals and a current-state regime classification.
 
-- Action 是否成功。
-- 核心標的是否 available。
-- `as_of` 是否合理。
-- AI 是否加入不存在的市場數字。
-- Pages 是否顯示最新報告。
-- Telegram 是否只發送一次。
+### Work
 
-### 只修正
-
-- 阻塞每日報告的錯誤。
-- 錯誤數字、時間或來源。
-- Secret／授權風險。
-- 主要手機版閱讀問題。
-- AI 明顯幻覺或輸出失敗。
-
-### 不加入
-
-- 新資產。
-- 新指標。
-- 新 Provider。
-- 新 AI 報告類型。
-- 用戶登入或自訂設定。
-- 事件通知。
-- 任何常駐後端或資料庫。
+- Add approved market/macro observations required by initial rules.
+- Implement versioned cross-asset rules.
+- Emit active, inactive, conflicting or insufficient states.
+- Implement risk-on/risk-off/mixed scoring.
+- Calculate confidence from coverage, freshness and consistency.
+- Build Risk Monitor and next-48-hours event list.
+- Generate `market_signals.json`.
+- Add deterministic `daily_intelligence.json` builder.
 
 ### Exit criteria
 
-- 最少 7 日 burn-in。
-- 排程成功率 ≥ 90%。
-- 核心標的資料完整率 ≥ 95%。
-- 無來源的具體市場數字為 0。
-- 平台固定成本為 US$0。
-- 可在五分鐘內完成一次完整 Demo。
+- Every signal identifies exact observations, evidence and rule version.
+- Missing or stale inputs lower confidence rather than default to neutral facts.
+- Regime includes classification, score, confidence, conflicts and missing inputs.
+- Output is descriptive and contains no prediction or trade instruction.
+- Fixture tests cover all three regimes and incomplete data.
 
-## 9. 第一階段 P0
+## 8. Phase 6.4 — Intelligence Brief and Validation
 
-### 必須完成
+Indicative duration: Week 4.
 
-- 每日排程。
-- 一個 Market Data Adapter。
-- 一個 Macro / News Adapter。
-- 四項 Feature Calculator。
-- 一個 AI Daily Brief。
-- 非 AI 模板 fallback。
-- GitHub Pages。
-- Telegram 每日摘要。
-- 資料時間、來源及免責聲明。
+### Objective
 
-### 可以降低品質但不能阻塞
+Publish a useful research-style brief from structured intelligence, with or without an LLM.
 
-- 部分新聞來源暫時不可用。
-- AI 免費額度耗盡。
-- 個別非核心標的資料缺失。
-- GitHub Actions 排程延遲。
+### Work
 
-### 絕不進入第一階段
+- Build deterministic intelligence brief from `daily_intelligence.json`.
+- Add the required Top Events, Cross Asset Signals and Next 48 Hours sections.
+- Update Pages from price-card emphasis to research-terminal reading order.
+- Add citation resolution to canonical source URLs.
+- Add concrete-number, reference and causality validation.
+- Test invalid output rejection and deterministic fallback.
+- Only after deterministic acceptance, connect a real LLM behind the existing adapter boundary.
+- Keep Telegram optional and downstream of validated report generation.
 
-- 即時或事件驅動功能。
-- 平行 AI 研究流程或複雜編排。
-- 複雜資料庫、資料湖或向量搜尋。
-- 登入、多租戶、付款及個人化。
+### Exit criteria
 
-## 10. Demo 指標
+- LLM-disabled runs still produce a complete intelligence brief.
+- Every published number resolves to an observation.
+- Every event claim resolves to source and evidence IDs.
+- Unsupported causal language causes validation failure.
+- Existing price snapshot remains available as supporting detail.
+- Public page leads with intelligence, not a grid of asset prices.
 
-| 類別 | Day 30 目標 |
-|---|---|
-| 可展示版本 | Day 23 前 |
-| Burn-in | 7 日 |
-| 排程成功率 | ≥ 90% |
-| 核心資料完整率 | ≥ 95% |
-| 有來源的市場數字 | 100% |
-| 每日 Telegram 重複訊息 | 0 |
-| 固定平台成本 | US$0 |
-| 測試用戶 | 5 名 |
-| 一週閱讀至少 3 次 | 至少 3 名 |
+## 9. Workflow Migration Order
 
-## 11. 主要風險
+Future workflow stages should be added in this order:
 
-| 風險 | 30 日處理方式 |
-|---|---|
-| 免費行情失效或限流 | 顯示 unavailable；不臨時擴建多 Provider 系統 |
-| 數據延遲 | 顯示 `as_of` 及 stale 狀態 |
-| 新聞授權 | 只保存 metadata、短摘要及原文連結 |
-| AI 幻覺 | AI 不計算數字；輸出對照 snapshot；保留模板 fallback |
-| Actions 排程延遲 | 不提供即時承諾；支援手動重跑 |
-| Scope creep | 30 日架構凍結；新需求進 backlog |
-| Secret 洩漏 | 使用 GitHub Secrets；不輸出至 log 或靜態頁面 |
+```text
+tests
+  ↓
+existing market snapshot
+  ↓
+new source adapters
+  ↓
+event / observation validation
+  ↓
+evidence + ranking
+  ↓
+signals + regime
+  ↓
+daily intelligence contract validation
+  ↓
+deterministic intelligence brief
+  ↓
+optional LLM brief + output validation
+  ↓
+static Pages
+  ↓
+optional Telegram
+  ↓
+artifacts
+```
 
-## 12. Day 30 後決策
+During migration, a failure before validated intelligence generation should fall back to the existing price brief where safe. A failed or invalid report must not replace the last successful public page.
 
-Demo 完成後先回答：
+## 10. Acceptance Metrics
 
-1. 測試者是否持續閱讀 Brief？
-2. 最常閱讀的是市場快照、新聞還是 AI 摘要？
-3. 哪些內容被認為不可信或沒有價值？
-4. 免費數據是否足以支持下一階段？
-5. 用戶願意為甚麼能力付費？
+### Data and evidence
 
-只有獲得實際使用證據後，才制定下一階段產品及架構。Day 30 不自動開始擴建。
+| Metric | MVP target |
+|---|---:|
+| Market observation completeness | ≥ 95% for required existing assets |
+| Published events with valid source URL | 100% |
+| Published concrete values linked to observations | 100% |
+| Signals with rule version and input IDs | 100% |
+| Duplicate canonical events in Top Events | 0 |
+
+### Intelligence quality
+
+| Metric | MVP target |
+|---|---:|
+| Required report sections generated | 100% |
+| Unsupported causal claims | 0 |
+| Regime output with confidence and conflicts | 100% |
+| LLM-disabled useful brief | 100% of successful data runs |
+| Top events with why-it-matters and affected assets | 100% |
+
+### Reliability
+
+| Metric | MVP target |
+|---|---:|
+| Existing test regression | 0 |
+| Seven-day scheduled run success | ≥ 90% |
+| One source failure causing total pipeline failure | 0 |
+| Invalid LLM output published | 0 |
+
+## 11. Demo Review Questions
+
+Before inviting test users, the product owner should be able to answer yes to:
+
+1. Does the report explain why an event matters instead of merely listing a headline?
+2. Can each conclusion be traced to evidence and a source URL?
+3. Does the report show conflicting evidence and uncertainty?
+4. Does it identify cross-asset relationships that are inconvenient to assemble manually?
+5. Does it highlight the next 24–48 hour events?
+6. Is the output still useful when the LLM is disabled?
+7. Would a user learn something beyond checking Yahoo Finance or TradingView prices?
+
+If question 7 is no, the system remains an infrastructure demo and should not be presented as Market Intelligence.
+
+## 12. Deferred Until User Validation
+
+- Persistent database and historical search.
+- Multiple provider fallback and paid data.
+- Embedding-based semantic deduplication.
+- Personalized watchlists or portfolios.
+- User accounts and subscriptions.
+- Real-time events or alerts.
+- Advanced company fundamental research.
+- Strategy testing or execution.
+- Commercial redistribution of licensed news content.
