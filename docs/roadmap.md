@@ -110,7 +110,8 @@ Prove the frozen observation and evidence contracts using only the existing mark
 Indicative duration: Week 2.
 
 Status: 6.2-A Macro Adapter and 6.2-B Economic Calendar completed locally;
-6.2-C News Adapter remains pending schema design and implementation.
+6.2-C News Event Schema approved and frozen locally; source approval and
+implementation remain pending.
 
 ### Objective
 
@@ -121,6 +122,8 @@ Add approved News, Macro and Calendar sources, then turn normalized source recor
 - 6.2-A: Add bounded DXY, US10Y, VIX and WTI proxy ingestion.
 - 6.2-B: Add one Economic Calendar Adapter.
 - 6.2-C: Add one bounded News Adapter using an approved free/public source.
+- Freeze `news_items.json` and news-to-event normalization contracts before
+  selecting or implementing the adapter.
 - Normalize source records into `events.json` and new observations.
 - Preserve canonical URL, publisher, publication time, retrieval time and content hash.
 - Exact and deterministic near-duplicate detection.

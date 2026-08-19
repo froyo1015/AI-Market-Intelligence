@@ -149,6 +149,7 @@ src/output/
 ├── market_snapshot.json       # existing; market observations
 ├── macro_snapshot.json        # DXY, US10Y, VIX and WTI proxy records
 ├── economic_calendar.json     # next-48h official scheduled releases
+├── news_items.json            # immutable validated adapter records
 ├── events.json                # normalized news and scheduled events
 ├── observations.json          # normalized market and macro observations
 ├── evidence.json              # traceable evidence bundles
@@ -166,6 +167,18 @@ it does not yet replace canonical `events.json`. Impact and affected-asset
 labels are deterministic relevance metadata, not claims that an event will
 move those assets. Source failure produces an explicit failed artifact with no
 synthetic events.
+
+Phase 6.2-C keeps `news_items.json` separate from canonical `events.json`.
+Headlines and provider metadata are source records; event type, entities,
+topics and candidate assets are versioned normalization results. The detailed
+design and implementation gate are defined in
+[news-event-schema.md](news-event-schema.md).
+
+News event lifecycle is independent from artifact data status. A stable event
+may progress through `new`, `validated`, `confirmed`, `expired` or `retracted`
+without changing its `event_id`. Verification levels and extraction/mapping
+quality scores describe provenance and deterministic rule coverage; they are
+not estimates of truth probability or market impact.
 
 ## 8. Daily Processing Sequence
 

@@ -2,6 +2,14 @@
 
 > 本文件定義 v2 pipeline 的 canonical JSON contracts。它是架構規格，不代表模組已經實作。
 
+Phase 6.2-C 的 provider-boundary `news_items.json`、news-to-event
+normalization metadata、copyright rules 及 implementation gates 詳見
+[news-event-schema.md](news-event-schema.md)。
+
+News event 的 `verification_level` 與 quality scores 不代表真實概率。
+Canonical event 的資料健康仍由 `status` 表示；事件演進則使用獨立的
+`lifecycle_status`、`event_version` 及 transition metadata。
+
 ## 1. Contract Principles
 
 - 所有 artifacts 使用 UTF-8 JSON、UTC ISO 8601 timestamps 及明確 `schema_version`。
@@ -23,7 +31,7 @@
 | Field | Type | Required | Meaning |
 |---|---|---:|---|
 | `schema_version` | string | yes | Contract major/minor version，例如 `1.0` |
-| `artifact_type` | string | yes | `events`、`observations`、`evidence`、`market_signals` 或 `daily_intelligence` |
+| `artifact_type` | string | yes | Provider artifacts：`macro_snapshot`、`economic_calendar`、`news_items`；canonical artifacts：`events`、`observations`、`evidence`、`market_signals`、`daily_intelligence` |
 | `run_id` | string | yes | 同一批次共用的 stable identifier |
 | `report_date` | string | yes | `YYYY-MM-DD`，以報告時區計算 |
 | `generated_at` | string | yes | UTC timestamp |
