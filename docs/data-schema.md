@@ -142,6 +142,35 @@ Phase 6.2-A adds a provider artifact for four bounded macro market proxies:
 The artifact status becomes `partial` when any instrument is stale or failed.
 One record failure never removes successful records.
 
+## 3.2 `economic_calendar.json`
+
+Phase 6.2-B adds a bounded provider artifact for official BLS releases in the
+next 48 hours. It is an input to the future Event Normalizer, not a substitute
+for canonical `events.json`.
+
+| Field | Meaning |
+|---|---|
+| `event_id` | Deterministic ID derived from normalized name and UTC schedule |
+| `event_type` | Fixed as `economic_event` at the provider-artifact boundary |
+| `name` / `scheduled_at` | Source-grounded release name and UTC time |
+| `country` | `US` for the BLS source |
+| `impact` | Deterministic `high`, `medium` or `low` release-class rule |
+| `affected_assets` / `topics` | Candidate relevance mapping, not confirmed impact |
+| `source` / `publisher` / `source_url` | Provenance retained from the official feed |
+| `retrieved_at` / `content_hash` | Retrieval timestamp and exact VEVENT fingerprint |
+| `status` | `scheduled`; unavailable source produces no event records |
+| `confidence_score` / `confidence_label` | Confidence that the official schedule is represented accurately |
+
+Artifact-level `status` is `complete`, `partial`, or `failed`. A source failure
+must produce a failed envelope, warning, and empty `events` list. The initial
+source does not cover FOMC, Treasury, BEA, or private-sector releases.
+
+`failure_type` is `null` for a valid source response, even when the bounded
+window contains no scheduled events. A transport or access failure uses
+`source_access_error` with `retryable: true`; an invalid source document uses
+`source_validation_error`; isolated malformed events use
+`event_validation_error` with artifact status `partial`.
+
 ## 4. `events.json`
 
 Purpose: represent normalized news, official releases and future calendar events without asserting market impact.

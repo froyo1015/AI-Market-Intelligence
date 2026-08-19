@@ -39,3 +39,18 @@ The adapter requires no API key. It isolates failures by instrument and records
 provider symbol, source URL, timestamp, price basis, asset mapping, and source
 confidence. US10Y changes use basis points; DXY, VIX, and Oil changes use
 percent. Oil is a front-month futures proxy rather than a physical spot price.
+
+## Economic Calendar (Phase 6.2-B)
+
+Generate a deterministic list of official BLS releases scheduled in the next
+48 hours:
+
+```bash
+python -m src.calendar_pipeline
+```
+
+This writes `src/output/economic_calendar.json`. Events preserve the official
+source URL, scheduled time, retrieval time, content hash, rule-based impact,
+and candidate affected assets. The adapter does not infer causality or predict
+market direction. This first calendar source covers BLS releases only; Fed,
+Treasury, BEA, and private calendars remain explicitly outside its coverage.

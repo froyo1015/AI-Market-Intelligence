@@ -109,7 +109,8 @@ Prove the frozen observation and evidence contracts using only the existing mark
 
 Indicative duration: Week 2.
 
-Status: 6.2-A Macro Adapter implemented locally; Economic Calendar and News remain pending.
+Status: 6.2-A Macro Adapter and 6.2-B Economic Calendar completed locally;
+6.2-C News Adapter remains pending schema design and implementation.
 
 ### Objective
 
@@ -142,6 +143,9 @@ Add approved News, Macro and Calendar sources, then turn normalized source recor
 - No LLM is used for facts, ranking or mapping.
 - A single macro instrument failure produces a partial artifact rather than a total pipeline failure.
 - Each macro observation has source, timestamp, asset mapping and confidence.
+- The initial calendar adapter emits a bounded next-48-hours BLS provider
+  artifact with deterministic IDs, source metadata, event times and failure
+  isolation; broader calendar coverage remains deferred.
 
 ## 7. Phase 6.3 — Cross-Asset and Regime Engine
 

@@ -148,6 +148,7 @@ src/
 src/output/
 ├── market_snapshot.json       # existing; market observations
 ├── macro_snapshot.json        # DXY, US10Y, VIX and WTI proxy records
+├── economic_calendar.json     # next-48h official scheduled releases
 ├── events.json                # normalized news and scheduled events
 ├── observations.json          # normalized market and macro observations
 ├── evidence.json              # traceable evidence bundles
@@ -158,6 +159,13 @@ src/output/
 ```
 
 Detailed fields and validation rules are defined in [data-schema.md](data-schema.md).
+
+Phase 6.2-B initially bounds calendar coverage to the official BLS release ICS
+feed and the next 48 hours. `economic_calendar.json` is a provider artifact;
+it does not yet replace canonical `events.json`. Impact and affected-asset
+labels are deterministic relevance metadata, not claims that an event will
+move those assets. Source failure produces an explicit failed artifact with no
+synthetic events.
 
 ## 8. Daily Processing Sequence
 
