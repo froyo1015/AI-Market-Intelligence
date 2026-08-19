@@ -54,3 +54,22 @@ source URL, scheduled time, retrieval time, content hash, rule-based impact,
 and candidate affected assets. The adapter does not infer causality or predict
 market direction. This first calendar source covers BLS releases only; Fed,
 Treasury, BEA, and private calendars remain explicitly outside its coverage.
+
+## News Source Ingestion (Phase 6.2-C1)
+
+Generate a source-grounded `news_items.json` from the Federal Reserve Board's
+official all-press-releases RSS feed:
+
+```bash
+python -m src.news_pipeline
+```
+
+The first runtime source is Tier 1 and requires no API key. The ingestion
+window is the latest 24 hours plus a six-hour overlap. The artifact retains
+only feed-supplied headlines, a bounded excerpt, official URLs, publication and
+retrieval timestamps, and stable hashes. A valid feed with no current items is
+`complete`; access and validation failures are classified explicitly.
+
+This phase does not create events, infer assets, score sentiment, rank news, or
+call an LLM. It only collapses exact duplicate source records inside one feed;
+cross-publisher and event-level deduplication remain part of C2.

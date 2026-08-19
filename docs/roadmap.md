@@ -110,8 +110,8 @@ Prove the frozen observation and evidence contracts using only the existing mark
 Indicative duration: Week 2.
 
 Status: 6.2-A Macro Adapter and 6.2-B Economic Calendar completed locally;
-6.2-C News Event Schema approved and frozen locally; source approval and
-implementation remain pending.
+6.2-C News Event Schema is frozen and C1 Federal Reserve News Source Ingestion
+is implemented locally pending review. C2 Event Normalization remains pending.
 
 ### Objective
 
@@ -124,6 +124,9 @@ Add approved News, Macro and Calendar sources, then turn normalized source recor
 - 6.2-C: Add one bounded News Adapter using an approved free/public source.
 - Freeze `news_items.json` and news-to-event normalization contracts before
   selecting or implementing the adapter.
+- C1 only: ingest the approved official Federal Reserve RSS into
+  `news_items.json`, with no event extraction, mapping, ranking or AI.
+- C2 later: normalize accepted source items into canonical events.
 - Normalize source records into `events.json` and new observations.
 - Preserve canonical URL, publisher, publication time, retrieval time and content hash.
 - Exact and deterministic near-duplicate detection.

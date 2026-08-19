@@ -180,6 +180,11 @@ without changing its `event_id`. Verification levels and extraction/mapping
 quality scores describe provenance and deterministic rule coverage; they are
 not estimates of truth probability or market impact.
 
+Phase 6.2-C1 implements only the source boundary using the Federal Reserve
+Board's official all-press-releases RSS feed. It produces `news_items.json`;
+Event Normalization, asset mapping, ranking, Evidence linkage and Intelligence
+remain separate future stages.
+
 ## 8. Daily Processing Sequence
 
 1. Run the existing market pipeline and produce `market_snapshot.json`.

@@ -65,6 +65,7 @@ enter `events.json`, Evidence or Intelligence directly.
 | `generated_at` | string | yes | UTC retrieval completion time |
 | `window_start` / `window_end` | string | yes | Inclusive UTC ingestion window |
 | `source` | string | yes | Adapter identifier |
+| `source_url` | string | yes | Approved feed endpoint used by the adapter |
 | `status` | enum | yes | `complete`, `partial` or `failed` |
 | `failure_type` | string/null | yes | Machine-readable failure classification |
 | `retryable` | boolean | yes | Whether a later retry may reasonably succeed |
@@ -89,7 +90,7 @@ A valid source response containing zero items is `complete` with
 
 | Field | Type | Required | Meaning |
 |---|---|---:|---|
-| `item_id` | string | yes | Deterministic internal source-item ID |
+| `item_id` | string | yes | Stable ID from provider ID or canonical URL |
 | `provider_item_id` | string/null | yes | Original feed ID when supplied |
 | `headline` | string | yes | Exact source headline after whitespace normalization |
 | `source_excerpt` | string/null | yes | Source-provided excerpt, capped at 500 characters |
@@ -106,6 +107,10 @@ A valid source response containing zero items is `complete` with
 
 The item contract stores no inferred assets, topics, sentiment or impact.
 Those belong to normalization and mapping, not source ingestion.
+
+A publisher correction keeps the same `item_id` when its provider identity or
+canonical URL is unchanged, while the changed retained fields produce a new
+`content_hash`. Retrieval time alone changes neither value.
 
 ### 3.3 `RejectionRecord`
 
@@ -147,6 +152,19 @@ social posts and feeds without publication timestamps are rejected.
 
 Source selection is an implementation gate. The schema does not approve a
 provider or its redistribution terms.
+
+### 4.1 Phase 6.2-C1 source decision
+
+The first approved runtime source is the Federal Reserve Board's official
+all-press-releases RSS feed:
+
+```text
+https://www.federalreserve.gov/feeds/press_all.xml
+```
+
+It is classified as `official`, quality Tier 1, English-only for the first
+implementation, and requires no API key. Phase 6.2-C1 retains only RSS fields
+allowed by this contract and does not fetch linked press-release bodies.
 
 ## 5. Normalized News Event in `events.json`
 
@@ -380,15 +398,16 @@ The example contains placeholders and must never be shipped as live data.
 
 ## 11. Implementation Gate and Acceptance Criteria
 
-Coding Phase 6.2-C may begin only after approval of:
+Phase 6.2-C1 is approved with the Federal Reserve source decision above,
+English-only input, Tier 1 classification, a 24-hour lookback plus six-hour
+overlap, and a maximum of 100 retained source records per run.
 
-1. one initial source and its usage/retention terms;
-2. supported language set;
-3. exact source-quality tier;
-4. ingestion window and item cap;
-5. entity aliases and controlled topic mappings;
-6. deterministic near-duplicate similarity threshold;
-7. lifecycle transition rules and retraction authority policy.
+Phase 6.2-C2 Event Normalization may begin only after approval of:
+
+1. entity aliases and controlled topic mappings;
+2. deterministic near-duplicate similarity threshold;
+3. lifecycle transition rules and retraction authority policy;
+4. source-quality and retention policy for any additional source.
 
 Implementation acceptance criteria:
 

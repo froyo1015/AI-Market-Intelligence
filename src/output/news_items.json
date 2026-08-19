@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "news_items",
+  "run_id": "run_20260819T120602Z_news",
+  "report_date": "2026-08-19",
+  "generated_at": "2026-08-19T12:06:02.404125Z",
+  "window_start": "2026-08-18T06:06:02.404125Z",
+  "window_end": "2026-08-19T12:11:02.404125Z",
+  "source": "federal_reserve_press_releases",
+  "source_url": "https://www.federalreserve.gov/feeds/press_all.xml",
+  "status": "complete",
+  "failure_type": null,
+  "retryable": false,
+  "warnings": [
+    "No Federal Reserve press releases were published in the configured ingestion window."
+  ],
+  "accepted_count": 0,
+  "rejected_count": 20,
+  "rejections": [
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260813a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260813a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804c.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804c.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804b.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804b.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260731b.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260731b.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260731a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260731a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260730b.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260730b.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260730a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260730a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260716a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260716a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260716a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260716a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260714a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260714a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260709a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260709a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260709a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260709a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260708a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260708a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260707a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260707a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260702a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260702a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/other20260701a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/other20260701a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260630a.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260630a.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    },
+    {
+      "provider_item_id": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260625b.htm",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260625b.htm",
+      "reason_codes": [
+        "outside_ingestion_window"
+      ],
+      "matched_item_id": null,
+      "matched_event_id": null
+    }
+  ],
+  "items": []
+}
