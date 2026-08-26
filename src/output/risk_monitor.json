@@ -1,0 +1,802 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "risk_monitor",
+  "run_id": "run_20260826T135504Z_risk_95c6286d52c6c58a",
+  "report_date": "2026-08-26",
+  "generated_at": "2026-08-26T13:55:04.063396Z",
+  "status": "partial",
+  "monitor_scope": "observable_risk_conditions",
+  "rule_set_version": "risk_monitor_rules_v1",
+  "input_refs": {
+    "evidence_bundle_run_id": "run_20260826T122417Z_consolidated_b778c9fbdc63ba81",
+    "market_signals_run_id": "run_20260826T124001Z_relationships_cf4a8a98a61cf7f1",
+    "market_regime_run_id": "run_20260826T133454Z_regime_854b3deb928ba64d"
+  },
+  "input_freshness": {
+    "status": "stale",
+    "checked_at": "2026-08-26T13:55:04.063396Z",
+    "maximum_artifact_age_hours": 24.0,
+    "artifacts": {
+      "evidence_bundle.json": {
+        "generated_at": "2026-08-26T12:24:17.315523Z",
+        "age_hours": 1.512986
+      },
+      "market_signals.json": {
+        "generated_at": "2026-08-26T12:40:01.280565Z",
+        "age_hours": 1.250773
+      },
+      "market_regime.json": {
+        "generated_at": "2026-08-26T13:34:54.926814Z",
+        "age_hours": 0.335871
+      }
+    },
+    "stale_artifacts": [],
+    "stale_supporting_observation_ids": [
+      "evd_aapl_market_move_2026_07_28t04_00_00z",
+      "evd_btc_usd_market_move_2026_07_29t00_00_00z",
+      "evd_dxy_market_move_2026_08_19t04_00_00z",
+      "evd_eth_usd_market_move_2026_07_29t00_00_00z",
+      "evd_eurusd_market_move_2026_07_28t23_00_00z",
+      "evd_gold_market_move_2026_07_29t04_00_00z",
+      "evd_nvda_market_move_2026_07_28t04_00_00z",
+      "evd_oil_market_move_2026_08_19t04_00_00z",
+      "evd_qqq_market_move_2026_07_28t04_00_00z",
+      "evd_spy_market_move_2026_07_28t04_00_00z",
+      "evd_tsla_market_move_2026_07_28t04_00_00z",
+      "evd_us10y_market_move_2026_08_18t05_00_00z",
+      "evd_usdjpy_market_move_2026_07_28t23_00_00z",
+      "evd_vix_market_move_2026_08_19t05_00_00z",
+      "obs_aapl_daily_change_pct_2026_07_28t04_00_00z",
+      "obs_aapl_price_2026_07_28t04_00_00z",
+      "obs_aapl_sma20_2026_07_28t04_00_00z",
+      "obs_aapl_trend_2026_07_28t04_00_00z",
+      "obs_aapl_volatility_20d_2026_07_28t04_00_00z",
+      "obs_aapl_weekly_change_pct_2026_07_28t04_00_00z",
+      "obs_btc_usd_daily_change_pct_2026_07_29t00_00_00z",
+      "obs_btc_usd_price_2026_07_29t00_00_00z",
+      "obs_btc_usd_sma20_2026_07_29t00_00_00z",
+      "obs_btc_usd_trend_2026_07_29t00_00_00z",
+      "obs_btc_usd_volatility_20d_2026_07_29t00_00_00z",
+      "obs_btc_usd_weekly_change_pct_2026_07_29t00_00_00z",
+      "obs_dxy_daily_change_pct_2026_08_19t04_00_00z",
+      "obs_dxy_index_level_2026_08_19t04_00_00z",
+      "obs_dxy_weekly_change_pct_2026_08_19t04_00_00z",
+      "obs_eth_usd_daily_change_pct_2026_07_29t00_00_00z",
+      "obs_eth_usd_price_2026_07_29t00_00_00z",
+      "obs_eth_usd_sma20_2026_07_29t00_00_00z",
+      "obs_eth_usd_trend_2026_07_29t00_00_00z",
+      "obs_eth_usd_volatility_20d_2026_07_29t00_00_00z",
+      "obs_eth_usd_weekly_change_pct_2026_07_29t00_00_00z",
+      "obs_eurusd_daily_change_pct_2026_07_28t23_00_00z",
+      "obs_eurusd_price_2026_07_28t23_00_00z",
+      "obs_eurusd_sma20_2026_07_28t23_00_00z",
+      "obs_eurusd_trend_2026_07_28t23_00_00z",
+      "obs_eurusd_volatility_20d_2026_07_28t23_00_00z",
+      "obs_eurusd_weekly_change_pct_2026_07_28t23_00_00z",
+      "obs_gold_daily_change_pct_2026_07_29t04_00_00z",
+      "obs_gold_price_2026_07_29t04_00_00z",
+      "obs_gold_sma20_2026_07_29t04_00_00z",
+      "obs_gold_trend_2026_07_29t04_00_00z",
+      "obs_gold_volatility_20d_2026_07_29t04_00_00z",
+      "obs_gold_weekly_change_pct_2026_07_29t04_00_00z",
+      "obs_nvda_daily_change_pct_2026_07_28t04_00_00z",
+      "obs_nvda_price_2026_07_28t04_00_00z",
+      "obs_nvda_sma20_2026_07_28t04_00_00z",
+      "obs_nvda_trend_2026_07_28t04_00_00z",
+      "obs_nvda_volatility_20d_2026_07_28t04_00_00z",
+      "obs_nvda_weekly_change_pct_2026_07_28t04_00_00z",
+      "obs_oil_daily_change_pct_2026_08_19t04_00_00z",
+      "obs_oil_futures_price_2026_08_19t04_00_00z",
+      "obs_oil_weekly_change_pct_2026_08_19t04_00_00z",
+      "obs_qqq_daily_change_pct_2026_07_28t04_00_00z",
+      "obs_qqq_price_2026_07_28t04_00_00z",
+      "obs_qqq_sma20_2026_07_28t04_00_00z",
+      "obs_qqq_trend_2026_07_28t04_00_00z",
+      "obs_qqq_volatility_20d_2026_07_28t04_00_00z",
+      "obs_qqq_weekly_change_pct_2026_07_28t04_00_00z",
+      "obs_spy_daily_change_pct_2026_07_28t04_00_00z",
+      "obs_spy_price_2026_07_28t04_00_00z",
+      "obs_spy_sma20_2026_07_28t04_00_00z",
+      "obs_spy_trend_2026_07_28t04_00_00z",
+      "obs_spy_volatility_20d_2026_07_28t04_00_00z",
+      "obs_spy_weekly_change_pct_2026_07_28t04_00_00z",
+      "obs_tsla_daily_change_pct_2026_07_28t04_00_00z",
+      "obs_tsla_price_2026_07_28t04_00_00z",
+      "obs_tsla_sma20_2026_07_28t04_00_00z",
+      "obs_tsla_trend_2026_07_28t04_00_00z",
+      "obs_tsla_volatility_20d_2026_07_28t04_00_00z",
+      "obs_tsla_weekly_change_pct_2026_07_28t04_00_00z",
+      "obs_us10y_daily_change_bps_2026_08_18t05_00_00z",
+      "obs_us10y_weekly_change_bps_2026_08_18t05_00_00z",
+      "obs_us10y_yield_2026_08_18t05_00_00z",
+      "obs_usdjpy_daily_change_pct_2026_07_28t23_00_00z",
+      "obs_usdjpy_price_2026_07_28t23_00_00z",
+      "obs_usdjpy_sma20_2026_07_28t23_00_00z",
+      "obs_usdjpy_trend_2026_07_28t23_00_00z",
+      "obs_usdjpy_volatility_20d_2026_07_28t23_00_00z",
+      "obs_usdjpy_weekly_change_pct_2026_07_28t23_00_00z",
+      "obs_vix_daily_change_pct_2026_08_19t05_00_00z",
+      "obs_vix_index_level_2026_08_19t05_00_00z",
+      "obs_vix_weekly_change_pct_2026_08_19t05_00_00z"
+    ]
+  },
+  "risk_count": 7,
+  "category_counts": {
+    "upcoming_event": 0,
+    "data_quality": 7,
+    "market_stress": 0
+  },
+  "risks": [
+    {
+      "risk_id": "rsk_input_coverage_degraded_v1_3032bf64a56d1e64",
+      "rule_id": "input_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "medium",
+      "title": "Degraded input coverage: news_events",
+      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+      "related_assets": [],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "input_type": "news_events",
+        "artifact": "events.json",
+        "coverage_status": "partial",
+        "record_count": 0,
+        "stale_record_count": 0
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "coverage_inputs": [
+          "news_events"
+        ]
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "artifact_coverage_metadata"
+      },
+      "limitations": [
+        "This item concerns data reliability, not market prices."
+      ]
+    },
+    {
+      "risk_id": "rsk_input_coverage_degraded_v1_71638bf8ab9a458e",
+      "rule_id": "input_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "medium",
+      "title": "Degraded input coverage: existing_evidence",
+      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+      "related_assets": [
+        "AAPL",
+        "BTC-USD",
+        "DXY",
+        "ETH-USD",
+        "EURUSD",
+        "GOLD",
+        "NVDA",
+        "QQQ",
+        "SPY",
+        "TSLA",
+        "USDJPY"
+      ],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "input_type": "existing_evidence",
+        "artifact": "evidence.json",
+        "coverage_status": "partial",
+        "record_count": 14,
+        "stale_record_count": 14
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_0ba5f5c7b3750738eb69",
+          "ebd_0eb9fa25336837b53b14",
+          "ebd_1c2b182ec207dca12f02",
+          "ebd_2f30efaad87fc919a527",
+          "ebd_5fdf9b497070970a34d3",
+          "ebd_6c64e6bc2b20b2ddc860",
+          "ebd_750e2d06add18071b91c",
+          "ebd_81831741c2a5221a286a",
+          "ebd_8dbfbf77019464ed0d64",
+          "ebd_a9aae81e5a34be6f22b8",
+          "ebd_b4082d2521bbc0b710e2",
+          "ebd_c25a1fc1d406f49d7977",
+          "ebd_c42102116886937e1f20",
+          "ebd_e1f02b84cdf4e7d32379"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_oil",
+          "src_yahoo_finance_us10y",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_aapl_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_aapl_price_2026_07_28t04_00_00z",
+          "obs_btc_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_btc_usd_price_2026_07_29t00_00_00z",
+          "obs_dxy_daily_change_pct_2026_08_19t04_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_eth_usd_price_2026_07_29t00_00_00z",
+          "obs_eurusd_daily_change_pct_2026_07_28t23_00_00z",
+          "obs_eurusd_price_2026_07_28t23_00_00z",
+          "obs_gold_daily_change_pct_2026_07_29t04_00_00z",
+          "obs_gold_price_2026_07_29t04_00_00z",
+          "obs_nvda_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_nvda_price_2026_07_28t04_00_00z",
+          "obs_oil_daily_change_pct_2026_08_19t04_00_00z",
+          "obs_qqq_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_qqq_price_2026_07_28t04_00_00z",
+          "obs_spy_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_spy_price_2026_07_28t04_00_00z",
+          "obs_tsla_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_tsla_price_2026_07_28t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_08_18t05_00_00z",
+          "obs_usdjpy_daily_change_pct_2026_07_28t23_00_00z",
+          "obs_usdjpy_price_2026_07_28t23_00_00z",
+          "obs_vix_daily_change_pct_2026_08_19t05_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_aapl_market_move_2026_07_28t04_00_00z",
+          "evd_btc_usd_market_move_2026_07_29t00_00_00z",
+          "evd_dxy_market_move_2026_08_19t04_00_00z",
+          "evd_eth_usd_market_move_2026_07_29t00_00_00z",
+          "evd_eurusd_market_move_2026_07_28t23_00_00z",
+          "evd_gold_market_move_2026_07_29t04_00_00z",
+          "evd_nvda_market_move_2026_07_28t04_00_00z",
+          "evd_oil_market_move_2026_08_19t04_00_00z",
+          "evd_qqq_market_move_2026_07_28t04_00_00z",
+          "evd_spy_market_move_2026_07_28t04_00_00z",
+          "evd_tsla_market_move_2026_07_28t04_00_00z",
+          "evd_us10y_market_move_2026_08_18t05_00_00z",
+          "evd_usdjpy_market_move_2026_07_28t23_00_00z",
+          "evd_vix_market_move_2026_08_19t05_00_00z"
+        ],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "coverage_inputs": [
+          "existing_evidence"
+        ]
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "artifact_coverage_metadata"
+      },
+      "limitations": [
+        "This item concerns data reliability, not market prices."
+      ]
+    },
+    {
+      "risk_id": "rsk_input_coverage_degraded_v1_89640d6f6de74a50",
+      "rule_id": "input_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "medium",
+      "title": "Degraded input coverage: market_observations",
+      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+      "related_assets": [
+        "AAPL",
+        "BTC-USD",
+        "ETH-USD",
+        "EURUSD",
+        "GOLD",
+        "NVDA",
+        "QQQ",
+        "SPY",
+        "TSLA",
+        "USDJPY"
+      ],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "input_type": "market_observations",
+        "artifact": "observations.json",
+        "coverage_status": "partial",
+        "record_count": 60,
+        "stale_record_count": 60
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_03227c6f21f4283ba072",
+          "ebd_04f1ef7556a3aeea776d",
+          "ebd_0ba5f5c7b3750738eb69",
+          "ebd_0f99c3dab50c5de28b5e",
+          "ebd_0f9b0bf6197210c8591f",
+          "ebd_1c2b182ec207dca12f02",
+          "ebd_25c135435c7a09fea624",
+          "ebd_2d7193b431ac568d7400",
+          "ebd_2f30efaad87fc919a527",
+          "ebd_30509a0e79a39ac93087",
+          "ebd_3171df47aa78674c6b8f",
+          "ebd_3915035667e28fbf127c",
+          "ebd_3b2e23a159ffb92c4a28",
+          "ebd_478c9fd2b4cee200b556",
+          "ebd_47dfa489acb4c2da461a",
+          "ebd_52ec47b50fc2313b2766",
+          "ebd_5fdf9b497070970a34d3",
+          "ebd_6089125996e926dd90ed",
+          "ebd_6300b0880a03d9df976c",
+          "ebd_68351d2378c47c76ab8a",
+          "ebd_6dbf369171a4cfed05d0",
+          "ebd_750e2d06add18071b91c",
+          "ebd_816d06a17d2734619a4f",
+          "ebd_81831741c2a5221a286a",
+          "ebd_8241aaf548ff15d5ce8c",
+          "ebd_86d3ef90872b7268789d",
+          "ebd_8dbfbf77019464ed0d64",
+          "ebd_9050a8884572cead4261",
+          "ebd_9af393638bb6d65954d5",
+          "ebd_adee5812c5d29571c8da",
+          "ebd_b17048c7555420c64dff",
+          "ebd_b1da112b30852bcd58b5",
+          "ebd_b4082d2521bbc0b710e2",
+          "ebd_b48e87016275f22a4b56",
+          "ebd_b51e9141d872b6eae835",
+          "ebd_c15da44502c62e4c8c98",
+          "ebd_c190fe9c69c1b7482122",
+          "ebd_c25a1fc1d406f49d7977",
+          "ebd_c42102116886937e1f20",
+          "ebd_c9f005db08c7bfae43c4",
+          "ebd_cb3245694a22d66284ae",
+          "ebd_d3d9c87d29cbc3de2583",
+          "ebd_da469fc541b76a629ded",
+          "ebd_e3d50fde65d75f96171b",
+          "ebd_e82ef80359e2ca0088b9",
+          "ebd_e84891c1191c4fd98932",
+          "ebd_f26b327971e3b2b31b16",
+          "ebd_f4ee5f5b0e02390ecaa5",
+          "ebd_f560c9bf1e107d3e6b4b",
+          "ebd_fd1a2e8d6edefe70bfa6"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_aapl_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_aapl_price_2026_07_28t04_00_00z",
+          "obs_aapl_sma20_2026_07_28t04_00_00z",
+          "obs_aapl_trend_2026_07_28t04_00_00z",
+          "obs_aapl_volatility_20d_2026_07_28t04_00_00z",
+          "obs_aapl_weekly_change_pct_2026_07_28t04_00_00z",
+          "obs_btc_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_btc_usd_price_2026_07_29t00_00_00z",
+          "obs_btc_usd_sma20_2026_07_29t00_00_00z",
+          "obs_btc_usd_trend_2026_07_29t00_00_00z",
+          "obs_btc_usd_volatility_20d_2026_07_29t00_00_00z",
+          "obs_btc_usd_weekly_change_pct_2026_07_29t00_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_eth_usd_price_2026_07_29t00_00_00z",
+          "obs_eth_usd_sma20_2026_07_29t00_00_00z",
+          "obs_eth_usd_trend_2026_07_29t00_00_00z",
+          "obs_eth_usd_volatility_20d_2026_07_29t00_00_00z",
+          "obs_eth_usd_weekly_change_pct_2026_07_29t00_00_00z",
+          "obs_eurusd_daily_change_pct_2026_07_28t23_00_00z",
+          "obs_eurusd_price_2026_07_28t23_00_00z",
+          "obs_eurusd_sma20_2026_07_28t23_00_00z",
+          "obs_eurusd_trend_2026_07_28t23_00_00z",
+          "obs_eurusd_volatility_20d_2026_07_28t23_00_00z",
+          "obs_eurusd_weekly_change_pct_2026_07_28t23_00_00z",
+          "obs_gold_daily_change_pct_2026_07_29t04_00_00z",
+          "obs_gold_price_2026_07_29t04_00_00z",
+          "obs_gold_sma20_2026_07_29t04_00_00z",
+          "obs_gold_trend_2026_07_29t04_00_00z",
+          "obs_gold_volatility_20d_2026_07_29t04_00_00z",
+          "obs_gold_weekly_change_pct_2026_07_29t04_00_00z",
+          "obs_nvda_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_nvda_price_2026_07_28t04_00_00z",
+          "obs_nvda_sma20_2026_07_28t04_00_00z",
+          "obs_nvda_trend_2026_07_28t04_00_00z",
+          "obs_nvda_volatility_20d_2026_07_28t04_00_00z",
+          "obs_nvda_weekly_change_pct_2026_07_28t04_00_00z",
+          "obs_qqq_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_qqq_price_2026_07_28t04_00_00z",
+          "obs_qqq_sma20_2026_07_28t04_00_00z",
+          "obs_qqq_trend_2026_07_28t04_00_00z",
+          "obs_qqq_volatility_20d_2026_07_28t04_00_00z",
+          "obs_qqq_weekly_change_pct_2026_07_28t04_00_00z",
+          "obs_spy_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_spy_price_2026_07_28t04_00_00z",
+          "obs_spy_sma20_2026_07_28t04_00_00z",
+          "obs_spy_trend_2026_07_28t04_00_00z",
+          "obs_spy_volatility_20d_2026_07_28t04_00_00z",
+          "obs_spy_weekly_change_pct_2026_07_28t04_00_00z",
+          "obs_tsla_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_tsla_price_2026_07_28t04_00_00z",
+          "obs_tsla_sma20_2026_07_28t04_00_00z",
+          "obs_tsla_trend_2026_07_28t04_00_00z",
+          "obs_tsla_volatility_20d_2026_07_28t04_00_00z",
+          "obs_tsla_weekly_change_pct_2026_07_28t04_00_00z",
+          "obs_usdjpy_daily_change_pct_2026_07_28t23_00_00z",
+          "obs_usdjpy_price_2026_07_28t23_00_00z",
+          "obs_usdjpy_sma20_2026_07_28t23_00_00z",
+          "obs_usdjpy_trend_2026_07_28t23_00_00z",
+          "obs_usdjpy_volatility_20d_2026_07_28t23_00_00z",
+          "obs_usdjpy_weekly_change_pct_2026_07_28t23_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_aapl_market_move_2026_07_28t04_00_00z",
+          "evd_btc_usd_market_move_2026_07_29t00_00_00z",
+          "evd_eth_usd_market_move_2026_07_29t00_00_00z",
+          "evd_eurusd_market_move_2026_07_28t23_00_00z",
+          "evd_gold_market_move_2026_07_29t04_00_00z",
+          "evd_nvda_market_move_2026_07_28t04_00_00z",
+          "evd_qqq_market_move_2026_07_28t04_00_00z",
+          "evd_spy_market_move_2026_07_28t04_00_00z",
+          "evd_tsla_market_move_2026_07_28t04_00_00z",
+          "evd_usdjpy_market_move_2026_07_28t23_00_00z"
+        ],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "coverage_inputs": [
+          "market_observations"
+        ]
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "artifact_coverage_metadata"
+      },
+      "limitations": [
+        "This item concerns data reliability, not market prices."
+      ]
+    },
+    {
+      "risk_id": "rsk_input_coverage_degraded_v1_a628ae833767d20e",
+      "rule_id": "input_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "medium",
+      "title": "Degraded input coverage: macro_observations",
+      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+      "related_assets": [
+        "BTC-USD",
+        "DXY",
+        "EURUSD",
+        "GOLD",
+        "QQQ",
+        "SPY",
+        "USDJPY"
+      ],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "input_type": "macro_observations",
+        "artifact": "observations.json",
+        "coverage_status": "partial",
+        "record_count": 12,
+        "stale_record_count": 12
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_0eb9fa25336837b53b14",
+          "ebd_1f2813a95926c2f86ad4",
+          "ebd_222537b719de06950ae0",
+          "ebd_3c7b0055fed1c011fc13",
+          "ebd_3edd86ad9323cac4144d",
+          "ebd_6c64e6bc2b20b2ddc860",
+          "ebd_6c6dd46a178178944259",
+          "ebd_a4300746ab99d810eb0f",
+          "ebd_a9aae81e5a34be6f22b8",
+          "ebd_b745192cc577af9ab0c7",
+          "ebd_d2c9c8da87c9886bbfc3",
+          "ebd_e1f02b84cdf4e7d32379"
+        ],
+        "source_ids": [
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_oil",
+          "src_yahoo_finance_us10y",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_dxy_daily_change_pct_2026_08_19t04_00_00z",
+          "obs_dxy_index_level_2026_08_19t04_00_00z",
+          "obs_dxy_weekly_change_pct_2026_08_19t04_00_00z",
+          "obs_oil_daily_change_pct_2026_08_19t04_00_00z",
+          "obs_oil_futures_price_2026_08_19t04_00_00z",
+          "obs_oil_weekly_change_pct_2026_08_19t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_08_18t05_00_00z",
+          "obs_us10y_weekly_change_bps_2026_08_18t05_00_00z",
+          "obs_us10y_yield_2026_08_18t05_00_00z",
+          "obs_vix_daily_change_pct_2026_08_19t05_00_00z",
+          "obs_vix_index_level_2026_08_19t05_00_00z",
+          "obs_vix_weekly_change_pct_2026_08_19t05_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_dxy_market_move_2026_08_19t04_00_00z",
+          "evd_oil_market_move_2026_08_19t04_00_00z",
+          "evd_us10y_market_move_2026_08_18t05_00_00z",
+          "evd_vix_market_move_2026_08_19t05_00_00z"
+        ],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "coverage_inputs": [
+          "macro_observations"
+        ]
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "artifact_coverage_metadata"
+      },
+      "limitations": [
+        "This item concerns data reliability, not market prices."
+      ]
+    },
+    {
+      "risk_id": "rsk_input_coverage_degraded_v1_e375ba54cefd5373",
+      "rule_id": "input_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "high",
+      "title": "Degraded input coverage: economic_calendar",
+      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+      "related_assets": [],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "input_type": "economic_calendar",
+        "artifact": "economic_calendar.json",
+        "coverage_status": "unavailable",
+        "record_count": 0,
+        "stale_record_count": 0
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "coverage_inputs": [
+          "economic_calendar"
+        ]
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "artifact_coverage_metadata"
+      },
+      "limitations": [
+        "This item concerns data reliability, not market prices."
+      ]
+    },
+    {
+      "risk_id": "rsk_market_regime_coverage_degraded_v1_56a8578f17c68545",
+      "rule_id": "market_regime_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "high",
+      "title": "Current market regime coverage degraded",
+      "description": "The current-condition classifier reports partial or insufficient eligible coverage.",
+      "related_assets": [
+        "BTC-USD",
+        "DXY",
+        "ETH-USD",
+        "EURUSD",
+        "GOLD",
+        "QQQ",
+        "SPY",
+        "USDJPY"
+      ],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "artifact_status": "unavailable",
+        "classification": null,
+        "eligible_dimension_count": 0,
+        "eligible_weight": 0.0
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81",
+          "run_20260826T124001Z_relationships_cf4a8a98a61cf7f1",
+          "run_20260826T133454Z_regime_854b3deb928ba64d"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_0eb9fa25336837b53b14",
+          "ebd_1c2b182ec207dca12f02",
+          "ebd_2f30efaad87fc919a527",
+          "ebd_6c64e6bc2b20b2ddc860",
+          "ebd_8dbfbf77019464ed0d64",
+          "ebd_a9aae81e5a34be6f22b8",
+          "ebd_c25a1fc1d406f49d7977"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_us10y",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_dxy_daily_change_pct_2026_08_19t04_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_qqq_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_spy_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_08_18t05_00_00z",
+          "obs_vix_daily_change_pct_2026_08_19t05_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_07_29t00_00_00z",
+          "evd_dxy_market_move_2026_08_19t04_00_00z",
+          "evd_eth_usd_market_move_2026_07_29t00_00_00z",
+          "evd_qqq_market_move_2026_07_28t04_00_00z",
+          "evd_spy_market_move_2026_07_28t04_00_00z",
+          "evd_us10y_market_move_2026_08_18t05_00_00z",
+          "evd_vix_market_move_2026_08_19t05_00_00z"
+        ],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_99d81c54faa8",
+          "sig_dollar_yield_co_movement_v1_34d987454500",
+          "sig_equity_crypto_co_movement_v1_c879d3aa8fee",
+          "sig_equity_index_co_movement_v1_79e88b14e909",
+          "sig_equity_volatility_inverse_move_v1_2e02a917ca42"
+        ],
+        "regime_dimension_ids": [
+          "cross_asset_alignment",
+          "crypto",
+          "dollar_yield",
+          "equity",
+          "volatility"
+        ],
+        "coverage_inputs": []
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "deterministic_regime_metadata"
+      },
+      "limitations": [
+        "No unavailable regime is treated as mixed."
+      ]
+    },
+    {
+      "risk_id": "rsk_market_signal_coverage_degraded_v1_91d7499df14b3694",
+      "rule_id": "market_signal_coverage_degraded_v1",
+      "category": "data_quality",
+      "status": "detected",
+      "attention_level": "medium",
+      "title": "Cross-asset relationship coverage degraded",
+      "description": "One or more cross-asset relationship evaluations are stale or incomplete.",
+      "related_assets": [
+        "BTC-USD",
+        "DXY",
+        "ETH-USD",
+        "EURUSD",
+        "GOLD",
+        "QQQ",
+        "SPY",
+        "USDJPY"
+      ],
+      "time_window": {
+        "detected_at": "2026-08-26T13:55:04.063396Z"
+      },
+      "observed_facts": {
+        "artifact_status": "partial",
+        "state_counts": {
+          "observed": 0,
+          "not_observed": 0,
+          "stale_data": 5,
+          "insufficient_data": 3
+        }
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260826T122417Z_consolidated_b778c9fbdc63ba81",
+          "run_20260826T124001Z_relationships_cf4a8a98a61cf7f1",
+          "run_20260826T133454Z_regime_854b3deb928ba64d"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_0ba5f5c7b3750738eb69",
+          "ebd_0eb9fa25336837b53b14",
+          "ebd_1c2b182ec207dca12f02",
+          "ebd_2f30efaad87fc919a527",
+          "ebd_6c64e6bc2b20b2ddc860",
+          "ebd_750e2d06add18071b91c",
+          "ebd_8dbfbf77019464ed0d64",
+          "ebd_a9aae81e5a34be6f22b8",
+          "ebd_b4082d2521bbc0b710e2",
+          "ebd_c25a1fc1d406f49d7977"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_us10y",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_dxy_daily_change_pct_2026_08_19t04_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_07_29t00_00_00z",
+          "obs_eurusd_daily_change_pct_2026_07_28t23_00_00z",
+          "obs_gold_daily_change_pct_2026_07_29t04_00_00z",
+          "obs_qqq_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_spy_daily_change_pct_2026_07_28t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_08_18t05_00_00z",
+          "obs_usdjpy_daily_change_pct_2026_07_28t23_00_00z",
+          "obs_vix_daily_change_pct_2026_08_19t05_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_07_29t00_00_00z",
+          "evd_dxy_market_move_2026_08_19t04_00_00z",
+          "evd_eth_usd_market_move_2026_07_29t00_00_00z",
+          "evd_eurusd_market_move_2026_07_28t23_00_00z",
+          "evd_gold_market_move_2026_07_29t04_00_00z",
+          "evd_qqq_market_move_2026_07_28t04_00_00z",
+          "evd_spy_market_move_2026_07_28t04_00_00z",
+          "evd_us10y_market_move_2026_08_18t05_00_00z",
+          "evd_usdjpy_market_move_2026_07_28t23_00_00z",
+          "evd_vix_market_move_2026_08_19t05_00_00z"
+        ],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_99d81c54faa8",
+          "sig_dollar_fx_quote_alignment_v1_b3f0297ff8a4",
+          "sig_dollar_yield_co_movement_v1_34d987454500",
+          "sig_equity_crypto_co_movement_v1_c879d3aa8fee",
+          "sig_equity_index_co_movement_v1_79e88b14e909",
+          "sig_equity_index_divergence_v1_b6face5f2693",
+          "sig_equity_volatility_inverse_move_v1_2e02a917ca42",
+          "sig_gold_dollar_inverse_move_v1_15c0bdab75f2"
+        ],
+        "regime_dimension_ids": [],
+        "coverage_inputs": []
+      },
+      "verification": {
+        "level": "verified",
+        "score": 1.0,
+        "basis": "deterministic_signal_metadata"
+      },
+      "limitations": [
+        "This item concerns analytical coverage only."
+      ]
+    }
+  ],
+  "warnings": [
+    "One or more monitor inputs have degraded coverage or freshness.",
+    "No eligible official events were found in the next 48 hours.",
+    "No current market-stress rule is supported by eligible evidence."
+  ],
+  "limitations": [
+    "Risk items describe scheduled events, data quality, or current observations.",
+    "They do not establish causality, persistence, or later outcomes.",
+    "No item is an investment or trading instruction."
+  ]
+}

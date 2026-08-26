@@ -27,6 +27,11 @@ market-brief-evidence = "src.evidence.pipeline:cli"
 market-brief-macro = "src.macro_pipeline:cli"
 market-brief-calendar = "src.calendar_pipeline:cli"
 market-brief-news = "src.news_pipeline:cli"
+market-brief-events = "src.events.pipeline:cli"
+market-brief-consolidate = "src.consolidation.pipeline:cli"
+market-brief-signals = "src.signals.pipeline:cli"
+market-brief-regime = "src.regime.pipeline:cli"
+market-brief-risk = "src.risk.pipeline:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]

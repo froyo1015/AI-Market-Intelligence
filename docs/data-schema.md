@@ -202,6 +202,16 @@ Purpose: represent normalized news, official releases and future calendar events
 | `canonical_hash` | string | yes | Deduplication key |
 | `duplicate_of` | string/null | yes | Canonical event ID if merged |
 
+News-normalized events additionally include a versioned `normalization` object
+with input NewsItem IDs, rule/mapping IDs, normalized action, non-probabilistic
+quality scores, verification level, and deduplication rule/score. Lifecycle is
+kept separately in `event_version`, `lifecycle_status`,
+`lifecycle_updated_at`, `lifecycle_reason_code`, and
+`retraction_source_ids`. Phase 6.2-C2 leaves `summary`, `occurred_at`,
+`scheduled_at` null and `candidate_assets` empty; publication time remains in
+each `source_ref`. Unsupported accepted records appear in the artifact-level
+`normalization_rejections` audit.
+
 Example:
 
 ```json
@@ -236,7 +246,36 @@ Example:
 }
 ```
 
-## 5. `observations.json`
+## 5. `evidence_bundle.json`
+
+Purpose: provide one validated factual boundary for future Intelligence
+processing without changing or interpreting the input records.
+
+The `1.0` envelope contains:
+
+- `status`: `available`, `partial`, or `unavailable`;
+- one coverage record for market observations, macro observations, economic
+  calendar, news events, and existing Evidence;
+- `bundles`: complete embedded source, observation, event and Evidence records;
+- `rejections`: invalid record IDs and deterministic reason codes;
+- counts, warnings, run ID, report date, and consolidation timestamp.
+
+Each bundle contains:
+
+- stable `id` and factual `type`;
+- explicit `related_assets` copied only from existing input mappings;
+- `source_records`, `observations`, `events`, and `evidence_records`;
+- observed, occurred, scheduled, published, retrieved and consolidated times;
+- verification level, data quality and freshness;
+- provenance containing every source, observation, event and Evidence ID.
+
+Exact duplicate Evidence facts may share one bundle, but their complete records
+and provenance links remain present. Unreferenced valid observations/events are
+retained as standalone bundles. Missing inputs never create placeholder facts.
+The complete contract and guardrails are defined in
+[evidence-model.md](evidence-model.md).
+
+## 6. `observations.json`
 
 Purpose: store directly observed or deterministically calculated market and macro facts.
 
@@ -286,7 +325,7 @@ Until raw close observations are introduced, these records use an empty
 feature value and rule remain owned by the existing Feature Calculator; the
 Evidence Foundation does not recalculate or modify them.
 
-## 6. `evidence.json`
+## 7. `evidence.json`
 
 Purpose: group the minimum evidence required to support a market interpretation.
 
@@ -314,68 +353,152 @@ Rules:
 - `supported_interpretation` requires at least two independent observations or sources.
 - `unconfirmed` is mandatory when evidence is conflicting or below the publication threshold.
 
-## 7. `market_signals.json`
+## 8. `market_signals.json`
 
-Purpose: expose deterministic cross-asset and risk rules before any LLM processing.
+Purpose: expose deterministic descriptions of same-window cross-asset
+relationships before any later Intelligence processing. Phase 6.3-A accepts
+only `evidence_bundle.json` and does not use an LLM.
 
 ### Signal record
 
 | Field | Type | Required | Meaning |
 |---|---|---:|---|
-| `signal_id` | string | yes | Stable internal ID |
+| `signal_id` | string | yes | Stable ID from rule and observation references |
 | `rule_id` | string | yes | Versioned deterministic rule |
-| `signal_type` | enum | yes | `cross_asset`, `risk`, `trend`, `divergence`, `regime_input` |
-| `label` | string | yes | Human-readable name |
-| `state` | enum | yes | `active`, `inactive`, `insufficient_data`, `conflicting` |
-| `direction` | enum/null | yes | `risk_on`, `risk_off`, `supportive`, `restrictive`, `mixed`, null |
-| `strength` | number | yes | Normalized `0.0–1.0` |
-| `observation_ids` | array[string] | yes | Exact inputs |
-| `evidence_ids` | array[string] | yes | Supporting evidence |
-| `affected_assets` | array[string] | yes | Relevant assets |
-| `explanation_template` | string | yes | Deterministic, non-causal explanation |
-| `limitations` | array[string] | yes | Missing inputs and caveats |
+| `signal_type` | string | yes | Fixed as `cross_asset_relationship` |
+| `relationship_kind` | enum | yes | Co-movement, inverse movement, divergence, or quote alignment |
+| `label` | string | yes | Neutral descriptive rule name |
+| `state` | enum | yes | `observed`, `not_observed`, `stale_data`, or `insufficient_data` |
+| `condition_met` | boolean/null | yes | Deterministic result; null with insufficient data |
+| `required_assets` | array[string] | yes | Exact rule operands |
+| `observed_values` | array[object] | yes | Values copied from input observations |
+| `rule_evaluation` | object | yes | Operator, thresholds, time gap and comparison result |
+| `evidence_refs` | object | yes | Bundle/source/observation/event/Evidence IDs |
+| `confidence` | object | yes | Confidence in data-backed evaluation only |
+| `data_quality` | object | yes | Missing, stale and conflicting inputs |
+| `limitations` | array[string] | yes | Fixed non-causal caveats |
 
 Example:
 
 ```json
 {
-  "signal_id": "sig_defensive_gold_20260818",
-  "rule_id": "gold_usd_yield_alignment_v1",
-  "signal_type": "cross_asset",
-  "label": "Gold aligned with softer dollar/yields",
-  "state": "active",
-  "direction": "supportive",
-  "strength": 0.72,
-  "observation_ids": ["obs_gold_daily", "obs_dxy_daily", "obs_us10y_daily"],
-  "evidence_ids": ["evd_gold_usd_yield_20260818"],
-  "affected_assets": ["GOLD", "EURUSD", "USDJPY"],
-  "explanation_template": "Gold strengthened while the dollar and yields softened; this alignment is supportive, but the specific cause is unconfirmed.",
+  "signal_id": "sig_gold_dollar_inverse_move_v1_a1b2c3d4",
+  "rule_id": "gold_dollar_inverse_move_v1",
+  "signal_type": "cross_asset_relationship",
+  "relationship_kind": "inverse_movement",
+  "label": "Gold and DXY inverse daily movement",
+  "state": "observed",
+  "condition_met": true,
+  "required_assets": ["GOLD", "DXY"],
+  "observed_values": [
+    {
+      "asset": "GOLD",
+      "metric": "daily_change_pct",
+      "value": 1.5,
+      "unit": "percent",
+      "as_of": "2026-08-26T04:00:00Z",
+      "observation_id": "obs_gold_daily",
+      "source_id": "src_market",
+      "evidence_bundle_ids": ["ebd_gold"]
+    }
+  ],
+  "rule_evaluation": {
+    "operator": "opposite_sign",
+    "comparison_result": true
+  },
+  "evidence_refs": {
+    "evidence_bundle_ids": ["ebd_gold", "ebd_dxy"],
+    "source_ids": ["src_macro", "src_market"],
+    "observation_ids": ["obs_dxy_daily", "obs_gold_daily"],
+    "event_ids": [],
+    "evidence_ids": ["evd_dxy", "evd_gold"]
+  },
+  "confidence": {"score": 0.75, "label": "medium", "basis": "data_quality"},
+  "data_quality": {"status": "available", "issues": []},
+  "limitations": ["The relationship does not establish causality or persistence."]
+}
+```
+
+Phase 6.3-A prohibits `direction`, `strength`, bullish/bearish labels,
+sentiment, ranking, recommendation, prediction, price target, regime and trade
+fields. The complete rule and validation contract is defined in
+[cross-asset-engine.md](cross-asset-engine.md).
+
+## 9. `market_regime.json`
+
+Purpose: classify current observed cross-market conditions without modifying
+the frozen `market_signals.json` schema.
+
+```json
+{
+  "schema_version": "1.0",
+  "artifact_type": "market_regime",
+  "status": "available",
+  "classification_scope": "current_observed_conditions",
+  "classification": "mixed",
+  "rule_set_version": "market_regime_rules_v1",
+  "input_refs": {
+    "evidence_bundle_run_id": "run_evidence",
+    "market_signals_run_id": "run_signals"
+  },
+  "input_freshness": {},
+  "score": {},
+  "confidence": {},
+  "dimensions": [],
+  "evidence_refs": {},
+  "warnings": [],
   "limitations": []
 }
 ```
 
-## 8. Regime Contract
+Allowed classifications are `risk_on`, `risk_off`, `mixed`, or null when
+current coverage is insufficient. A valid classification requires at least
+three eligible dimensions, weight coverage of at least `0.65`, and a current
+Equity or Volatility anchor. All concrete values and IDs must resolve through
+the exact input runs. The full contract is defined in
+[market-regime-classifier.md](market-regime-classifier.md).
 
-The regime is embedded in `market_signals.json` and copied into `daily_intelligence.json`:
+## 10. `risk_monitor.json`
+
+Purpose: expose only observable scheduled-event, data-quality and current
+market-stress conditions from the three linked Evidence, Signal and Regime
+artifacts.
 
 ```json
 {
-  "classification": "mixed",
-  "score": 0.08,
-  "confidence_score": 0.61,
-  "confidence_label": "medium",
-  "supporting_signal_ids": ["sig_example_1"],
-  "conflicting_signal_ids": ["sig_example_2"],
-  "missing_inputs": ["market_breadth"],
-  "rule_version": "market_regime_v1"
+  "schema_version": "1.0",
+  "artifact_type": "risk_monitor",
+  "status": "partial",
+  "monitor_scope": "observable_risk_conditions",
+  "rule_set_version": "risk_monitor_rules_v1",
+  "input_refs": {
+    "evidence_bundle_run_id": "run_evidence",
+    "market_signals_run_id": "run_signals",
+    "market_regime_run_id": "run_regime"
+  },
+  "input_freshness": {},
+  "risk_count": 1,
+  "category_counts": {
+    "upcoming_event": 0,
+    "data_quality": 1,
+    "market_stress": 0
+  },
+  "risks": [],
+  "warnings": [],
+  "limitations": []
 }
 ```
 
-Allowed classifications are `risk_on`, `risk_off` and `mixed`. This is a current-state classification, not a forecast.
+Every risk includes a frozen rule ID, category, status, attention level,
+structured observed facts, time window, verification metadata, limitations and
+complete artifact/bundle/source/observation/event/Evidence/Signal/Regime
+Dimension references. There is no aggregate risk score. The complete contract
+is defined in [risk-monitor.md](risk-monitor.md).
 
-## 9. `daily_intelligence.json`
+## 11. Future `daily_intelligence.json`
 
-Purpose: act as the single allowed factual input to deterministic and LLM brief generators.
+Purpose: define a later, separately approved factual input to deterministic and
+LLM brief generators. It is not implemented by Phase 6.3-A or 6.3-B.
 
 ### Top-level contract
 
@@ -441,7 +564,7 @@ Purpose: act as the single allowed factual input to deterministic and LLM brief 
 
 Each section contains Claim objects. Sections with insufficient data remain present and contain a claim explaining the limitation.
 
-## 10. Required Report Mapping
+## 12. Required Report Mapping
 
 | Report section | Contract source |
 |---|---|
@@ -458,7 +581,7 @@ Each section contains Claim objects. Sections with insufficient data remain pres
 
 The generator may change wording and ordering within a section but cannot introduce facts absent from these fields.
 
-## 11. Validation Rules
+## 13. Validation Rules
 
 An artifact is invalid if any of the following applies:
 
@@ -473,7 +596,7 @@ An artifact is invalid if any of the following applies:
 - a scheduled event appears in the past without a resolved status.
 - a failed or stale input is represented as current.
 
-## 12. Versioning and Compatibility
+## 14. Versioning and Compatibility
 
 - Additive optional fields increment the minor version.
 - Removing fields, changing meanings or changing enum values increments the major version.

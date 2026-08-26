@@ -64,19 +64,29 @@ flowchart TD
     EventNorm --> Events["events.json v1"]
     ObservationNorm --> Observations["observations.json v1"]
 
-    Events --> Evidence["Evidence Builder<br/>evidence.json v1"]
-    Observations --> Evidence
-    Evidence --> Dedupe["Deduplication + Ranking"]
+    Events --> Consolidator["Evidence Consolidator<br/>evidence_bundle.json v1"]
+    Observations --> Evidence["Evidence Builder<br/>evidence.json v1"]
+    Observations --> Consolidator
+    Evidence --> Consolidator
+    Calendar --> Consolidator
+    Consolidator --> Dedupe["Future Deduplication + Ranking"]
     Dedupe --> Mapping["Asset / Event Mapping"]
 
-    Mapping --> Signals["Cross-Asset Signal Engine"]
-    Snapshot --> Signals
-    Signals --> SignalFile["market_signals.json v1"]
-    SignalFile --> Regime["Market Regime Classifier"]
+    Consolidator --> Signals["Cross-Asset Relationship Engine"]
+    Signals --> SignalFile["market_signals.json v1<br/>descriptive evaluations"]
+    Consolidator --> Regime["Current-Condition Regime Classifier"]
+    SignalFile --> Regime
+    Regime --> RegimeFile["market_regime.json v1"]
 
-    Regime --> Intelligence["Daily Intelligence Builder<br/>daily_intelligence.json v1"]
+    Consolidator --> RiskMonitor["Observable Risk Monitor"]
+    SignalFile --> RiskMonitor
+    RegimeFile --> RiskMonitor
+    RiskMonitor --> RiskFile["risk_monitor.json v1"]
+
+    RegimeFile --> Intelligence["Daily Intelligence Builder<br/>daily_intelligence.json v1"]
+    RiskFile --> Intelligence
     Mapping --> Intelligence
-    Evidence --> Intelligence
+    Consolidator --> Intelligence
 
     Intelligence --> LLM["LLM Explanation Adapter"]
     LLM --> Validator["Citation + Claim Validator"]
@@ -95,8 +105,12 @@ flowchart TD
 | Source adapters | Fetch market, news, macro and calendar data; retain source metadata | Make analytical conclusions |
 | Normalization | Convert provider payloads into stable internal schemas | Guess missing facts |
 | Evidence | Link observations and events to sources | Treat correlation as confirmed causation |
+| Evidence consolidation | Preserve and unify factual records, health and provenance | Add interpretation, ranking, sentiment, impact or signals |
 | Ranking and mapping | Deduplicate events, score relevance, map affected assets | Produce buy/sell signals |
-| Intelligence engine | Build deterministic cross-asset signals and regime | Use LLM-generated facts |
+| Cross-asset relationship engine | Evaluate observed relationships from `evidence_bundle.json` only | Predict, rank, infer cause, classify sentiment/direction or recommend trades |
+| Market regime classifier | Classify current observed risk-on/risk-off/mixed conditions from linked Evidence and relationship artifacts | Treat stale/unknown data as mixed, forecast persistence or create trade actions |
+| Risk monitor | Report scheduled events, data-quality gaps and current evidence-backed stress | Predict crashes, infer event causality, classify bullish/bearish or recommend trades |
+| Future intelligence engine | Build later risk context and structured claims from validated relationships/regime | Use LLM-generated facts |
 | Brief generation | Explain structured intelligence in readable language | Invent prices, events or confidence |
 | Validation | Check references, numbers, required sections and prohibited claims | Silently repair unsupported claims |
 | Publishing | Render and distribute validated output | Expose secrets or present stale data as current |
@@ -153,7 +167,10 @@ src/output/
 ├── events.json                # normalized news and scheduled events
 ├── observations.json          # normalized market and macro observations
 ├── evidence.json              # traceable evidence bundles
+├── evidence_bundle.json       # consolidated factual boundary for Intelligence
 ├── market_signals.json        # deterministic cross-asset signals
+├── market_regime.json         # current observed regime or null when unavailable
+├── risk_monitor.json          # observable event/data/stress risk conditions
 ├── daily_intelligence.json    # only structured input accepted by LLM
 ├── daily_intelligence_brief.md
 └── ai_market_brief.md         # legacy output during migration
@@ -182,8 +199,38 @@ not estimates of truth probability or market impact.
 
 Phase 6.2-C1 implements only the source boundary using the Federal Reserve
 Board's official all-press-releases RSS feed. It produces `news_items.json`;
-Event Normalization, asset mapping, ranking, Evidence linkage and Intelligence
-remain separate future stages.
+C2 now converts accepted records into `events.json` using deterministic event
+typing, entity/topic mapping, conservative duplicate grouping, lifecycle
+initialization and source-reference preservation. C2 does not infer event time
+from publication time and leaves asset mapping empty. Ranking, impact, LLM
+extraction, Evidence linkage and Intelligence remain separate future stages.
+
+Phase 6.2-D adds a separate Evidence Consolidator after the existing source,
+observation, event and Evidence contracts. It embeds complete records and
+preserves all IDs/timestamps in `evidence_bundle.json`. Exact duplicate factual
+Evidence records may share one bundle, but all original records and provenance
+links remain present. Missing inputs become explicit coverage gaps. The layer
+does not rank, interpret, infer market impact, generate signals, or call an LLM.
+Its detailed contract is defined in [evidence-model.md](evidence-model.md).
+
+Phase 6.3-A reads only `evidence_bundle.json` and evaluates eight frozen,
+descriptive cross-asset relationship rules. Its output states only whether a
+condition is observed, not observed, stale, or insufficient. It has no
+direction/strength, regime, prediction, ranking, sentiment, trade action, or
+LLM fields. See [cross-asset-engine.md](cross-asset-engine.md).
+
+Phase 6.3-B reads the exact linked `evidence_bundle.json` and
+`market_signals.json` runs and writes a separate `market_regime.json` artifact.
+Its five weighted dimensions describe current conditions only. Classification
+is null when artifact freshness, observation freshness, minimum coverage, or
+anchor requirements fail. See
+[market-regime-classifier.md](market-regime-classifier.md).
+
+Phase 6.3-C validates all three linked Phase 6.2-D/6.3 artifacts and emits
+`risk_monitor.json`. It keeps upcoming official events, data-quality risks and
+observed market-stress rules separate. No item asserts an event caused a price
+move, predicts a crash, provides a bullish/bearish label, or recommends a
+trade. See [risk-monitor.md](risk-monitor.md).
 
 ## 8. Daily Processing Sequence
 
@@ -195,12 +242,14 @@ remain separate future stages.
 6. Rank events using recency, source quality, asset relevance and market impact.
 7. Build evidence bundles linking events and observations.
 8. Generate deterministic cross-asset signals.
-9. Classify the regime as `risk_on`, `risk_off` or `mixed` with an explicit confidence.
-10. Build `daily_intelligence.json` containing top events, signals, risks and next events.
-11. Generate a Markdown brief from that single structured input.
-12. Validate every citation, concrete number and claim reference.
-13. If validation or LLM generation fails, publish the deterministic intelligence brief.
-14. Deploy Pages; optionally deliver the same validated report through Telegram.
+9. Classify current conditions as `risk_on`, `risk_off` or `mixed` with explicit
+   confidence, or null when current coverage is insufficient.
+10. Generate observable scheduled-event, data-quality and market-stress risks.
+11. Build `daily_intelligence.json` containing top events, signals, risks and next events.
+12. Generate a Markdown brief from that single structured input.
+13. Validate every citation, concrete number and claim reference.
+14. If validation or LLM generation fails, publish the deterministic intelligence brief.
+15. Deploy Pages; optionally deliver the same validated report through Telegram.
 
 ## 9. Evidence and Causality Rules
 

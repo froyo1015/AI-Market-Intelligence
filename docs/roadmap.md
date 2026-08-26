@@ -110,8 +110,9 @@ Prove the frozen observation and evidence contracts using only the existing mark
 Indicative duration: Week 2.
 
 Status: 6.2-A Macro Adapter and 6.2-B Economic Calendar completed locally;
-6.2-C News Event Schema is frozen and C1 Federal Reserve News Source Ingestion
-is implemented locally pending review. C2 Event Normalization remains pending.
+6.2-C News Event Schema is frozen; C1 Federal Reserve News Source Ingestion and
+C2 deterministic News Normalization are implemented locally pending review.
+6.2-D Evidence Consolidation is implemented locally pending review.
 
 ### Objective
 
@@ -126,7 +127,15 @@ Add approved News, Macro and Calendar sources, then turn normalized source recor
   selecting or implementing the adapter.
 - C1 only: ingest the approved official Federal Reserve RSS into
   `news_items.json`, with no event extraction, mapping, ranking or AI.
-- C2 later: normalize accepted source items into canonical events.
+- C2: normalize accepted source items into canonical events with deterministic
+  event typing, conservative duplicate grouping, lifecycle and provenance.
+- C2 keeps asset mapping empty and excludes sentiment, ranking, impact, LLM and
+  intelligence logic.
+- 6.2-D: consolidate market/macro observations, calendar/news events, existing
+  Evidence records, freshness, quality and provenance into
+  `evidence_bundle.json`.
+- 6.2-D performs exact factual deduplication only and does not rank, interpret,
+  predict, classify direction, generate signals or call an LLM.
 - Normalize source records into `events.json` and new observations.
 - Preserve canonical URL, publisher, publication time, retrieval time and content hash.
 - Exact and deterministic near-duplicate detection.
@@ -152,33 +161,60 @@ Add approved News, Macro and Calendar sources, then turn normalized source recor
 - The initial calendar adapter emits a bounded next-48-hours BLS provider
   artifact with deterministic IDs, source metadata, event times and failure
   isolation; broader calendar coverage remains deferred.
+- Every valid input observation, event and Evidence record is retained in a
+  consolidated bundle or appears in an explicit rejection audit.
+- Every bundle resolves all source, observation, event and Evidence IDs and
+  preserves observed, scheduled, published and retrieved timestamps.
+- Failed or missing inputs create unavailable coverage without synthetic facts.
 
 ## 7. Phase 6.3 — Cross-Asset and Regime Engine
 
 Indicative duration: Week 3.
 
+Status: 6.3-A deterministic Cross-Asset Relationship Engine and 6.3-B
+current-condition Market Regime Classifier are implemented locally pending
+review. Phase 6.3-C observable Risk Monitor is implemented locally pending
+review. Broader Intelligence processing remains unimplemented.
+
 ### Objective
 
-Create deterministic market signals and a current-state regime classification.
+First create deterministic descriptions of observed cross-asset relationships.
+Regime classification and broader Intelligence processing remain deferred.
 
 ### Work
 
-- Add approved market/macro observations required by initial rules.
-- Implement versioned cross-asset rules.
-- Emit active, inactive, conflicting or insufficient states.
-- Implement risk-on/risk-off/mixed scoring.
-- Calculate confidence from coverage, freshness and consistency.
-- Build Risk Monitor and next-48-hours event list.
-- Generate `market_signals.json`.
-- Add deterministic `daily_intelligence.json` builder.
+- 6.3-A: read only `evidence_bundle.json` and emit eight descriptive rule
+  evaluations in `market_signals.json`.
+- 6.3-A states are limited to `observed`, `not_observed`, `stale_data`, and
+  `insufficient_data`; no direction, strength, ranking, prediction, sentiment,
+  trade or regime output is allowed.
+- 6.3-B reads only the linked `evidence_bundle.json` and
+  `market_signals.json` runs and writes `market_regime.json`.
+- 6.3-B classifies current observed conditions as `risk_on`, `risk_off`, or
+  `mixed`; insufficient current coverage produces a null classification.
+- 6.3-B preserves signal and Evidence provenance and does not forecast or
+  create trading instructions.
+- 6.3-C reads the linked Evidence, Signal and Regime artifacts and writes
+  `risk_monitor.json`.
+- 6.3-C reports only upcoming official events, data-quality degradation and
+  current evidence-backed market stress with complete provenance.
+- 6.3-C does not predict crashes, classify bullish/bearish conditions, rank
+  assets or recommend trades.
+- Later, under a separate approved phase: evaluate whether a regime contract,
+  broader event selection or `daily_intelligence.json` builder is required.
+  None is part of 6.3-A, 6.3-B or 6.3-C.
 
 ### Exit criteria
 
 - Every signal identifies exact observations, evidence and rule version.
 - Missing or stale inputs lower confidence rather than default to neutral facts.
-- Regime includes classification, score, confidence, conflicts and missing inputs.
 - Output is descriptive and contains no prediction or trade instruction.
-- Fixture tests cover all three regimes and incomplete data.
+- Fixture tests cover all eight frozen rules and incomplete, stale, duplicate,
+  conflicting and tampered inputs.
+- Regime fixtures cover risk-on, risk-off, mixed, stale, partial, mismatched and
+  tampered inputs.
+- Risk Monitor fixtures cover upcoming events, data-quality degradation,
+  current stress conditions, stale suppression, provenance and tampering.
 
 ## 8. Phase 6.4 — Intelligence Brief and Validation
 

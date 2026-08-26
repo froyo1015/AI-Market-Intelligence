@@ -1,5 +1,11 @@
 # Market Intelligence Engine — Functional Specification v1.0
 
+> Historical design note: the implemented Phase 6.3-A and 6.3-B runtime
+> contracts, plus the Phase 6.3-C Risk Monitor contract, are defined by
+> `cross-asset-engine.md`, `market-regime-classifier.md`, and `risk-monitor.md`.
+> Their frozen rules and schemas supersede the draft signal/regime/risk details
+> in Sections 9–11 below.
+
 > 本文件定義 deterministic intelligence layer 的行為。第一版不使用 LLM 作事件排序、訊號判定或 regime classification。
 
 ## 1. Objective

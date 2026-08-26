@@ -1,7 +1,8 @@
 # Phase 6.2-C News Event Schema — Design Freeze
 
-> Status: CTO-approved documentation contract. No News Adapter, external feed,
-> extraction code, ranking code or LLM integration is authorized yet.
+> Status: CTO-approved frozen contract. C1 source ingestion and C2 deterministic
+> normalization implement only the boundaries documented here. Ranking, market
+> impact, LLM extraction and Intelligence remain prohibited.
 
 ## 1. Purpose
 
@@ -166,6 +167,26 @@ It is classified as `official`, quality Tier 1, English-only for the first
 implementation, and requires no API key. Phase 6.2-C1 retains only RSS fields
 allowed by this contract and does not fetch linked press-release bodies.
 
+### 4.2 Phase 6.2-C2 runtime decision
+
+The first normalizer accepts only validated items from the approved Federal
+Reserve C1 artifact. It uses `news_normalization_v1` deterministic headline
+rules and supports only identifiable central-bank, regulatory, and macro-release
+records. Unsupported accepted items are retained in a normalization-rejection
+audit rather than guessed into an event type.
+
+Near duplicates require matching event type and normalized action, a shared
+canonical entity, publication times within 12 hours, and headline-token Jaccard
+similarity of at least `0.90`. The rule ID and score are stored on the event.
+Ambiguous records remain separate.
+
+For this phase, exact Federal Reserve entity/topic mappings are permitted but
+asset mapping is not: `candidate_assets` must be empty. `summary`, `occurred_at`
+and `scheduled_at` remain null because the source headline and publication time
+do not deterministically establish those values. A Tier 1 official release may
+start at lifecycle `confirmed`, meaning only that the official publication
+occurred—not that any claimed market effect is confirmed.
+
 ## 5. Normalized News Event in `events.json`
 
 The existing canonical Event contract remains authoritative. News normalization
@@ -200,10 +221,12 @@ fields into the event root.
   "rule_version": "news_normalization_v1",
   "normalized_action": "publishes_announcement",
   "event_key_fields": ["event_type", "entity_ids", "normalized_action"],
-  "mapping_rule_ids": ["entity_alias_v1", "topic_asset_map_v1"],
+  "mapping_rule_ids": ["entity_alias_v1", "topic_map_v1"],
   "extraction_quality_score": 0.82,
   "mapping_quality_score": 0.75,
-  "verification_level": "single_source"
+  "verification_level": "single_source",
+  "deduplication_rule_id": "single_item_v1",
+  "deduplication_score": 1.0
 }
 ```
 
@@ -402,7 +425,7 @@ Phase 6.2-C1 is approved with the Federal Reserve source decision above,
 English-only input, Tier 1 classification, a 24-hour lookback plus six-hour
 overlap, and a maximum of 100 retained source records per run.
 
-Phase 6.2-C2 Event Normalization may begin only after approval of:
+Phase 6.2-C2 Event Normalization uses the following approved frozen decisions:
 
 1. entity aliases and controlled topic mappings;
 2. deterministic near-duplicate similarity threshold;
