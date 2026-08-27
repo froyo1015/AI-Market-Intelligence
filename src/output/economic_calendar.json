@@ -1,18 +1,18 @@
 {
   "schema_version": "1.0",
   "artifact_type": "economic_calendar",
-  "run_id": "run_20260819T104951Z_calendar",
-  "report_date": "2026-08-19",
-  "generated_at": "2026-08-19T10:49:51.772784Z",
-  "window_start": "2026-08-19T10:49:51.772784Z",
-  "window_end": "2026-08-21T10:49:51.772784Z",
+  "run_id": "run_20260827T172737Z_calendar",
+  "report_date": "2026-08-27",
+  "generated_at": "2026-08-27T17:27:37.146074Z",
+  "window_start": "2026-08-27T17:27:37.146074Z",
+  "window_end": "2026-08-29T17:27:37.146074Z",
   "source": "bls_release_calendar",
   "source_url": "https://www.bls.gov/schedule/news_release/bls.ics",
   "status": "failed",
   "failure_type": "source_access_error",
   "retryable": true,
   "warnings": [
-    "Economic calendar unavailable: CalendarSourceAccessError: BLS calendar download failed: HTTP Error 403: Forbidden"
+    "Economic calendar unavailable: CalendarSourceAccessError: BLS calendar download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
   ],
   "events": []
 }

@@ -200,9 +200,8 @@ Regime classification and broader Intelligence processing remain deferred.
   current evidence-backed market stress with complete provenance.
 - 6.3-C does not predict crashes, classify bullish/bearish conditions, rank
   assets or recommend trades.
-- Later, under a separate approved phase: evaluate whether a regime contract,
-  broader event selection or `daily_intelligence.json` builder is required.
-  None is part of 6.3-A, 6.3-B or 6.3-C.
+- Phase 6.4 handles structured daily assembly and any later event selection;
+  neither belongs to 6.3-A, 6.3-B or 6.3-C.
 
 ### Exit criteria
 
@@ -220,15 +219,34 @@ Regime classification and broader Intelligence processing remain deferred.
 
 Indicative duration: Week 4.
 
+Status: 6.4-A Structured Intelligence Composer, 6.4-B1 Deterministic Brief
+Renderer and 6.4-C additive Intelligence Web View are implemented locally
+pending review. Event selection and LLM integration remain unimplemented.
+
 ### Objective
 
 Publish a useful research-style brief from structured intelligence, with or without an LLM.
 
 ### Work
 
-- Build deterministic intelligence brief from `daily_intelligence.json`.
+- 6.4-A reads only the four linked Evidence Bundle, Signal, Regime and Risk
+  artifacts and writes `daily_intelligence.json`.
+- 6.4-A preserves every validated object, timestamp, upstream status and
+  provenance reference; it performs fixed ordering, not ranking.
+- 6.4-A marks artifacts older than 24 hours stale and does not treat them as
+  current intelligence.
+- 6.4-B1 reads only `daily_intelligence.json` and writes the deterministic
+  `daily_market_brief.md` presentation artifact.
+- 6.4-B1 retains validated objects, timestamps, evidence/source references,
+  coverage and warning codes without selecting or generating analysis.
+- 6.4-C preserves the existing Pages market view and adds
+  `docs/intelligence.html` as a same-origin, framework-free presentation layer.
+- 6.4-C displays only observed relationship objects, existing Regime/Risk
+  states, approved market snapshots and collapsible provenance; missing inputs
+  remain explicitly unavailable.
 - Add the required Top Events, Cross Asset Signals and Next 48 Hours sections.
-- Update Pages from price-card emphasis to research-terminal reading order.
+- A later, separately approved phase may change the default Pages landing view;
+  6.4-C keeps the existing price-oriented page intact.
 - Add citation resolution to canonical source URLs.
 - Add concrete-number, reference and causality validation.
 - Test invalid output rejection and deterministic fallback.

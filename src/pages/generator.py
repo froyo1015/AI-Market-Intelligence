@@ -589,6 +589,7 @@ PAGE_TEMPLATE = Template(
     </header>
 
     <nav class="nav" aria-label="市場分類">
+      <a href="intelligence.html">Intelligence</a>
       <a href="#equities">美股</a>
       <a href="#crypto">Crypto</a>
       <a href="#gold">黃金</a>

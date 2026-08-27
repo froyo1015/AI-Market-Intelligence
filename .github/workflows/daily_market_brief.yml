@@ -38,8 +38,8 @@ jobs:
       - name: Run tests
         run: python -m pytest -q
 
-      - name: Generate market snapshot
-        run: python -m src.main
+      - name: Regenerate intelligence pipeline
+        run: python -m src.orchestration.pipeline
 
       - name: Generate deterministic brief
         run: python -m src.brief.generator
@@ -53,9 +53,15 @@ jobs:
       - name: Verify generated outputs
         run: |
           test -s src/output/market_snapshot.json
+          test -s src/output/run_manifest.json
+          test -s src/output/daily_intelligence.json
+          test -s src/output/daily_market_brief.md
           test -s src/output/daily_brief.md
           test -s src/output/ai_market_brief.md
           test -s docs/index.html
+          test -s docs/intelligence.html
+          test -s docs/assets/intelligence.js
+          test -s docs/data/run_manifest.json
 
       - name: Send Telegram market brief
         if: ${{ success() }}
@@ -71,10 +77,26 @@ jobs:
           name: daily-market-brief-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             src/output/market_snapshot.json
+            src/output/macro_snapshot.json
+            src/output/economic_calendar.json
+            src/output/news_items.json
+            src/output/events.json
+            src/output/observations.json
+            src/output/evidence.json
+            src/output/evidence_bundle.json
+            src/output/market_signals.json
+            src/output/market_regime.json
+            src/output/risk_monitor.json
+            src/output/daily_intelligence.json
+            src/output/daily_market_brief.md
+            src/output/run_manifest.json
             src/output/market_context.json
             src/output/daily_brief.md
             src/output/ai_market_brief.md
             docs/index.html
+            docs/intelligence.html
+            docs/assets/intelligence.js
+            docs/data/
           if-no-files-found: error
           retention-days: 30
 

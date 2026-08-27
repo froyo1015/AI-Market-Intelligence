@@ -164,3 +164,53 @@ quality problems, and current evidence-backed market stress. Every item keeps
 artifact, bundle, source, observation, event, Evidence, Signal and Regime
 Dimension references. It does not predict crashes, classify bullish/bearish
 conditions, calculate a market forecast, or recommend trades.
+
+## Structured Daily Intelligence (Phase 6.4-A)
+
+Assemble the four validated intelligence artifacts into one deterministic
+contract:
+
+```bash
+python -m src.intelligence.pipeline
+```
+
+- Inputs: `evidence_bundle.json`, `market_signals.json`,
+  `market_regime.json`, and `risk_monitor.json`
+- Output: `src/output/daily_intelligence.json`
+
+The composer preserves every validated Signal, Regime and Risk payload, its
+timestamps, status and complete provenance. It also exposes upstream coverage
+and rejects inputs older than 24 hours as current intelligence. This phase does
+not select, rank, summarize, generate prose, call an LLM, predict markets or
+recommend trades.
+
+## Deterministic Intelligence Brief (Phase 6.4-B1)
+
+Render the validated structured artifact as readable Markdown:
+
+```bash
+python -m src.brief.renderer_pipeline
+```
+
+- Input: `src/output/daily_intelligence.json`
+- Output: `src/output/daily_market_brief.md`
+
+The renderer uses fixed section and formatting rules. It preserves all object
+validation/data statuses, timestamps, warning codes, evidence references and
+source URLs. It does not call an LLM, create analysis, predict markets, rank
+items or provide trading recommendations.
+
+## Intelligence Web View (Phase 6.4-C)
+
+Build the additive static Intelligence page and package available artifacts:
+
+```bash
+python -m src.pages.intelligence_generator
+```
+
+The existing `docs/index.html` market brief remains available. The new
+`docs/intelligence.html` loads same-origin JSON from `docs/data/` and displays
+current Regime, observed cross-asset relationships, observable Risk categories,
+the existing market/macro snapshots and a collapsible audit trail. Missing,
+partial and unavailable artifacts degrade visibly without creating replacement
+facts. No framework, server, LLM, prediction or trade recommendation is added.

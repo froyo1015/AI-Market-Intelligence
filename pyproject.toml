@@ -22,6 +22,7 @@ market-brief-snapshot = "src.main:cli"
 market-brief-generate = "src.brief.generator:cli"
 market-brief-analyst = "src.ai.analyst:cli"
 market-brief-pages = "src.pages.generator:cli"
+market-brief-intelligence-pages = "src.pages.intelligence_generator:cli"
 market-brief-telegram = "src.telegram.bot:cli"
 market-brief-evidence = "src.evidence.pipeline:cli"
 market-brief-macro = "src.macro_pipeline:cli"
@@ -32,6 +33,9 @@ market-brief-consolidate = "src.consolidation.pipeline:cli"
 market-brief-signals = "src.signals.pipeline:cli"
 market-brief-regime = "src.regime.pipeline:cli"
 market-brief-risk = "src.risk.pipeline:cli"
+market-brief-intelligence = "src.intelligence.pipeline:cli"
+market-brief-render-intelligence = "src.brief.renderer_pipeline:cli"
+market-brief-orchestrate = "src.orchestration.pipeline:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -53,6 +53,7 @@ def test_page_contains_required_content_and_metadata() -> None:
     assert "🟢 0 current" in page
     assert "market_source" in page
     assert "2026-07-29T12:00:00Z" in page
+    assert 'href="intelligence.html"' in page
 
 
 def test_page_escapes_untrusted_markdown_html() -> None:

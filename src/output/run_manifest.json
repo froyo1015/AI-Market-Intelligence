@@ -1,0 +1,692 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "run_manifest",
+  "run_id": "run_20260827T172737Z_orchestration_0b9bac2d514d",
+  "execution_timestamp": "2026-08-27T17:27:37.123839Z",
+  "execution_started_at": "2026-08-27T17:27:37.123839Z",
+  "execution_completed_at": "2026-08-27T17:27:37.200303Z",
+  "status": "partial",
+  "freshness_status": "mixed",
+  "execution_order": [
+    "market_data",
+    "macro",
+    "calendar",
+    "news_ingestion",
+    "event_normalization",
+    "evidence_foundation",
+    "evidence_consolidation",
+    "cross_asset_signals",
+    "market_regime",
+    "risk_monitor",
+    "daily_intelligence",
+    "brief_renderer",
+    "intelligence_web_view"
+  ],
+  "modules": [
+    {
+      "sequence": 1,
+      "name": "market_data",
+      "hard_dependencies": [],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.124551Z",
+      "completed_at": "2026-08-27T17:27:37.141863Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "market_snapshot.json"
+      ],
+      "artifacts": [
+        {
+          "path": "market_snapshot.json",
+          "artifact_type": "market_snapshot",
+          "sha256": "61a70c2287a28cf8c73a30e03a91c0302539e610ff81bd4497eec35e1b68be73",
+          "versions": {
+            "schema_version": "1.0"
+          },
+          "generated_at": "2026-08-27T17:27:37.124565Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [],
+      "failure": {
+        "module": "market_data",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 2,
+      "name": "macro",
+      "hard_dependencies": [],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.141873Z",
+      "completed_at": "2026-08-27T17:27:37.146059Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "macro_snapshot.json"
+      ],
+      "artifacts": [
+        {
+          "path": "macro_snapshot.json",
+          "artifact_type": "macro_snapshot",
+          "sha256": "695e8c16e0aed00dabf21ba91a361c59fe599e256d77a4171a466c704d5d8e6c",
+          "versions": {
+            "schema_version": "1.0"
+          },
+          "generated_at": "2026-08-27T17:27:37.141880Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [],
+      "failure": {
+        "module": "macro",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 3,
+      "name": "calendar",
+      "hard_dependencies": [],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.146067Z",
+      "completed_at": "2026-08-27T17:27:37.154602Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "economic_calendar.json"
+      ],
+      "artifacts": [
+        {
+          "path": "economic_calendar.json",
+          "artifact_type": "economic_calendar",
+          "sha256": "d5f0d7f45dfbb36af5160e2c951f2f3c4acae29cca00d85bf574a515af6121f5",
+          "versions": {
+            "schema_version": "1.0"
+          },
+          "generated_at": "2026-08-27T17:27:37.146074Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": false
+        }
+      ],
+      "warnings": [
+        "Economic calendar unavailable: CalendarSourceAccessError: BLS calendar download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+      ],
+      "failure": {
+        "module": "calendar",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 4,
+      "name": "news_ingestion",
+      "hard_dependencies": [],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.154609Z",
+      "completed_at": "2026-08-27T17:27:37.157945Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "news_items.json"
+      ],
+      "artifacts": [
+        {
+          "path": "news_items.json",
+          "artifact_type": "news_items",
+          "sha256": "4153f9667a72d5a3b51dfe774a49036f928336d71172b3a6505ff675f345c805",
+          "versions": {
+            "schema_version": "1.0"
+          },
+          "generated_at": "2026-08-27T17:27:37.154616Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": false
+        }
+      ],
+      "warnings": [
+        "News source unavailable: NewsSourceAccessError: Federal Reserve RSS download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+      ],
+      "failure": {
+        "module": "news_ingestion",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 5,
+      "name": "event_normalization",
+      "hard_dependencies": [
+        "news_ingestion"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.157951Z",
+      "completed_at": "2026-08-27T17:27:37.158334Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "events.json"
+      ],
+      "artifacts": [
+        {
+          "path": "events.json",
+          "artifact_type": "events",
+          "sha256": "d0c60ad042fdff10e71253afcfd0bf191a87be637fc686c7f76516549390e561",
+          "versions": {
+            "schema_version": "1.1"
+          },
+          "generated_at": "2026-08-27T17:27:37.158003Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": false
+        }
+      ],
+      "warnings": [
+        "News input: News source unavailable: NewsSourceAccessError: Federal Reserve RSS download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>",
+        "News normalization skipped: input artifact failed."
+      ],
+      "failure": {
+        "module": "event_normalization",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 6,
+      "name": "evidence_foundation",
+      "hard_dependencies": [
+        "market_data"
+      ],
+      "soft_dependencies": [
+        "macro"
+      ],
+      "started_at": "2026-08-27T17:27:37.158339Z",
+      "completed_at": "2026-08-27T17:27:37.159326Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "observations.json",
+        "evidence.json"
+      ],
+      "artifacts": [
+        {
+          "path": "observations.json",
+          "artifact_type": "observations",
+          "sha256": "e3815bc12082011420470dcade9f3ead1e7a0f3a01aa90109e38fee3f8fc2372",
+          "versions": {
+            "schema_version": "1.1"
+          },
+          "generated_at": "2026-08-27T17:27:37.141880Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": false
+        },
+        {
+          "path": "evidence.json",
+          "artifact_type": "evidence",
+          "sha256": "dd6389f03e98631b37ff3a3ec208c758bcba9db7ba5a9ca36f3a844de879a271",
+          "versions": {
+            "schema_version": "1.1"
+          },
+          "generated_at": "2026-08-27T17:27:37.141880Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": false
+        }
+      ],
+      "warnings": [
+        "AAPL omitted: market snapshot status is failed",
+        "BTC-USD omitted: market snapshot status is failed",
+        "DXY macro observations omitted: status is failed",
+        "ETH-USD omitted: market snapshot status is failed",
+        "EURUSD omitted: market snapshot status is failed",
+        "GOLD omitted: market snapshot status is failed",
+        "NVDA omitted: market snapshot status is failed",
+        "OIL macro observations omitted: status is failed",
+        "QQQ omitted: market snapshot status is failed",
+        "SPY omitted: market snapshot status is failed",
+        "TSLA omitted: market snapshot status is failed",
+        "US10Y macro observations omitted: status is failed",
+        "USDJPY omitted: market snapshot status is failed",
+        "VIX macro observations omitted: status is failed"
+      ],
+      "failure": {
+        "module": "evidence_foundation",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 7,
+      "name": "evidence_consolidation",
+      "hard_dependencies": [
+        "evidence_foundation"
+      ],
+      "soft_dependencies": [
+        "calendar",
+        "event_normalization"
+      ],
+      "started_at": "2026-08-27T17:27:37.159334Z",
+      "completed_at": "2026-08-27T17:27:37.160233Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "evidence_bundle.json"
+      ],
+      "artifacts": [
+        {
+          "path": "evidence_bundle.json",
+          "artifact_type": "evidence_bundle",
+          "sha256": "cdffd5c5c0c987b35435ded66d9c37609afa463c65522f15235d0cfd1daccd44",
+          "versions": {
+            "schema_version": "1.0"
+          },
+          "generated_at": "2026-08-27T17:27:37.159456Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": false
+        }
+      ],
+      "warnings": [
+        "economic_calendar coverage is unavailable.",
+        "existing_evidence coverage is unavailable.",
+        "macro_observations coverage is unavailable.",
+        "market_observations coverage is unavailable.",
+        "news_events coverage is unavailable."
+      ],
+      "failure": {
+        "module": "evidence_consolidation",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 8,
+      "name": "cross_asset_signals",
+      "hard_dependencies": [
+        "evidence_consolidation"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.160238Z",
+      "completed_at": "2026-08-27T17:27:37.163744Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "market_signals.json"
+      ],
+      "artifacts": [
+        {
+          "path": "market_signals.json",
+          "artifact_type": "market_signals",
+          "sha256": "86237207a41e8569c25df2843cba5e4083e0a696f5fc90a4d1a26c69664a6420",
+          "versions": {
+            "schema_version": "1.0",
+            "rule_set_version": "cross_asset_rules_v1"
+          },
+          "generated_at": "2026-08-27T17:27:37.160318Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [
+        "8 relationship rule(s) have insufficient data.",
+        "Input evidence coverage is unavailable."
+      ],
+      "failure": {
+        "module": "cross_asset_signals",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 9,
+      "name": "market_regime",
+      "hard_dependencies": [
+        "evidence_consolidation",
+        "cross_asset_signals"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.163752Z",
+      "completed_at": "2026-08-27T17:27:37.167374Z",
+      "status": "unavailable",
+      "freshness_status": "current",
+      "declared_artifacts": [
+        "market_regime.json"
+      ],
+      "artifacts": [
+        {
+          "path": "market_regime.json",
+          "artifact_type": "market_regime",
+          "sha256": "13694821bb9f12f4da8d7a5d60ec9037c51499673ce0465bbeb72a5d4f73331c",
+          "versions": {
+            "schema_version": "1.0",
+            "rule_set_version": "market_regime_rules_v1"
+          },
+          "generated_at": "2026-08-27T17:27:37.163872Z",
+          "data_status": "unavailable",
+          "freshness_status": "current",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [
+        "5 regime dimension(s) are unavailable.",
+        "Current evidence does not meet classification coverage rules."
+      ],
+      "failure": {
+        "module": "market_regime",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 10,
+      "name": "risk_monitor",
+      "hard_dependencies": [
+        "evidence_consolidation",
+        "cross_asset_signals",
+        "market_regime"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.167379Z",
+      "completed_at": "2026-08-27T17:27:37.172928Z",
+      "status": "partial",
+      "freshness_status": "current",
+      "declared_artifacts": [
+        "risk_monitor.json"
+      ],
+      "artifacts": [
+        {
+          "path": "risk_monitor.json",
+          "artifact_type": "risk_monitor",
+          "sha256": "0ffd6798c6c49a345020156aa9ad52a3a0caa07b26f7ffc1c70f9079204bedbe",
+          "versions": {
+            "schema_version": "1.0",
+            "rule_set_version": "risk_monitor_rules_v1"
+          },
+          "generated_at": "2026-08-27T17:27:37.167543Z",
+          "data_status": "partial",
+          "freshness_status": "current",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [
+        "No current market-stress rule is supported by eligible evidence.",
+        "No eligible official events were found in the next 48 hours.",
+        "One or more monitor inputs have degraded coverage or freshness."
+      ],
+      "failure": null
+    },
+    {
+      "sequence": 11,
+      "name": "daily_intelligence",
+      "hard_dependencies": [
+        "evidence_consolidation",
+        "cross_asset_signals",
+        "market_regime",
+        "risk_monitor"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.172934Z",
+      "completed_at": "2026-08-27T17:27:37.187765Z",
+      "status": "unavailable",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "daily_intelligence.json"
+      ],
+      "artifacts": [
+        {
+          "path": "daily_intelligence.json",
+          "artifact_type": "daily_intelligence",
+          "sha256": "7125644b69a177829fd1106847013f03ed315de409582b576d2295aecdce7d0a",
+          "versions": {
+            "schema_version": "1.0",
+            "schema_contract": "daily_intelligence_v1"
+          },
+          "generated_at": "2026-08-27T17:27:37.173176Z",
+          "data_status": "unavailable",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [
+        "no_current_substantive_intelligence",
+        "provenance_catalog_empty",
+        "upstream_partial:risk_monitor.json",
+        "upstream_unavailable:evidence_bundle.json",
+        "upstream_unavailable:market_regime.json",
+        "upstream_unavailable:market_signals.json"
+      ],
+      "failure": {
+        "module": "daily_intelligence",
+        "failure_type": "source_or_data_unavailable",
+        "retryable": true,
+        "message": "Module produced a valid unavailable artifact."
+      }
+    },
+    {
+      "sequence": 12,
+      "name": "brief_renderer",
+      "hard_dependencies": [
+        "daily_intelligence"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-08-27T17:27:37.187772Z",
+      "completed_at": "2026-08-27T17:27:37.190373Z",
+      "status": "success",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "daily_market_brief.md"
+      ],
+      "artifacts": [
+        {
+          "path": "daily_market_brief.md",
+          "artifact_type": "daily_market_brief",
+          "sha256": "0589dd354fa4bd5d7b90e84f3b23287926a593c1ccd02d38956a10c6cdd8d6d3",
+          "versions": {},
+          "generated_at": null,
+          "data_status": "success",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [],
+      "failure": null
+    },
+    {
+      "sequence": 13,
+      "name": "intelligence_web_view",
+      "hard_dependencies": [],
+      "soft_dependencies": [
+        "daily_intelligence",
+        "cross_asset_signals",
+        "market_regime",
+        "risk_monitor"
+      ],
+      "started_at": "2026-08-27T17:27:37.190380Z",
+      "completed_at": "2026-08-27T17:27:37.196001Z",
+      "status": "success",
+      "freshness_status": "unknown",
+      "declared_artifacts": [
+        "docs/intelligence.html",
+        "docs/assets/intelligence.js"
+      ],
+      "artifacts": [
+        {
+          "path": "docs/intelligence.html",
+          "artifact_type": "intelligence",
+          "sha256": "99dc642c21c7165153a070213736b3fdf85108cfd719aa362b69db6bfed318ce",
+          "versions": {},
+          "generated_at": null,
+          "data_status": "success",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        },
+        {
+          "path": "docs/assets/intelligence.js",
+          "artifact_type": "intelligence",
+          "sha256": "04728b5d974dc18c7115f9a583b0d535f2232300b6a714d2cb5feb0320e4994c",
+          "versions": {},
+          "generated_at": null,
+          "data_status": "success",
+          "freshness_status": "unknown",
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [],
+      "failure": null
+    }
+  ],
+  "artifact_versions": {
+    "daily_intelligence.json": {
+      "schema_version": "1.0",
+      "schema_contract": "daily_intelligence_v1"
+    },
+    "daily_market_brief.md": {},
+    "docs/assets/intelligence.js": {},
+    "docs/intelligence.html": {},
+    "economic_calendar.json": {
+      "schema_version": "1.0"
+    },
+    "events.json": {
+      "schema_version": "1.1"
+    },
+    "evidence.json": {
+      "schema_version": "1.1"
+    },
+    "evidence_bundle.json": {
+      "schema_version": "1.0"
+    },
+    "macro_snapshot.json": {
+      "schema_version": "1.0"
+    },
+    "market_regime.json": {
+      "schema_version": "1.0",
+      "rule_set_version": "market_regime_rules_v1"
+    },
+    "market_signals.json": {
+      "schema_version": "1.0",
+      "rule_set_version": "cross_asset_rules_v1"
+    },
+    "market_snapshot.json": {
+      "schema_version": "1.0"
+    },
+    "news_items.json": {
+      "schema_version": "1.0"
+    },
+    "observations.json": {
+      "schema_version": "1.1"
+    },
+    "risk_monitor.json": {
+      "schema_version": "1.0",
+      "rule_set_version": "risk_monitor_rules_v1"
+    },
+    "run_manifest.json": {
+      "schema_version": "1.0"
+    }
+  },
+  "failures": [
+    {
+      "module": "market_data",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "macro",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "calendar",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "news_ingestion",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "event_normalization",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "evidence_foundation",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "evidence_consolidation",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "cross_asset_signals",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "market_regime",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    },
+    {
+      "module": "daily_intelligence",
+      "failure_type": "source_or_data_unavailable",
+      "retryable": true,
+      "message": "Module produced a valid unavailable artifact."
+    }
+  ],
+  "publication": {
+    "approved_files": [
+      "data/daily_intelligence.json",
+      "data/market_signals.json",
+      "data/market_regime.json",
+      "data/risk_monitor.json",
+      "data/daily_market_brief.md",
+      "data/market_snapshot.json",
+      "data/macro_snapshot.json",
+      "data/run_manifest.json",
+      "intelligence.html",
+      "assets/intelligence.js"
+    ],
+    "published_files": [
+      "assets/intelligence.js",
+      "data/daily_intelligence.json",
+      "data/daily_market_brief.md",
+      "data/macro_snapshot.json",
+      "data/market_regime.json",
+      "data/market_signals.json",
+      "data/market_snapshot.json",
+      "data/risk_monitor.json",
+      "data/run_manifest.json",
+      "intelligence.html"
+    ],
+    "omitted_files": []
+  }
+}

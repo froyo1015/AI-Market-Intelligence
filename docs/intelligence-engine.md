@@ -6,6 +6,15 @@
 > Their frozen rules and schemas supersede the draft signal/regime/risk details
 > in Sections 9–11 below.
 
+> Phase 6.4-A now implements deterministic structured assembly only. Its
+> contract is defined by `daily-intelligence-schema.md`; draft selection,
+> claims, ranking and prose-generation details in this document remain future
+> design and are not part of the composer.
+
+> Phase 6.4-B1 adds only a deterministic Markdown renderer over that structured
+> artifact. `brief-renderer.md` is authoritative for its presentation contract;
+> no selection, analytical prose or LLM behavior is included.
+
 > 本文件定義 deterministic intelligence layer 的行為。第一版不使用 LLM 作事件排序、訊號判定或 regime classification。
 
 ## 1. Objective

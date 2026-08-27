@@ -83,18 +83,29 @@ flowchart TD
     RegimeFile --> RiskMonitor
     RiskMonitor --> RiskFile["risk_monitor.json v1"]
 
-    RegimeFile --> Intelligence["Daily Intelligence Builder<br/>daily_intelligence.json v1"]
+    Consolidator --> Intelligence["Structured Intelligence Composer"]
+    SignalFile --> Intelligence
+    RegimeFile --> Intelligence
     RiskFile --> Intelligence
-    Mapping --> Intelligence
-    Consolidator --> Intelligence
+    Intelligence --> IntelligenceFile["daily_intelligence.json v1"]
+    IntelligenceFile --> Renderer["Deterministic Brief Renderer"]
+    Renderer --> Markdown["daily_market_brief.md"]
+    IntelligenceFile --> WebView["Static Intelligence View"]
+    SignalFile --> WebView
+    RegimeFile --> WebView
+    RiskFile --> WebView
+    Snapshot --> WebView
+    Macro --> WebView
+    Markdown --> WebView
 
-    Intelligence --> LLM["LLM Explanation Adapter"]
+    Mapping --> FutureSelection["Future Event Selection"]
+    IntelligenceFile --> LLM["LLM Explanation Adapter"]
     LLM --> Validator["Citation + Claim Validator"]
     Validator --> Report["Daily Market Intelligence Brief"]
-    Intelligence --> Fallback["Deterministic Intelligence Brief"]
-    Fallback --> Report
+    Markdown --> Report
 
     Report --> Pages["GitHub Pages"]
+    WebView --> Pages
     Report --> Telegram["Telegram — optional delivery"]
 ```
 
@@ -110,6 +121,9 @@ flowchart TD
 | Cross-asset relationship engine | Evaluate observed relationships from `evidence_bundle.json` only | Predict, rank, infer cause, classify sentiment/direction or recommend trades |
 | Market regime classifier | Classify current observed risk-on/risk-off/mixed conditions from linked Evidence and relationship artifacts | Treat stale/unknown data as mixed, forecast persistence or create trade actions |
 | Risk monitor | Report scheduled events, data-quality gaps and current evidence-backed stress | Predict crashes, infer event causality, classify bullish/bearish or recommend trades |
+| Structured intelligence composer | Assemble all validated Signal, Regime and Risk objects with timestamps, status, coverage and provenance | Rank, summarize, interpret, predict or generate prose |
+| Deterministic brief renderer | Transform validated `daily_intelligence.json` objects into fixed Markdown with warnings and references intact | Select, summarize, predict, recommend or add analysis |
+| Static Intelligence View | Present approved JSON/Markdown artifacts with browser-side missing/partial/unavailable handling | Change intelligence state, infer missing facts or expose secrets/raw licensed content |
 | Future intelligence engine | Build later risk context and structured claims from validated relationships/regime | Use LLM-generated facts |
 | Brief generation | Explain structured intelligence in readable language | Invent prices, events or confidence |
 | Validation | Check references, numbers, required sections and prohibited claims | Silently repair unsupported claims |

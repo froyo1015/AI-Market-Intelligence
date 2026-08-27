@@ -495,91 +495,58 @@ complete artifact/bundle/source/observation/event/Evidence/Signal/Regime
 Dimension references. There is no aggregate risk score. The complete contract
 is defined in [risk-monitor.md](risk-monitor.md).
 
-## 11. Future `daily_intelligence.json`
+## 11. `daily_intelligence.json` v1
 
-Purpose: define a later, separately approved factual input to deterministic and
-LLM brief generators. It is not implemented by Phase 6.3-A or 6.3-B.
+Purpose: assemble the four validated upstream artifacts into one deterministic,
+traceable input for a future brief layer. Phase 6.4-A does not create claims,
+select events, rank items, summarize, generate prose or invoke an LLM.
 
 ### Top-level contract
 
 | Field | Type | Required |
 |---|---|---:|
 | Common artifact envelope | object fields | yes |
+| `composition_scope` | string | yes |
+| `input_refs` | object | yes |
 | `data_window` | object | yes |
-| `coverage` | object | yes |
-| `regime` | Regime | yes |
-| `top_events` | array[IntelligenceItem] | yes |
-| `market_overview` | array[Claim] | yes |
-| `asset_sections` | object | yes |
-| `cross_asset_signals` | array[SignalReference] | yes |
-| `next_48_hours` | array[EventReference] | yes |
-| `risk_monitor` | array[Claim] | yes |
-| `sources` | array[SourceReference] | yes |
-| `disclaimer` | string | yes |
+| `coverage` | array[Coverage] | yes |
+| `object_counts` | object | yes |
+| `market_regime` | IntelligenceObject | yes |
+| `cross_asset_signals` | array[IntelligenceObject] | yes |
+| `upcoming_events` | array[IntelligenceObject] | yes |
+| `data_quality_risks` | array[IntelligenceObject] | yes |
+| `observed_market_stress` | array[IntelligenceObject] | yes |
+| `provenance_catalog` | object | yes |
+| `warnings` | array[string] | yes |
+| `limitations` | array[string] | yes |
 
-### Claim
+Every `IntelligenceObject` contains a deterministic ID, exact source artifact
+and run IDs, source generation time, `validation_status`, original upstream
+data status, observed/scheduled/detected timestamps, normalized provenance
+references and an unchanged upstream payload.
 
-```json
-{
-  "claim_id": "clm_overview_01_20260818",
-  "text": "Risk conditions are mixed across equities, crypto and defensive assets.",
-  "relation": "supported_interpretation",
-  "confidence_score": 0.64,
-  "confidence_label": "medium",
-  "evidence_ids": ["evd_example_1", "evd_example_2"],
-  "signal_ids": ["sig_example_1", "sig_example_2"],
-  "source_ids": ["src_example_1"],
-  "limitations": ["Market breadth was unavailable."]
-}
-```
+Coverage retains both upstream record freshness and the artifact age measured
+at composition time. An artifact older than 24 hours is stale and cannot
+support current substantive intelligence. Complete field definitions and
+ordering rules are frozen in
+[daily-intelligence-schema.md](daily-intelligence-schema.md).
 
-### Intelligence item
-
-```json
-{
-  "rank": 1,
-  "event_id": "evt_example_1",
-  "headline": "Normalized event title",
-  "why_it_matters": "Source-grounded explanation of relevance.",
-  "affected_assets": ["SPY", "QQQ"],
-  "relevance_score": 0.86,
-  "confidence_score": 0.81,
-  "confidence_label": "high",
-  "evidence_ids": ["evd_example_1"],
-  "source_ids": ["src_example_1"],
-  "causality": "unconfirmed"
-}
-```
-
-### Asset sections
-
-```json
-{
-  "equities": [],
-  "crypto": [],
-  "gold_dollar_commodities": [],
-  "forex": []
-}
-```
-
-Each section contains Claim objects. Sections with insufficient data remain present and contain a claim explaining the limitation.
-
-## 12. Required Report Mapping
+## 12. Deterministic Brief Mapping
 
 | Report section | Contract source |
 |---|---|
-| Today's Three Most Important Events | `top_events` |
-| Market Overview | `regime` + `market_overview` |
-| US Equities | `asset_sections.equities` |
-| Crypto | `asset_sections.crypto` |
-| Gold / Dollar / Commodities | `asset_sections.gold_dollar_commodities` |
-| Forex | `asset_sections.forex` |
+| Current Regime | `market_regime` |
 | Cross Asset Signals | `cross_asset_signals` |
-| Next 48 Hours Events | `next_48_hours` |
-| Risk Monitor | `risk_monitor` + `warnings` |
-| Sources & Timestamp | `sources` + envelope + `data_window` |
+| Upcoming Event Risks | `upcoming_events` |
+| Data Quality Risks | `data_quality_risks` |
+| Observed Market Stress | `observed_market_stress` |
+| Sources & Timestamp | `provenance_catalog` + envelope + `data_window` |
 
-The generator may change wording and ordering within a section but cannot introduce facts absent from these fields.
+Phase 6.4-B1 renders this mapping mechanically into
+`daily_market_brief.md`. It retains upstream order, status, timestamps,
+warnings and all provenance-reference arrays. It does not select, summarize or
+rewrite the intelligence objects. The complete Markdown contract is defined in
+[brief-renderer.md](brief-renderer.md).
 
 ## 13. Validation Rules
 
@@ -587,14 +554,15 @@ An artifact is invalid if any of the following applies:
 
 - a referenced ID does not resolve within the current run artifacts.
 - an event has no source reference.
-- a source URL is missing or not HTTP(S).
-- `generated_at`, `as_of`, `published_at` or `scheduled_at` is malformed.
-- confidence label does not match its numeric range.
-- a `supported_interpretation` has fewer than two supporting inputs.
-- a claim contains a concrete number that is absent from its observations.
-- a top event has no relevance reason or affected assets.
-- a scheduled event appears in the past without a resolved status.
-- a failed or stale input is represented as current.
+- an assembled payload differs from its validated upstream object.
+- an intelligence object does not have `validation_status: validated`.
+- a source generation or record timestamp is malformed.
+- a provenance reference cannot be resolved in its designated catalog or
+  assembled section.
+- an upstream partial, unavailable or stale state is upgraded.
+- deterministic reconstruction from the four recorded inputs differs.
+- a prohibited prediction, sentiment, ranking, recommendation, LLM or
+  bullish/bearish field is introduced.
 
 ## 14. Versioning and Compatibility
 

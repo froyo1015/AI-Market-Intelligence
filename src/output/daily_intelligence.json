@@ -1,0 +1,1771 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "daily_intelligence",
+  "run_id": "run_20260827T172737Z_intelligence_8a26a166b9f81df1",
+  "report_date": "2026-08-28",
+  "generated_at": "2026-08-27T17:27:37.173176Z",
+  "status": "unavailable",
+  "composition_scope": "validated_structured_intelligence",
+  "schema_contract": "daily_intelligence_v1",
+  "input_refs": {
+    "evidence_bundle_run_id": "run_20260827T172737Z_consolidated_09d138d0e91042df",
+    "market_signals_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+    "market_regime_run_id": "run_20260827T172737Z_regime_29a799bae33da2c2",
+    "risk_monitor_run_id": "run_20260827T172737Z_risk_513224477d71c4e7"
+  },
+  "data_window": {
+    "report_date": "2026-08-28",
+    "composed_at": "2026-08-27T17:27:37.173176Z",
+    "input_generated_at": {
+      "values": [
+        "2026-08-27T17:27:37.159456Z",
+        "2026-08-27T17:27:37.160318Z",
+        "2026-08-27T17:27:37.163872Z",
+        "2026-08-27T17:27:37.167543Z"
+      ],
+      "earliest": "2026-08-27T17:27:37.159456Z",
+      "latest": "2026-08-27T17:27:37.167543Z"
+    },
+    "observed_at": {
+      "values": [],
+      "earliest": null,
+      "latest": null
+    },
+    "scheduled_at": {
+      "values": [],
+      "earliest": null,
+      "latest": null
+    },
+    "occurred_at": {
+      "values": [],
+      "earliest": null,
+      "latest": null
+    },
+    "published_at": {
+      "values": [],
+      "earliest": null,
+      "latest": null
+    },
+    "retrieved_at": {
+      "values": [],
+      "earliest": null,
+      "latest": null
+    },
+    "detected_at": {
+      "values": [
+        "2026-08-27T17:27:37.167543Z"
+      ],
+      "earliest": "2026-08-27T17:27:37.167543Z",
+      "latest": "2026-08-27T17:27:37.167543Z"
+    }
+  },
+  "coverage": [
+    {
+      "artifact": "evidence_bundle.json",
+      "artifact_type": "evidence_bundle",
+      "run_id": "run_20260827T172737Z_consolidated_09d138d0e91042df",
+      "generated_at": "2026-08-27T17:27:37.159456Z",
+      "validation_status": "validated",
+      "data_status": "unavailable",
+      "freshness_status": "current",
+      "object_count": 0,
+      "warning_count": 5,
+      "age_hours": 4e-06,
+      "maximum_age_hours": 24.0,
+      "artifact_freshness_status": "current"
+    },
+    {
+      "artifact": "market_signals.json",
+      "artifact_type": "market_signals",
+      "run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "unavailable",
+      "freshness_status": "current",
+      "object_count": 8,
+      "warning_count": 2,
+      "age_hours": 4e-06,
+      "maximum_age_hours": 24.0,
+      "artifact_freshness_status": "current"
+    },
+    {
+      "artifact": "market_regime.json",
+      "artifact_type": "market_regime",
+      "run_id": "run_20260827T172737Z_regime_29a799bae33da2c2",
+      "generated_at": "2026-08-27T17:27:37.163872Z",
+      "validation_status": "validated",
+      "data_status": "unavailable",
+      "freshness_status": "current",
+      "object_count": 1,
+      "warning_count": 2,
+      "age_hours": 3e-06,
+      "maximum_age_hours": 24.0,
+      "artifact_freshness_status": "current"
+    },
+    {
+      "artifact": "risk_monitor.json",
+      "artifact_type": "risk_monitor",
+      "run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "partial",
+      "freshness_status": "current",
+      "object_count": 7,
+      "warning_count": 3,
+      "age_hours": 2e-06,
+      "maximum_age_hours": 24.0,
+      "artifact_freshness_status": "current"
+    }
+  ],
+  "object_counts": {
+    "market_regime": 1,
+    "cross_asset_signals": 8,
+    "upcoming_events": 0,
+    "data_quality_risks": 7,
+    "observed_market_stress": 0,
+    "total": 16
+  },
+  "market_regime": {
+    "object_id": "int_regime_c5128a5e1164abbb",
+    "object_type": "market_regime",
+    "source_artifact": "market_regime.json",
+    "source_run_id": "run_20260827T172737Z_regime_29a799bae33da2c2",
+    "source_generated_at": "2026-08-27T17:27:37.163872Z",
+    "validation_status": "validated",
+    "data_status": "unavailable",
+    "timestamps": {
+      "observed_at": [],
+      "scheduled_at": [],
+      "detected_at": []
+    },
+    "evidence_refs": {
+      "artifact_run_ids": [
+        "run_20260827T172737Z_consolidated_09d138d0e91042df",
+        "run_20260827T172737Z_regime_29a799bae33da2c2",
+        "run_20260827T172737Z_relationships_2923ca683ae97030"
+      ],
+      "evidence_bundle_ids": [],
+      "source_ids": [],
+      "observation_ids": [],
+      "event_ids": [],
+      "evidence_ids": [],
+      "signal_ids": [
+        "sig_crypto_co_movement_v1_53689a02d99c",
+        "sig_dollar_yield_co_movement_v1_c4a307baad88",
+        "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+        "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+        "sig_equity_volatility_inverse_move_v1_f1b870e3f543"
+      ],
+      "regime_dimension_ids": [
+        "cross_asset_alignment",
+        "crypto",
+        "dollar_yield",
+        "equity",
+        "volatility"
+      ],
+      "risk_ids": [],
+      "coverage_inputs": []
+    },
+    "payload": {
+      "schema_version": "1.0",
+      "artifact_type": "market_regime",
+      "run_id": "run_20260827T172737Z_regime_29a799bae33da2c2",
+      "report_date": "2026-08-28",
+      "generated_at": "2026-08-27T17:27:37.163872Z",
+      "status": "unavailable",
+      "classification_scope": "current_observed_conditions",
+      "classification": null,
+      "rule_set_version": "market_regime_rules_v1",
+      "input_refs": {
+        "evidence_bundle_run_id": "run_20260827T172737Z_consolidated_09d138d0e91042df",
+        "market_signals_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030"
+      },
+      "input_freshness": {
+        "status": "current",
+        "checked_at": "2026-08-27T17:27:37.163872Z",
+        "maximum_artifact_age_hours": 24.0,
+        "artifacts": {
+          "evidence_bundle.json": {
+            "generated_at": "2026-08-27T17:27:37.159456Z",
+            "age_hours": 1e-06
+          },
+          "market_signals.json": {
+            "generated_at": "2026-08-27T17:27:37.160318Z",
+            "age_hours": 1e-06
+          }
+        },
+        "stale_artifacts": [],
+        "stale_supporting_observation_ids": []
+      },
+      "score": {
+        "weighted_sum": 0,
+        "eligible_weight": 0,
+        "eligible_dimension_count": 0,
+        "normalized_score": 0.0,
+        "risk_on_threshold": 0.25,
+        "risk_off_threshold": -0.25,
+        "minimum_eligible_weight": 0.65,
+        "minimum_eligible_dimensions": 3,
+        "anchor_present": false,
+        "state_weights": {
+          "risk_on": 0,
+          "risk_off": 0,
+          "mixed": 0
+        }
+      },
+      "confidence": {
+        "score": 0.0,
+        "label": "insufficient",
+        "basis": "coverage_quality_agreement",
+        "coverage_score": 0,
+        "input_quality": 0.0,
+        "agreement_score": 0.0
+      },
+      "dimensions": [
+        {
+          "dimension_id": "equity",
+          "weight": 0.3,
+          "signal_id": "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+          "rule_id": "equity_index_co_movement_v1",
+          "eligibility": "unavailable",
+          "observed_state": "unavailable",
+          "contribution": null,
+          "weighted_contribution": null,
+          "observed_values": [],
+          "evidence_refs": {
+            "evidence_bundle_ids": [],
+            "source_ids": [],
+            "observation_ids": [],
+            "event_ids": [],
+            "evidence_ids": []
+          },
+          "confidence": {
+            "score": 0.0,
+            "label": "insufficient",
+            "basis": "data_quality"
+          },
+          "reason_codes": [
+            "missing_required_asset_value",
+            "signal_data_quality_unavailable",
+            "signal_insufficient_data"
+          ]
+        },
+        {
+          "dimension_id": "volatility",
+          "weight": 0.25,
+          "signal_id": "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
+          "rule_id": "equity_volatility_inverse_move_v1",
+          "eligibility": "unavailable",
+          "observed_state": "unavailable",
+          "contribution": null,
+          "weighted_contribution": null,
+          "observed_values": [],
+          "evidence_refs": {
+            "evidence_bundle_ids": [],
+            "source_ids": [],
+            "observation_ids": [],
+            "event_ids": [],
+            "evidence_ids": []
+          },
+          "confidence": {
+            "score": 0.0,
+            "label": "insufficient",
+            "basis": "data_quality"
+          },
+          "reason_codes": [
+            "missing_required_asset_value",
+            "signal_data_quality_unavailable",
+            "signal_insufficient_data"
+          ]
+        },
+        {
+          "dimension_id": "crypto",
+          "weight": 0.2,
+          "signal_id": "sig_crypto_co_movement_v1_53689a02d99c",
+          "rule_id": "crypto_co_movement_v1",
+          "eligibility": "unavailable",
+          "observed_state": "unavailable",
+          "contribution": null,
+          "weighted_contribution": null,
+          "observed_values": [],
+          "evidence_refs": {
+            "evidence_bundle_ids": [],
+            "source_ids": [],
+            "observation_ids": [],
+            "event_ids": [],
+            "evidence_ids": []
+          },
+          "confidence": {
+            "score": 0.0,
+            "label": "insufficient",
+            "basis": "data_quality"
+          },
+          "reason_codes": [
+            "missing_required_asset_value",
+            "signal_data_quality_unavailable",
+            "signal_insufficient_data"
+          ]
+        },
+        {
+          "dimension_id": "dollar_yield",
+          "weight": 0.15,
+          "signal_id": "sig_dollar_yield_co_movement_v1_c4a307baad88",
+          "rule_id": "dollar_yield_co_movement_v1",
+          "eligibility": "unavailable",
+          "observed_state": "unavailable",
+          "contribution": null,
+          "weighted_contribution": null,
+          "observed_values": [],
+          "evidence_refs": {
+            "evidence_bundle_ids": [],
+            "source_ids": [],
+            "observation_ids": [],
+            "event_ids": [],
+            "evidence_ids": []
+          },
+          "confidence": {
+            "score": 0.0,
+            "label": "insufficient",
+            "basis": "data_quality"
+          },
+          "reason_codes": [
+            "missing_required_asset_value",
+            "signal_data_quality_unavailable",
+            "signal_insufficient_data"
+          ]
+        },
+        {
+          "dimension_id": "cross_asset_alignment",
+          "weight": 0.1,
+          "signal_id": "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+          "rule_id": "equity_crypto_co_movement_v1",
+          "eligibility": "unavailable",
+          "observed_state": "unavailable",
+          "contribution": null,
+          "weighted_contribution": null,
+          "observed_values": [],
+          "evidence_refs": {
+            "evidence_bundle_ids": [],
+            "source_ids": [],
+            "observation_ids": [],
+            "event_ids": [],
+            "evidence_ids": []
+          },
+          "confidence": {
+            "score": 0.0,
+            "label": "insufficient",
+            "basis": "data_quality"
+          },
+          "reason_codes": [
+            "missing_required_asset_value",
+            "signal_data_quality_unavailable",
+            "signal_insufficient_data"
+          ]
+        }
+      ],
+      "evidence_refs": {
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": []
+      },
+      "warnings": [
+        "5 regime dimension(s) are unavailable.",
+        "Current evidence does not meet classification coverage rules."
+      ],
+      "limitations": [
+        "The classification describes current observations only.",
+        "It does not establish causality, persistence, or later outcomes.",
+        "The classifier does not provide investment or trading instructions."
+      ]
+    }
+  },
+  "cross_asset_signals": [
+    {
+      "object_id": "int_signal_05b8248084a9658d",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_53689a02d99c"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_crypto_co_movement_v1_53689a02d99c",
+        "rule_id": "crypto_co_movement_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "co_movement",
+        "label": "BTC-USD and ETH-USD daily co-movement",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "BTC-USD",
+          "ETH-USD"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "same_sign",
+          "thresholds": {
+            "BTC-USD": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "ETH-USD": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "BTC-USD:daily_change_pct",
+            "ETH-USD:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_e6652a4e393a4bdb",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_dollar_fx_quote_alignment_v1_cb0110e8e493"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_dollar_fx_quote_alignment_v1_cb0110e8e493",
+        "rule_id": "dollar_fx_quote_alignment_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "quote_alignment",
+        "label": "DXY and major FX quote alignment",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "DXY",
+          "EURUSD",
+          "USDJPY"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "dollar_fx_quote_alignment",
+          "thresholds": {
+            "DXY": {
+              "minimum_absolute_move": 0.05,
+              "unit": "percent"
+            },
+            "EURUSD": {
+              "minimum_absolute_move": 0.05,
+              "unit": "percent"
+            },
+            "USDJPY": {
+              "minimum_absolute_move": 0.05,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "DXY:daily_change_pct",
+            "EURUSD:daily_change_pct",
+            "USDJPY:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_9b26a0f955e1e534",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_dollar_yield_co_movement_v1_c4a307baad88"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_dollar_yield_co_movement_v1_c4a307baad88",
+        "rule_id": "dollar_yield_co_movement_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "co_movement",
+        "label": "DXY and US10Y daily co-movement",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "DXY",
+          "US10Y"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "same_sign",
+          "thresholds": {
+            "DXY": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "US10Y": {
+              "minimum_absolute_move": 1.0,
+              "unit": "basis_points"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "DXY:daily_change_pct",
+            "US10Y:daily_change_bps"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_cf0222f802be82f4",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+        "rule_id": "equity_crypto_co_movement_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "co_movement",
+        "label": "Equity indexes and BTC-USD daily co-movement",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "SPY",
+          "QQQ",
+          "BTC-USD"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "same_sign",
+          "thresholds": {
+            "SPY": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "QQQ": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "BTC-USD": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "BTC-USD:daily_change_pct",
+            "QQQ:daily_change_pct",
+            "SPY:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_37523896535ca9f2",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_equity_index_co_movement_v1_ff8d02ef65e2"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+        "rule_id": "equity_index_co_movement_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "co_movement",
+        "label": "SPY and QQQ daily co-movement",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "SPY",
+          "QQQ"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "same_sign",
+          "thresholds": {
+            "SPY": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "QQQ": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "QQQ:daily_change_pct",
+            "SPY:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_b5be00a5f39cc0b7",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_equity_index_divergence_v1_5f45b91736c8"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_equity_index_divergence_v1_5f45b91736c8",
+        "rule_id": "equity_index_divergence_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "divergence",
+        "label": "SPY and QQQ daily divergence",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "SPY",
+          "QQQ"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "opposite_sign_with_spread",
+          "thresholds": {
+            "SPY": {
+              "minimum_absolute_move": 0.0,
+              "unit": "percent"
+            },
+            "QQQ": {
+              "minimum_absolute_move": 0.0,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": 1.0,
+          "spread_threshold_unit": "percentage_points",
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "QQQ:daily_change_pct",
+            "SPY:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_43a76b626a91d701",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_equity_volatility_inverse_move_v1_f1b870e3f543"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
+        "rule_id": "equity_volatility_inverse_move_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "inverse_movement",
+        "label": "Equity indexes and VIX inverse daily movement",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "SPY",
+          "QQQ",
+          "VIX"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "equity_pair_inverse_third",
+          "thresholds": {
+            "SPY": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "QQQ": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "VIX": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "QQQ:daily_change_pct",
+            "SPY:daily_change_pct",
+            "VIX:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    },
+    {
+      "object_id": "int_signal_551d1328d1e3a4ad",
+      "object_type": "cross_asset_signal",
+      "source_artifact": "market_signals.json",
+      "source_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
+      "source_generated_at": "2026-08-27T17:27:37.160318Z",
+      "validation_status": "validated",
+      "data_status": "insufficient_data",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_relationships_2923ca683ae97030"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_gold_dollar_inverse_move_v1_4514042730ae"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "signal_id": "sig_gold_dollar_inverse_move_v1_4514042730ae",
+        "rule_id": "gold_dollar_inverse_move_v1",
+        "signal_type": "cross_asset_relationship",
+        "relationship_kind": "inverse_movement",
+        "label": "Gold and DXY inverse daily movement",
+        "state": "insufficient_data",
+        "condition_met": null,
+        "required_assets": [
+          "GOLD",
+          "DXY"
+        ],
+        "observed_values": [],
+        "rule_evaluation": {
+          "operator": "opposite_sign",
+          "thresholds": {
+            "GOLD": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            },
+            "DXY": {
+              "minimum_absolute_move": 0.1,
+              "unit": "percent"
+            }
+          },
+          "spread_threshold": null,
+          "spread_threshold_unit": null,
+          "maximum_time_gap_hours": 36.0,
+          "actual_time_gap_hours": null,
+          "thresholds_met": null,
+          "comparison_result": null,
+          "rule_version": "v1"
+        },
+        "evidence_refs": {
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": []
+        },
+        "confidence": {
+          "score": 0.0,
+          "label": "insufficient",
+          "basis": "data_quality"
+        },
+        "data_quality": {
+          "status": "unavailable",
+          "issues": [
+            "missing_required_observation"
+          ],
+          "missing_inputs": [
+            "DXY:daily_change_pct",
+            "GOLD:daily_change_pct"
+          ],
+          "stale_observation_ids": [],
+          "conflicting_inputs": []
+        },
+        "limitations": [
+          "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
+          "One or more required observations are unavailable."
+        ]
+      }
+    }
+  ],
+  "upcoming_events": [],
+  "data_quality_risks": [
+    {
+      "object_id": "int_risk_9f064d3f3ba6a9fb",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_input_coverage_degraded_v1_1cf1af0ddcc53a1e"
+        ],
+        "coverage_inputs": [
+          "existing_evidence"
+        ]
+      },
+      "payload": {
+        "risk_id": "rsk_input_coverage_degraded_v1_1cf1af0ddcc53a1e",
+        "rule_id": "input_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Degraded input coverage: existing_evidence",
+        "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "input_type": "existing_evidence",
+          "artifact": "evidence.json",
+          "coverage_status": "unavailable",
+          "record_count": 0,
+          "stale_record_count": 0
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [],
+          "regime_dimension_ids": [],
+          "coverage_inputs": [
+            "existing_evidence"
+          ]
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "artifact_coverage_metadata"
+        },
+        "limitations": [
+          "This item concerns data reliability, not market prices."
+        ]
+      }
+    },
+    {
+      "object_id": "int_risk_b08232cc9826f1f5",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_input_coverage_degraded_v1_850c5ecba1c7d212"
+        ],
+        "coverage_inputs": [
+          "economic_calendar"
+        ]
+      },
+      "payload": {
+        "risk_id": "rsk_input_coverage_degraded_v1_850c5ecba1c7d212",
+        "rule_id": "input_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Degraded input coverage: economic_calendar",
+        "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "input_type": "economic_calendar",
+          "artifact": "economic_calendar.json",
+          "coverage_status": "unavailable",
+          "record_count": 0,
+          "stale_record_count": 0
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [],
+          "regime_dimension_ids": [],
+          "coverage_inputs": [
+            "economic_calendar"
+          ]
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "artifact_coverage_metadata"
+        },
+        "limitations": [
+          "This item concerns data reliability, not market prices."
+        ]
+      }
+    },
+    {
+      "object_id": "int_risk_a22a76dc4d4aca3d",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_input_coverage_degraded_v1_accae6621acac1d4"
+        ],
+        "coverage_inputs": [
+          "market_observations"
+        ]
+      },
+      "payload": {
+        "risk_id": "rsk_input_coverage_degraded_v1_accae6621acac1d4",
+        "rule_id": "input_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Degraded input coverage: market_observations",
+        "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "input_type": "market_observations",
+          "artifact": "observations.json",
+          "coverage_status": "unavailable",
+          "record_count": 0,
+          "stale_record_count": 0
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [],
+          "regime_dimension_ids": [],
+          "coverage_inputs": [
+            "market_observations"
+          ]
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "artifact_coverage_metadata"
+        },
+        "limitations": [
+          "This item concerns data reliability, not market prices."
+        ]
+      }
+    },
+    {
+      "object_id": "int_risk_3e27d6138c9912df",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_input_coverage_degraded_v1_c0af9ca21691ff9e"
+        ],
+        "coverage_inputs": [
+          "news_events"
+        ]
+      },
+      "payload": {
+        "risk_id": "rsk_input_coverage_degraded_v1_c0af9ca21691ff9e",
+        "rule_id": "input_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Degraded input coverage: news_events",
+        "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "input_type": "news_events",
+          "artifact": "events.json",
+          "coverage_status": "unavailable",
+          "record_count": 0,
+          "stale_record_count": 0
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [],
+          "regime_dimension_ids": [],
+          "coverage_inputs": [
+            "news_events"
+          ]
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "artifact_coverage_metadata"
+        },
+        "limitations": [
+          "This item concerns data reliability, not market prices."
+        ]
+      }
+    },
+    {
+      "object_id": "int_risk_a3bc41dc6c6ac48f",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_input_coverage_degraded_v1_d473656ecece5f8e"
+        ],
+        "coverage_inputs": [
+          "macro_observations"
+        ]
+      },
+      "payload": {
+        "risk_id": "rsk_input_coverage_degraded_v1_d473656ecece5f8e",
+        "rule_id": "input_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Degraded input coverage: macro_observations",
+        "description": "The consolidated Evidence input reports incomplete or stale coverage.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "input_type": "macro_observations",
+          "artifact": "observations.json",
+          "coverage_status": "unavailable",
+          "record_count": 0,
+          "stale_record_count": 0
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [],
+          "regime_dimension_ids": [],
+          "coverage_inputs": [
+            "macro_observations"
+          ]
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "artifact_coverage_metadata"
+        },
+        "limitations": [
+          "This item concerns data reliability, not market prices."
+        ]
+      }
+    },
+    {
+      "object_id": "int_risk_6db037225cbfe23d",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_53689a02d99c",
+          "sig_dollar_yield_co_movement_v1_c4a307baad88",
+          "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+          "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+          "sig_equity_volatility_inverse_move_v1_f1b870e3f543"
+        ],
+        "regime_dimension_ids": [
+          "cross_asset_alignment",
+          "crypto",
+          "dollar_yield",
+          "equity",
+          "volatility"
+        ],
+        "risk_ids": [
+          "rsk_market_regime_coverage_degraded_v1_20d52c4a1b0f550c"
+        ],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "risk_id": "rsk_market_regime_coverage_degraded_v1_20d52c4a1b0f550c",
+        "rule_id": "market_regime_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Current market regime coverage degraded",
+        "description": "The current-condition classifier reports partial or insufficient eligible coverage.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "artifact_status": "unavailable",
+          "classification": null,
+          "eligible_dimension_count": 0,
+          "eligible_weight": 0.0
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df",
+            "run_20260827T172737Z_regime_29a799bae33da2c2",
+            "run_20260827T172737Z_relationships_2923ca683ae97030"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [
+            "sig_crypto_co_movement_v1_53689a02d99c",
+            "sig_dollar_yield_co_movement_v1_c4a307baad88",
+            "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+            "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+            "sig_equity_volatility_inverse_move_v1_f1b870e3f543"
+          ],
+          "regime_dimension_ids": [
+            "cross_asset_alignment",
+            "crypto",
+            "dollar_yield",
+            "equity",
+            "volatility"
+          ],
+          "coverage_inputs": []
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "deterministic_regime_metadata"
+        },
+        "limitations": [
+          "No unavailable regime is treated as mixed."
+        ]
+      }
+    },
+    {
+      "object_id": "int_risk_4bdb10474b452e59",
+      "object_type": "data_quality_risk",
+      "source_artifact": "risk_monitor.json",
+      "source_run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
+      "source_generated_at": "2026-08-27T17:27:37.167543Z",
+      "validation_status": "validated",
+      "data_status": "detected",
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [],
+        "detected_at": [
+          "2026-08-27T17:27:37.167543Z"
+        ]
+      },
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260827T172737Z_consolidated_09d138d0e91042df",
+          "run_20260827T172737Z_regime_29a799bae33da2c2",
+          "run_20260827T172737Z_relationships_2923ca683ae97030",
+          "run_20260827T172737Z_risk_513224477d71c4e7"
+        ],
+        "evidence_bundle_ids": [],
+        "source_ids": [],
+        "observation_ids": [],
+        "event_ids": [],
+        "evidence_ids": [],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_53689a02d99c",
+          "sig_dollar_fx_quote_alignment_v1_cb0110e8e493",
+          "sig_dollar_yield_co_movement_v1_c4a307baad88",
+          "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+          "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+          "sig_equity_index_divergence_v1_5f45b91736c8",
+          "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
+          "sig_gold_dollar_inverse_move_v1_4514042730ae"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_market_signal_coverage_degraded_v1_19d895dc003dad90"
+        ],
+        "coverage_inputs": []
+      },
+      "payload": {
+        "risk_id": "rsk_market_signal_coverage_degraded_v1_19d895dc003dad90",
+        "rule_id": "market_signal_coverage_degraded_v1",
+        "category": "data_quality",
+        "status": "detected",
+        "attention_level": "high",
+        "title": "Cross-asset relationship coverage degraded",
+        "description": "One or more cross-asset relationship evaluations are stale or incomplete.",
+        "related_assets": [],
+        "time_window": {
+          "detected_at": "2026-08-27T17:27:37.167543Z"
+        },
+        "observed_facts": {
+          "artifact_status": "unavailable",
+          "state_counts": {
+            "observed": 0,
+            "not_observed": 0,
+            "stale_data": 0,
+            "insufficient_data": 8
+          }
+        },
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260827T172737Z_consolidated_09d138d0e91042df",
+            "run_20260827T172737Z_regime_29a799bae33da2c2",
+            "run_20260827T172737Z_relationships_2923ca683ae97030"
+          ],
+          "evidence_bundle_ids": [],
+          "source_ids": [],
+          "observation_ids": [],
+          "event_ids": [],
+          "evidence_ids": [],
+          "signal_ids": [
+            "sig_crypto_co_movement_v1_53689a02d99c",
+            "sig_dollar_fx_quote_alignment_v1_cb0110e8e493",
+            "sig_dollar_yield_co_movement_v1_c4a307baad88",
+            "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+            "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+            "sig_equity_index_divergence_v1_5f45b91736c8",
+            "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
+            "sig_gold_dollar_inverse_move_v1_4514042730ae"
+          ],
+          "regime_dimension_ids": [],
+          "coverage_inputs": []
+        },
+        "verification": {
+          "level": "verified",
+          "score": 1.0,
+          "basis": "deterministic_signal_metadata"
+        },
+        "limitations": [
+          "This item concerns analytical coverage only."
+        ]
+      }
+    }
+  ],
+  "observed_market_stress": [],
+  "provenance_catalog": {
+    "evidence_bundles": [],
+    "source_records": [],
+    "observation_records": [],
+    "event_records": [],
+    "evidence_records": []
+  },
+  "warnings": [
+    "upstream_unavailable:evidence_bundle.json",
+    "upstream_unavailable:market_signals.json",
+    "upstream_unavailable:market_regime.json",
+    "upstream_partial:risk_monitor.json",
+    "no_current_substantive_intelligence",
+    "provenance_catalog_empty"
+  ],
+  "limitations": [
+    "structured_assembly_only",
+    "no_new_interpretation",
+    "no_market_outlook_or_trade_action"
+  ]
+}
