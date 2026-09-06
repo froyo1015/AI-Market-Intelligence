@@ -1,33 +1,57 @@
 {
   "schema_version": "1.0",
   "artifact_type": "market_signals",
-  "run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
-  "report_date": "2026-08-28",
-  "generated_at": "2026-08-27T17:27:37.160318Z",
-  "status": "unavailable",
+  "run_id": "run_20260903T094941Z_relationships_ec87c2fc99bc03db",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:41.980662Z",
+  "status": "partial",
   "input_artifact": "evidence_bundle.json",
-  "input_run_id": "run_20260827T172737Z_consolidated_09d138d0e91042df",
+  "input_run_id": "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
   "rule_set_version": "cross_asset_rules_v1",
   "warnings": [
-    "Input evidence coverage is unavailable.",
-    "8 relationship rule(s) have insufficient data."
+    "Input evidence coverage is partial."
   ],
   "signal_count": 8,
-  "observed_count": 0,
+  "observed_count": 5,
   "signals": [
     {
-      "signal_id": "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+      "signal_id": "sig_equity_index_co_movement_v1_8549080eb48d",
       "rule_id": "equity_index_co_movement_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "co_movement",
       "label": "SPY and QQQ daily co-movement",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "observed",
+      "condition_met": true,
       "required_assets": [
         "SPY",
         "QQQ"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "same_sign",
         "thresholds": {
@@ -43,53 +67,83 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 0.0,
+        "thresholds_met": true,
+        "comparison_result": true,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "QQQ:daily_change_pct",
-          "SPY:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_crypto_co_movement_v1_53689a02d99c",
+      "signal_id": "sig_crypto_co_movement_v1_aecafb33f76e",
       "rule_id": "crypto_co_movement_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "co_movement",
       "label": "BTC-USD and ETH-USD daily co-movement",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "observed",
+      "condition_met": true,
       "required_assets": [
         "BTC-USD",
         "ETH-USD"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "BTC-USD",
+          "metric": "daily_change_pct",
+          "value": 0.3966,
+          "unit": "percent",
+          "as_of": "2026-09-03T00:00:00Z",
+          "observation_id": "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_4cb1e81b79936ae9b10b"
+          ]
+        },
+        {
+          "asset": "ETH-USD",
+          "metric": "daily_change_pct",
+          "value": 0.1149,
+          "unit": "percent",
+          "as_of": "2026-09-03T00:00:00Z",
+          "observation_id": "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6416c8e31707f297c728"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "same_sign",
         "thresholds": {
@@ -105,54 +159,96 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 0.0,
+        "thresholds_met": true,
+        "comparison_result": true,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_4cb1e81b79936ae9b10b",
+          "ebd_6416c8e31707f297c728"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_09_03t00_00_00z",
+          "evd_eth_usd_market_move_2026_09_03t00_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "BTC-USD:daily_change_pct",
-          "ETH-USD:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+      "signal_id": "sig_equity_crypto_co_movement_v1_2f9b6e9b0752",
       "rule_id": "equity_crypto_co_movement_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "co_movement",
       "label": "Equity indexes and BTC-USD daily co-movement",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "observed",
+      "condition_met": true,
       "required_assets": [
         "SPY",
         "QQQ",
         "BTC-USD"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "BTC-USD",
+          "metric": "daily_change_pct",
+          "value": 0.3966,
+          "unit": "percent",
+          "as_of": "2026-09-03T00:00:00Z",
+          "observation_id": "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_4cb1e81b79936ae9b10b"
+          ]
+        },
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "same_sign",
         "thresholds": {
@@ -172,55 +268,99 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 20.0,
+        "thresholds_met": true,
+        "comparison_result": true,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_4cb1e81b79936ae9b10b",
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_09_03t00_00_00z",
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "BTC-USD:daily_change_pct",
-          "QQQ:daily_change_pct",
-          "SPY:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
+      "signal_id": "sig_equity_volatility_inverse_move_v1_61ace3e32c42",
       "rule_id": "equity_volatility_inverse_move_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "inverse_movement",
       "label": "Equity indexes and VIX inverse daily movement",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "not_observed",
+      "condition_met": false,
       "required_assets": [
         "SPY",
         "QQQ",
         "VIX"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        },
+        {
+          "asset": "VIX",
+          "metric": "daily_change_pct",
+          "value": 0.1316,
+          "unit": "percent",
+          "as_of": "2026-09-03T05:00:00Z",
+          "observation_id": "obs_vix_daily_change_pct_2026_09_03t05_00_00z",
+          "source_id": "src_yahoo_finance_vix",
+          "evidence_bundle_ids": [
+            "ebd_f88af88c3ffe6dbbd6a6"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "equity_pair_inverse_third",
         "thresholds": {
@@ -240,54 +380,87 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 25.0,
+        "thresholds_met": true,
+        "comparison_result": false,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294",
+          "ebd_f88af88c3ffe6dbbd6a6"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_vix_daily_change_pct_2026_09_03t05_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z",
+          "evd_vix_market_move_2026_09_03t05_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.75,
+        "label": "medium",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "QQQ:daily_change_pct",
-          "SPY:daily_change_pct",
-          "VIX:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_gold_dollar_inverse_move_v1_4514042730ae",
+      "signal_id": "sig_gold_dollar_inverse_move_v1_b788f58b52f2",
       "rule_id": "gold_dollar_inverse_move_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "inverse_movement",
       "label": "Gold and DXY inverse daily movement",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "observed",
+      "condition_met": true,
       "required_assets": [
         "GOLD",
         "DXY"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "DXY",
+          "metric": "daily_change_pct",
+          "value": -0.3224,
+          "unit": "percent",
+          "as_of": "2026-09-03T04:00:00Z",
+          "observation_id": "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "source_id": "src_yahoo_finance_dxy",
+          "evidence_bundle_ids": [
+            "ebd_cb82f4dc2e067c02f2b1"
+          ]
+        },
+        {
+          "asset": "GOLD",
+          "metric": "daily_change_pct",
+          "value": 2.5445,
+          "unit": "percent",
+          "as_of": "2026-09-03T04:00:00Z",
+          "observation_id": "obs_gold_daily_change_pct_2026_09_03t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_8c7e99b1acb0ae62a341"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "opposite_sign",
         "thresholds": {
@@ -303,54 +476,97 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 0.0,
+        "thresholds_met": true,
+        "comparison_result": true,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_8c7e99b1acb0ae62a341",
+          "ebd_cb82f4dc2e067c02f2b1"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy"
+        ],
+        "observation_ids": [
+          "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "obs_gold_daily_change_pct_2026_09_03t04_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_dxy_market_move_2026_09_03t04_00_00z",
+          "evd_gold_market_move_2026_09_03t04_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.75,
+        "label": "medium",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "DXY:daily_change_pct",
-          "GOLD:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_dollar_fx_quote_alignment_v1_cb0110e8e493",
+      "signal_id": "sig_dollar_fx_quote_alignment_v1_99e634155f1f",
       "rule_id": "dollar_fx_quote_alignment_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "quote_alignment",
       "label": "DXY and major FX quote alignment",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "observed",
+      "condition_met": true,
       "required_assets": [
         "DXY",
         "EURUSD",
         "USDJPY"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "DXY",
+          "metric": "daily_change_pct",
+          "value": -0.3224,
+          "unit": "percent",
+          "as_of": "2026-09-03T04:00:00Z",
+          "observation_id": "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "source_id": "src_yahoo_finance_dxy",
+          "evidence_bundle_ids": [
+            "ebd_cb82f4dc2e067c02f2b1"
+          ]
+        },
+        {
+          "asset": "EURUSD",
+          "metric": "daily_change_pct",
+          "value": 0.1161,
+          "unit": "percent",
+          "as_of": "2026-09-02T23:00:00Z",
+          "observation_id": "obs_eurusd_daily_change_pct_2026_09_02t23_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_4546fec4d63b69066be0"
+          ]
+        },
+        {
+          "asset": "USDJPY",
+          "metric": "daily_change_pct",
+          "value": -2.4869,
+          "unit": "percent",
+          "as_of": "2026-09-02T23:00:00Z",
+          "observation_id": "obs_usdjpy_daily_change_pct_2026_09_02t23_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_c307bdcf93780136ea41"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "dollar_fx_quote_alignment",
         "thresholds": {
@@ -370,54 +586,87 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 5.0,
+        "thresholds_met": true,
+        "comparison_result": true,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_4546fec4d63b69066be0",
+          "ebd_c307bdcf93780136ea41",
+          "ebd_cb82f4dc2e067c02f2b1"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy"
+        ],
+        "observation_ids": [
+          "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "obs_eurusd_daily_change_pct_2026_09_02t23_00_00z",
+          "obs_usdjpy_daily_change_pct_2026_09_02t23_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_dxy_market_move_2026_09_03t04_00_00z",
+          "evd_eurusd_market_move_2026_09_02t23_00_00z",
+          "evd_usdjpy_market_move_2026_09_02t23_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.75,
+        "label": "medium",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "DXY:daily_change_pct",
-          "EURUSD:daily_change_pct",
-          "USDJPY:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_equity_index_divergence_v1_5f45b91736c8",
+      "signal_id": "sig_equity_index_divergence_v1_c206ac641826",
       "rule_id": "equity_index_divergence_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "divergence",
       "label": "SPY and QQQ daily divergence",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "not_observed",
+      "condition_met": false,
       "required_assets": [
         "SPY",
         "QQQ"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "opposite_sign_with_spread",
         "thresholds": {
@@ -433,53 +682,83 @@
         "spread_threshold": 1.0,
         "spread_threshold_unit": "percentage_points",
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 0.0,
+        "thresholds_met": true,
+        "comparison_result": false,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "QQQ:daily_change_pct",
-          "SPY:daily_change_pct"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     },
     {
-      "signal_id": "sig_dollar_yield_co_movement_v1_c4a307baad88",
+      "signal_id": "sig_dollar_yield_co_movement_v1_680ed3bbbf67",
       "rule_id": "dollar_yield_co_movement_v1",
       "signal_type": "cross_asset_relationship",
       "relationship_kind": "co_movement",
       "label": "DXY and US10Y daily co-movement",
-      "state": "insufficient_data",
-      "condition_met": null,
+      "state": "not_observed",
+      "condition_met": false,
       "required_assets": [
         "DXY",
         "US10Y"
       ],
-      "observed_values": [],
+      "observed_values": [
+        {
+          "asset": "DXY",
+          "metric": "daily_change_pct",
+          "value": -0.3224,
+          "unit": "percent",
+          "as_of": "2026-09-03T04:00:00Z",
+          "observation_id": "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "source_id": "src_yahoo_finance_dxy",
+          "evidence_bundle_ids": [
+            "ebd_cb82f4dc2e067c02f2b1"
+          ]
+        },
+        {
+          "asset": "US10Y",
+          "metric": "daily_change_bps",
+          "value": 0.0,
+          "unit": "basis_points",
+          "as_of": "2026-09-02T05:00:00Z",
+          "observation_id": "obs_us10y_daily_change_bps_2026_09_02t05_00_00z",
+          "source_id": "src_yahoo_finance_us10y",
+          "evidence_bundle_ids": [
+            "ebd_7159cab27e384dda620c"
+          ]
+        }
+      ],
       "rule_evaluation": {
         "operator": "same_sign",
         "thresholds": {
@@ -495,39 +774,52 @@
         "spread_threshold": null,
         "spread_threshold_unit": null,
         "maximum_time_gap_hours": 36.0,
-        "actual_time_gap_hours": null,
-        "thresholds_met": null,
-        "comparison_result": null,
+        "actual_time_gap_hours": 23.0,
+        "thresholds_met": false,
+        "comparison_result": false,
         "rule_version": "v1"
       },
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_7159cab27e384dda620c",
+          "ebd_cb82f4dc2e067c02f2b1"
+        ],
+        "source_ids": [
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_us10y"
+        ],
+        "observation_ids": [
+          "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_09_02t05_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_dxy_market_move_2026_09_03t04_00_00z",
+          "evd_us10y_market_move_2026_09_02t05_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.75,
+        "label": "medium",
         "basis": "data_quality"
       },
       "data_quality": {
-        "status": "unavailable",
-        "issues": [
-          "missing_required_observation"
-        ],
-        "missing_inputs": [
-          "DXY:daily_change_pct",
-          "US10Y:daily_change_bps"
-        ],
+        "status": "available",
+        "issues": [],
+        "missing_inputs": [],
         "stale_observation_ids": [],
         "conflicting_inputs": []
       },
       "limitations": [
-        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome.",
-        "One or more required observations are unavailable."
+        "This relationship describes same-window observations and does not establish causality, persistence, or a future outcome."
       ]
     }
-  ]
+  ],
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "age_seconds": 107381.981,
+  "freshness_status": "current",
+  "freshness_basis": "source_timestamp",
+  "stale_after_seconds": 172800,
+  "freshness_contract_version": "1.0"
 }

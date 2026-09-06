@@ -1,214 +1,449 @@
 {
   "schema_version": "1.0",
   "artifact_type": "market_regime",
-  "run_id": "run_20260827T172737Z_regime_29a799bae33da2c2",
-  "report_date": "2026-08-28",
-  "generated_at": "2026-08-27T17:27:37.163872Z",
-  "status": "unavailable",
+  "run_id": "run_20260903T094942Z_regime_104101e92401b5e8",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:42.005953Z",
+  "status": "available",
   "classification_scope": "current_observed_conditions",
-  "classification": null,
+  "classification": "risk_on",
   "rule_set_version": "market_regime_rules_v1",
   "input_refs": {
-    "evidence_bundle_run_id": "run_20260827T172737Z_consolidated_09d138d0e91042df",
-    "market_signals_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030"
+    "evidence_bundle_run_id": "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+    "market_signals_run_id": "run_20260903T094941Z_relationships_ec87c2fc99bc03db"
   },
   "input_freshness": {
     "status": "current",
-    "checked_at": "2026-08-27T17:27:37.163872Z",
+    "checked_at": "2026-09-03T09:49:42.005953Z",
     "maximum_artifact_age_hours": 24.0,
     "artifacts": {
       "evidence_bundle.json": {
-        "generated_at": "2026-08-27T17:27:37.159456Z",
-        "age_hours": 1e-06
+        "generated_at": "2026-09-03T09:49:41.942940Z",
+        "age_hours": 1.8e-05
       },
       "market_signals.json": {
-        "generated_at": "2026-08-27T17:27:37.160318Z",
-        "age_hours": 1e-06
+        "generated_at": "2026-09-03T09:49:41.980662Z",
+        "age_hours": 7e-06
       }
     },
     "stale_artifacts": [],
     "stale_supporting_observation_ids": []
   },
   "score": {
-    "weighted_sum": 0,
-    "eligible_weight": 0,
-    "eligible_dimension_count": 0,
-    "normalized_score": 0.0,
+    "weighted_sum": 0.35,
+    "eligible_weight": 1.0,
+    "eligible_dimension_count": 5,
+    "normalized_score": 0.35,
     "risk_on_threshold": 0.25,
     "risk_off_threshold": -0.25,
     "minimum_eligible_weight": 0.65,
     "minimum_eligible_dimensions": 3,
-    "anchor_present": false,
+    "anchor_present": true,
     "state_weights": {
-      "risk_on": 0,
-      "risk_off": 0,
-      "mixed": 0
+      "risk_on": 0.6,
+      "risk_off": 0.25,
+      "mixed": 0.15
     }
   },
   "confidence": {
-    "score": 0.0,
-    "label": "insufficient",
+    "score": 0.8375,
+    "label": "high",
     "basis": "coverage_quality_agreement",
-    "coverage_score": 0,
-    "input_quality": 0.0,
-    "agreement_score": 0.0
+    "coverage_score": 1.0,
+    "input_quality": 0.75,
+    "agreement_score": 0.6
   },
   "dimensions": [
     {
       "dimension_id": "equity",
       "weight": 0.3,
-      "signal_id": "sig_equity_index_co_movement_v1_ff8d02ef65e2",
+      "signal_id": "sig_equity_index_co_movement_v1_8549080eb48d",
       "rule_id": "equity_index_co_movement_v1",
-      "eligibility": "unavailable",
-      "observed_state": "unavailable",
-      "contribution": null,
-      "weighted_contribution": null,
-      "observed_values": [],
+      "eligibility": "eligible",
+      "observed_state": "risk_on",
+      "contribution": 1.0,
+      "weighted_contribution": 0.3,
+      "observed_values": [
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        }
+      ],
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "reason_codes": [
-        "missing_required_asset_value",
-        "signal_data_quality_unavailable",
-        "signal_insufficient_data"
+        "current_relationship_observed"
       ]
     },
     {
       "dimension_id": "volatility",
       "weight": 0.25,
-      "signal_id": "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
+      "signal_id": "sig_equity_volatility_inverse_move_v1_61ace3e32c42",
       "rule_id": "equity_volatility_inverse_move_v1",
-      "eligibility": "unavailable",
-      "observed_state": "unavailable",
-      "contribution": null,
-      "weighted_contribution": null,
-      "observed_values": [],
+      "eligibility": "eligible",
+      "observed_state": "risk_off",
+      "contribution": -1.0,
+      "weighted_contribution": -0.25,
+      "observed_values": [
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        },
+        {
+          "asset": "VIX",
+          "metric": "daily_change_pct",
+          "value": 0.1316,
+          "unit": "percent",
+          "as_of": "2026-09-03T05:00:00Z",
+          "observation_id": "obs_vix_daily_change_pct_2026_09_03t05_00_00z",
+          "source_id": "src_yahoo_finance_vix",
+          "evidence_bundle_ids": [
+            "ebd_f88af88c3ffe6dbbd6a6"
+          ]
+        }
+      ],
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294",
+          "ebd_f88af88c3ffe6dbbd6a6"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_vix_daily_change_pct_2026_09_03t05_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z",
+          "evd_vix_market_move_2026_09_03t05_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.75,
+        "label": "medium",
         "basis": "data_quality"
       },
       "reason_codes": [
-        "missing_required_asset_value",
-        "signal_data_quality_unavailable",
-        "signal_insufficient_data"
+        "relationship_condition_not_observed"
       ]
     },
     {
       "dimension_id": "crypto",
       "weight": 0.2,
-      "signal_id": "sig_crypto_co_movement_v1_53689a02d99c",
+      "signal_id": "sig_crypto_co_movement_v1_aecafb33f76e",
       "rule_id": "crypto_co_movement_v1",
-      "eligibility": "unavailable",
-      "observed_state": "unavailable",
-      "contribution": null,
-      "weighted_contribution": null,
-      "observed_values": [],
+      "eligibility": "eligible",
+      "observed_state": "risk_on",
+      "contribution": 1.0,
+      "weighted_contribution": 0.2,
+      "observed_values": [
+        {
+          "asset": "BTC-USD",
+          "metric": "daily_change_pct",
+          "value": 0.3966,
+          "unit": "percent",
+          "as_of": "2026-09-03T00:00:00Z",
+          "observation_id": "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_4cb1e81b79936ae9b10b"
+          ]
+        },
+        {
+          "asset": "ETH-USD",
+          "metric": "daily_change_pct",
+          "value": 0.1149,
+          "unit": "percent",
+          "as_of": "2026-09-03T00:00:00Z",
+          "observation_id": "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6416c8e31707f297c728"
+          ]
+        }
+      ],
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_4cb1e81b79936ae9b10b",
+          "ebd_6416c8e31707f297c728"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_09_03t00_00_00z",
+          "evd_eth_usd_market_move_2026_09_03t00_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "reason_codes": [
-        "missing_required_asset_value",
-        "signal_data_quality_unavailable",
-        "signal_insufficient_data"
+        "current_relationship_observed"
       ]
     },
     {
       "dimension_id": "dollar_yield",
       "weight": 0.15,
-      "signal_id": "sig_dollar_yield_co_movement_v1_c4a307baad88",
+      "signal_id": "sig_dollar_yield_co_movement_v1_680ed3bbbf67",
       "rule_id": "dollar_yield_co_movement_v1",
-      "eligibility": "unavailable",
-      "observed_state": "unavailable",
-      "contribution": null,
-      "weighted_contribution": null,
-      "observed_values": [],
+      "eligibility": "eligible",
+      "observed_state": "mixed",
+      "contribution": 0.0,
+      "weighted_contribution": 0.0,
+      "observed_values": [
+        {
+          "asset": "DXY",
+          "metric": "daily_change_pct",
+          "value": -0.3224,
+          "unit": "percent",
+          "as_of": "2026-09-03T04:00:00Z",
+          "observation_id": "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "source_id": "src_yahoo_finance_dxy",
+          "evidence_bundle_ids": [
+            "ebd_cb82f4dc2e067c02f2b1"
+          ]
+        },
+        {
+          "asset": "US10Y",
+          "metric": "daily_change_bps",
+          "value": 0.0,
+          "unit": "basis_points",
+          "as_of": "2026-09-02T05:00:00Z",
+          "observation_id": "obs_us10y_daily_change_bps_2026_09_02t05_00_00z",
+          "source_id": "src_yahoo_finance_us10y",
+          "evidence_bundle_ids": [
+            "ebd_7159cab27e384dda620c"
+          ]
+        }
+      ],
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_7159cab27e384dda620c",
+          "ebd_cb82f4dc2e067c02f2b1"
+        ],
+        "source_ids": [
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_us10y"
+        ],
+        "observation_ids": [
+          "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_09_02t05_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_dxy_market_move_2026_09_03t04_00_00z",
+          "evd_us10y_market_move_2026_09_02t05_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.75,
+        "label": "medium",
         "basis": "data_quality"
       },
       "reason_codes": [
-        "missing_required_asset_value",
-        "signal_data_quality_unavailable",
-        "signal_insufficient_data"
+        "relationship_condition_not_observed"
       ]
     },
     {
       "dimension_id": "cross_asset_alignment",
       "weight": 0.1,
-      "signal_id": "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
+      "signal_id": "sig_equity_crypto_co_movement_v1_2f9b6e9b0752",
       "rule_id": "equity_crypto_co_movement_v1",
-      "eligibility": "unavailable",
-      "observed_state": "unavailable",
-      "contribution": null,
-      "weighted_contribution": null,
-      "observed_values": [],
+      "eligibility": "eligible",
+      "observed_state": "risk_on",
+      "contribution": 1.0,
+      "weighted_contribution": 0.1,
+      "observed_values": [
+        {
+          "asset": "BTC-USD",
+          "metric": "daily_change_pct",
+          "value": 0.3966,
+          "unit": "percent",
+          "as_of": "2026-09-03T00:00:00Z",
+          "observation_id": "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_4cb1e81b79936ae9b10b"
+          ]
+        },
+        {
+          "asset": "QQQ",
+          "metric": "daily_change_pct",
+          "value": 0.2261,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_6dbbb75ebc1538cda8b4"
+          ]
+        },
+        {
+          "asset": "SPY",
+          "metric": "daily_change_pct",
+          "value": 0.4437,
+          "unit": "percent",
+          "as_of": "2026-09-02T04:00:00Z",
+          "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "source_id": "src_yahoo_finance",
+          "evidence_bundle_ids": [
+            "ebd_a8e7955e1620946e1294"
+          ]
+        }
+      ],
       "evidence_refs": {
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_4cb1e81b79936ae9b10b",
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_a8e7955e1620946e1294"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z"
+        ],
         "event_ids": [],
-        "evidence_ids": []
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_09_03t00_00_00z",
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z"
+        ]
       },
       "confidence": {
-        "score": 0.0,
-        "label": "insufficient",
+        "score": 0.95,
+        "label": "high",
         "basis": "data_quality"
       },
       "reason_codes": [
-        "missing_required_asset_value",
-        "signal_data_quality_unavailable",
-        "signal_insufficient_data"
+        "current_relationship_observed"
       ]
     }
   ],
   "evidence_refs": {
-    "evidence_bundle_ids": [],
-    "source_ids": [],
-    "observation_ids": [],
+    "evidence_bundle_ids": [
+      "ebd_4cb1e81b79936ae9b10b",
+      "ebd_6416c8e31707f297c728",
+      "ebd_6dbbb75ebc1538cda8b4",
+      "ebd_7159cab27e384dda620c",
+      "ebd_a8e7955e1620946e1294",
+      "ebd_cb82f4dc2e067c02f2b1",
+      "ebd_f88af88c3ffe6dbbd6a6"
+    ],
+    "source_ids": [
+      "src_yahoo_finance",
+      "src_yahoo_finance_dxy",
+      "src_yahoo_finance_us10y",
+      "src_yahoo_finance_vix"
+    ],
+    "observation_ids": [
+      "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+      "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+      "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z",
+      "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+      "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+      "obs_us10y_daily_change_bps_2026_09_02t05_00_00z",
+      "obs_vix_daily_change_pct_2026_09_03t05_00_00z"
+    ],
     "event_ids": [],
-    "evidence_ids": []
+    "evidence_ids": [
+      "evd_btc_usd_market_move_2026_09_03t00_00_00z",
+      "evd_dxy_market_move_2026_09_03t04_00_00z",
+      "evd_eth_usd_market_move_2026_09_03t00_00_00z",
+      "evd_qqq_market_move_2026_09_02t04_00_00z",
+      "evd_spy_market_move_2026_09_02t04_00_00z",
+      "evd_us10y_market_move_2026_09_02t05_00_00z",
+      "evd_vix_market_move_2026_09_03t05_00_00z"
+    ]
   },
-  "warnings": [
-    "5 regime dimension(s) are unavailable.",
-    "Current evidence does not meet classification coverage rules."
-  ],
+  "warnings": [],
   "limitations": [
     "The classification describes current observations only.",
     "It does not establish causality, persistence, or later outcomes.",
     "The classifier does not provide investment or trading instructions."
-  ]
+  ],
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "age_seconds": 107382.006,
+  "freshness_status": "current",
+  "freshness_basis": "source_timestamp",
+  "stale_after_seconds": 172800,
+  "freshness_contract_version": "1.0"
 }

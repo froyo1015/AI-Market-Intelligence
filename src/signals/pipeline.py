@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
+from src.data.freshness import enrich_artifact_freshness
 from src.models.cross_asset_schema import MarketSignalsArtifact
 from src.signals.engine import build_market_signals_artifact
 from src.signals.validator import validate_market_signals_artifact
@@ -28,7 +29,7 @@ def run_market_signals_pipeline(
     evidence_bundle = read_evidence_bundle(input_path)
     artifact = build_market_signals_artifact(evidence_bundle)
     validate_market_signals_artifact(artifact.to_dict(), evidence_bundle)
-    write_market_signals_artifact(artifact, output_path)
+    write_market_signals_artifact(artifact, output_path, (evidence_bundle,))
     return artifact
 
 
@@ -53,11 +54,15 @@ def read_evidence_bundle(path: Path = DEFAULT_INPUT_PATH) -> Mapping[str, Any]:
 def write_market_signals_artifact(
     artifact: MarketSignalsArtifact,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    supporting_artifacts: Sequence[Mapping[str, Any]] = (),
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(
+        artifact.to_dict(), supporting_artifacts=supporting_artifacts
+    )
     temporary_path.write_text(
-        json.dumps(artifact.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)

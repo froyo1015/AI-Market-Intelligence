@@ -9,6 +9,7 @@ from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
 from src.consolidation.builder import build_consolidated_evidence_artifact
 from src.consolidation.validator import validate_consolidated_evidence_artifact
+from src.data.freshness import enrich_artifact_freshness
 from src.models.evidence_bundle_schema import ConsolidatedEvidenceArtifact
 
 
@@ -48,7 +49,12 @@ def run_consolidation_pipeline(
         input_errors=errors,
     )
     validate_consolidated_evidence_artifact(artifact.to_dict())
-    write_consolidated_evidence_artifact(artifact, output_path)
+    freshness_inputs = tuple(
+        payload for payload in payloads.values() if payload is not None
+    )
+    write_consolidated_evidence_artifact(
+        artifact, output_path, freshness_inputs
+    )
     return artifact
 
 
@@ -71,11 +77,15 @@ def read_optional_artifact(
 def write_consolidated_evidence_artifact(
     artifact: ConsolidatedEvidenceArtifact,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    supporting_artifacts: Sequence[Mapping[str, Any]] = (),
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(
+        artifact.to_dict(), supporting_artifacts=supporting_artifacts
+    )
     temporary_path.write_text(
-        json.dumps(artifact.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)

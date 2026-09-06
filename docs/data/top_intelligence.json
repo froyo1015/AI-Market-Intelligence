@@ -1,0 +1,276 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "top_intelligence",
+  "run_id": "run_20260903T094942Z_top_2fe9871b5822097f",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:42.135872Z",
+  "status": "complete",
+  "selection_scope": "current_validated_market_intelligence",
+  "rule_set_version": "top_intelligence_rules_v1",
+  "input_refs": {
+    "daily_intelligence_run_id": "run_20260903T094942Z_intelligence_8638df744a4ecf19"
+  },
+  "candidate_count": 12,
+  "eligible_count": 7,
+  "selected_count": 3,
+  "items": [
+    {
+      "rank": 1,
+      "item_id": "top_ef201411296af0ac",
+      "type": "market_regime",
+      "story_key": "market_state:risk_on",
+      "source_object_id": "run_20260903T094942Z_regime_104101e92401b5e8",
+      "headline": "Current market regime: risk_on",
+      "why": "The deterministic classifier used 5 eligible current dimensions; confidence is high.",
+      "monitor": "Monitor the existing regime dimensions and their current evidence coverage.",
+      "total_score": 81,
+      "score_breakdown": {
+        "freshness": 20,
+        "evidence_quality": 18,
+        "cross_asset_breadth": 15,
+        "event_proximity": 0,
+        "market_relevance": 15,
+        "confirmation": 10,
+        "risk_relevance": 3
+      },
+      "primary_theme": "market_regime",
+      "related_assets": [
+        "BTC-USD",
+        "DXY",
+        "ETH-USD",
+        "QQQ",
+        "SPY",
+        "US10Y",
+        "VIX"
+      ],
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+          "run_20260903T094941Z_relationships_ec87c2fc99bc03db",
+          "run_20260903T094942Z_regime_104101e92401b5e8"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_4cb1e81b79936ae9b10b",
+          "ebd_6416c8e31707f297c728",
+          "ebd_6dbbb75ebc1538cda8b4",
+          "ebd_7159cab27e384dda620c",
+          "ebd_a8e7955e1620946e1294",
+          "ebd_cb82f4dc2e067c02f2b1",
+          "ebd_f88af88c3ffe6dbbd6a6"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_us10y",
+          "src_yahoo_finance_vix"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z",
+          "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_09_02t05_00_00z",
+          "obs_vix_daily_change_pct_2026_09_03t05_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_09_03t00_00_00z",
+          "evd_dxy_market_move_2026_09_03t04_00_00z",
+          "evd_eth_usd_market_move_2026_09_03t00_00_00z",
+          "evd_qqq_market_move_2026_09_02t04_00_00z",
+          "evd_spy_market_move_2026_09_02t04_00_00z",
+          "evd_us10y_market_move_2026_09_02t05_00_00z",
+          "evd_vix_market_move_2026_09_03t05_00_00z"
+        ],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_aecafb33f76e",
+          "sig_dollar_yield_co_movement_v1_680ed3bbbf67",
+          "sig_equity_crypto_co_movement_v1_2f9b6e9b0752",
+          "sig_equity_index_co_movement_v1_8549080eb48d",
+          "sig_equity_volatility_inverse_move_v1_61ace3e32c42"
+        ],
+        "regime_dimension_ids": [
+          "cross_asset_alignment",
+          "crypto",
+          "dollar_yield",
+          "equity",
+          "volatility"
+        ],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "source_refs": [
+        "src_yahoo_finance",
+        "src_yahoo_finance_dxy",
+        "src_yahoo_finance_us10y",
+        "src_yahoo_finance_vix"
+      ],
+      "timestamps": {
+        "observed_at": [
+          "2026-09-02T04:00:00Z",
+          "2026-09-02T05:00:00Z",
+          "2026-09-03T00:00:00Z",
+          "2026-09-03T04:00:00Z",
+          "2026-09-03T05:00:00Z"
+        ],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "freshness_status": "current",
+      "validation_status": "validated"
+    },
+    {
+      "rank": 2,
+      "item_id": "top_98c52727f919916a",
+      "type": "upcoming_event",
+      "story_key": "event:evt_20260903_u_s_international_trade_in_goods_and_5ed967ecb2",
+      "source_object_id": "rsk_upcoming_official_event_v1_33fae68465aa5c86",
+      "headline": "Upcoming official event: U.S. International Trade in Goods and Services, July 2026",
+      "why": "The validated official calendar record is scheduled for 2026-09-03T12:30:00Z; impact is low.",
+      "monitor": "Monitor the official event record at 2026-09-03T12:30:00Z and any validated lifecycle update.",
+      "total_score": 80,
+      "score_breakdown": {
+        "freshness": 20,
+        "evidence_quality": 20,
+        "cross_asset_breadth": 10,
+        "event_proximity": 15,
+        "market_relevance": 5,
+        "confirmation": 10,
+        "risk_relevance": 0
+      },
+      "primary_theme": "upcoming_events",
+      "related_assets": [
+        "DXY",
+        "QQQ",
+        "SPY",
+        "US10Y"
+      ],
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+          "run_20260903T094941Z_relationships_ec87c2fc99bc03db",
+          "run_20260903T094942Z_regime_104101e92401b5e8",
+          "run_20260903T094942Z_risk_7db934988052ef5e"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_70eb06a1cf9a20519c76"
+        ],
+        "source_ids": [
+          "src_calendar_4a850d66272d3d7b"
+        ],
+        "observation_ids": [],
+        "event_ids": [
+          "evt_20260903_u_s_international_trade_in_goods_and_5ed967ecb2"
+        ],
+        "evidence_ids": [],
+        "signal_ids": [],
+        "regime_dimension_ids": [],
+        "risk_ids": [
+          "rsk_upcoming_official_event_v1_33fae68465aa5c86"
+        ],
+        "coverage_inputs": []
+      },
+      "source_refs": [
+        "src_calendar_4a850d66272d3d7b"
+      ],
+      "timestamps": {
+        "observed_at": [],
+        "scheduled_at": [
+          "2026-09-03T12:30:00Z"
+        ],
+        "detected_at": []
+      },
+      "freshness_status": "current",
+      "validation_status": "validated"
+    },
+    {
+      "rank": 3,
+      "item_id": "top_676bf8578ac614b2",
+      "type": "cross_asset_signal",
+      "story_key": "macro_state:usd_weakness",
+      "source_object_id": "sig_dollar_fx_quote_alignment_v1_99e634155f1f",
+      "headline": "Observed: DXY and major FX quote alignment",
+      "why": "The validated relationship condition is observed across DXY, EURUSD, USDJPY; DXY daily_change_pct=-0.3224 percent, EURUSD daily_change_pct=0.1161 percent, USDJPY daily_change_pct=-2.4869 percent.",
+      "monitor": "Monitor the same validated metrics and their observation timestamps on the next run.",
+      "total_score": 68,
+      "score_breakdown": {
+        "freshness": 20,
+        "evidence_quality": 18,
+        "cross_asset_breadth": 5,
+        "event_proximity": 0,
+        "market_relevance": 15,
+        "confirmation": 10,
+        "risk_relevance": 0
+      },
+      "primary_theme": "macro_rates",
+      "related_assets": [
+        "DXY",
+        "EURUSD",
+        "USDJPY"
+      ],
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+          "run_20260903T094941Z_relationships_ec87c2fc99bc03db"
+        ],
+        "evidence_bundle_ids": [
+          "ebd_4546fec4d63b69066be0",
+          "ebd_c307bdcf93780136ea41",
+          "ebd_cb82f4dc2e067c02f2b1"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy"
+        ],
+        "observation_ids": [
+          "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+          "obs_eurusd_daily_change_pct_2026_09_02t23_00_00z",
+          "obs_usdjpy_daily_change_pct_2026_09_02t23_00_00z"
+        ],
+        "event_ids": [],
+        "evidence_ids": [
+          "evd_dxy_market_move_2026_09_03t04_00_00z",
+          "evd_eurusd_market_move_2026_09_02t23_00_00z",
+          "evd_usdjpy_market_move_2026_09_02t23_00_00z"
+        ],
+        "signal_ids": [
+          "sig_dollar_fx_quote_alignment_v1_99e634155f1f"
+        ],
+        "regime_dimension_ids": [],
+        "risk_ids": [],
+        "coverage_inputs": []
+      },
+      "source_refs": [
+        "src_yahoo_finance",
+        "src_yahoo_finance_dxy"
+      ],
+      "timestamps": {
+        "observed_at": [
+          "2026-09-02T23:00:00Z",
+          "2026-09-03T04:00:00Z"
+        ],
+        "scheduled_at": [],
+        "detected_at": []
+      },
+      "freshness_status": "current",
+      "validation_status": "validated"
+    }
+  ],
+  "warnings": [
+    "semantic_story_duplicates_suppressed",
+    "duplicate_or_same_theme_candidates_suppressed"
+  ],
+  "limitations": [
+    "Selection uses current validated structured intelligence only.",
+    "Scores order observed conditions; they are not forecasts or trading signals.",
+    "Fewer than three items are published when distinct evidence is unavailable."
+  ],
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "age_seconds": 107382.136,
+  "freshness_status": "current",
+  "freshness_basis": "source_timestamp",
+  "stale_after_seconds": 172800,
+  "freshness_contract_version": "1.0"
+}

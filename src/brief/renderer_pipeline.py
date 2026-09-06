@@ -13,10 +13,12 @@ from src.brief.renderer_validator import (
     validate_rendered_brief,
 )
 from src.models.brief_renderer_schema import DeterministicBrief
+from src.top_intelligence.validator import validate_top_intelligence_artifact
 
 
 OUTPUT_DIRECTORY = Path(__file__).resolve().parents[1] / "output"
 DEFAULT_INPUT_PATH = OUTPUT_DIRECTORY / "daily_intelligence.json"
+DEFAULT_TOP_INPUT_PATH = OUTPUT_DIRECTORY / "top_intelligence.json"
 DEFAULT_OUTPUT_PATH = OUTPUT_DIRECTORY / "daily_market_brief.md"
 
 
@@ -27,25 +29,41 @@ class BriefRendererInputError(ValueError):
 def run_renderer_pipeline(
     input_path: Path = DEFAULT_INPUT_PATH,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    top_input_path: Optional[Path] = None,
 ) -> DeterministicBrief:
     artifact = load_daily_intelligence(input_path)
-    result = render_daily_market_brief(artifact)
-    validate_rendered_brief(result.markdown, artifact)
+    top_intelligence = None
+    if top_input_path is not None:
+        top_intelligence = load_top_intelligence(top_input_path)
+        validate_top_intelligence_artifact(top_intelligence, artifact)
+    result = render_daily_market_brief(artifact, top_intelligence)
+    validate_rendered_brief(result.markdown, artifact, top_intelligence)
     write_rendered_brief(result.markdown, output_path)
     return result
 
 
+def load_top_intelligence(input_path: Path) -> Dict[str, Any]:
+    payload = _load_json_object(input_path, "top intelligence")
+    if payload.get("artifact_type") != "top_intelligence":
+        raise BriefRendererInputError("renderer requires top_intelligence input")
+    return payload
+
+
 def load_daily_intelligence(input_path: Path) -> Dict[str, Any]:
+    return _load_json_object(input_path, "intelligence")
+
+
+def _load_json_object(input_path: Path, label: str) -> Dict[str, Any]:
     try:
         payload = json.loads(input_path.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
-        raise BriefRendererInputError(f"intelligence input not found: {input_path}") from exc
+        raise BriefRendererInputError(f"{label} input not found: {input_path}") from exc
     except OSError as exc:
-        raise BriefRendererInputError(f"intelligence input cannot be read: {exc}") from exc
+        raise BriefRendererInputError(f"{label} input cannot be read: {exc}") from exc
     except json.JSONDecodeError as exc:
-        raise BriefRendererInputError(f"intelligence input is invalid JSON: {exc}") from exc
+        raise BriefRendererInputError(f"{label} input is invalid JSON: {exc}") from exc
     if not isinstance(payload, dict):
-        raise BriefRendererInputError("intelligence input root must be an object")
+        raise BriefRendererInputError(f"{label} input root must be an object")
     return payload
 
 
@@ -62,6 +80,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Render validated structured intelligence as Markdown."
     )
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT_PATH)
+    parser.add_argument("--top-input", type=Path, default=DEFAULT_TOP_INPUT_PATH)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
     return parser
 
@@ -69,7 +88,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        result = run_renderer_pipeline(args.input, args.output)
+        result = run_renderer_pipeline(args.input, args.output, args.top_input)
     except (BriefRendererInputError, BriefRendererValidationError) as exc:
         print(f"Deterministic brief rendering failed: {exc}")
         return 1

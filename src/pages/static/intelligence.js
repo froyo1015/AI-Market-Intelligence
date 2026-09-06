@@ -14,14 +14,23 @@
   "use strict";
 
   const ENDPOINTS = {
+    topIntelligence: ["data/top_intelligence.json", "json"],
     dailyIntelligence: ["data/daily_intelligence.json", "json"],
     marketSignals: ["data/market_signals.json", "json"],
     marketRegime: ["data/market_regime.json", "json"],
     riskMonitor: ["data/risk_monitor.json", "json"],
     marketSnapshot: ["data/market_snapshot.json", "json"],
     macroSnapshot: ["data/macro_snapshot.json", "json"],
+    aiBrief: ["data/ai_market_brief.md", "text"],
+    runManifest: ["data/run_manifest.json", "json"],
     deterministicBrief: ["data/daily_market_brief.md", "text"]
   };
+  const MAX_BRIEF_CHARACTERS = 100000;
+  const GENERATION_FALLBACK_REASONS = [
+    "no_provider_configured", "provider_timeout", "provider_rate_limit",
+    "invalid_llm_output", "malformed_provider_response", "provider_error",
+    "pipeline_failure", "missing_generation_metadata"
+  ];
   const MARKET_ORDER = [
     "BTC-USD", "ETH-USD", "SPY", "QQQ", "GOLD", "DXY", "US10Y", "VIX"
   ];
@@ -63,6 +72,12 @@
     const signals = normalizeSignals(daily, resources.marketSignals);
     const risks = normalizeRisks(daily, resources.riskMonitor);
     const markets = normalizeMarkets(resources.marketSnapshot, resources.macroSnapshot);
+    const topIntelligence = normalizeTopIntelligence(resources.topIntelligence);
+    const aiBrief = normalizeAIBrief(
+      resources.aiBrief,
+      resources.deterministicBrief,
+      resources.runManifest
+    );
     const coverage = daily && Array.isArray(daily.coverage) ? daily.coverage : [];
     const intelligenceStatus = daily ? safeStatus(daily.status) : "unavailable";
     const freshness = overallFreshness(coverage, daily);
@@ -86,12 +101,259 @@
       freshnessStatus: freshness,
       validationStatus: validation,
       warnings: uniqueStrings(warnings),
+      aiBrief: aiBrief,
+      topIntelligence: topIntelligence,
       regime: regime,
       signals: signals,
       risks: risks,
       markets: markets,
       audit: buildAudit(daily, resources),
-      briefAvailable: typeof resources.deterministicBrief === "string"
+      deterministicBriefAvailable: typeof resources.deterministicBrief === "string"
+    };
+  }
+
+  function normalizeAIBrief(aiBriefInput, deterministicInput, manifestInput) {
+    const available = typeof aiBriefInput === "string"
+      && aiBriefInput.trim().length > 0
+      && aiBriefInput.length <= MAX_BRIEF_CHARACTERS;
+    if (!available) {
+      return {
+        available: false,
+        mode: "unavailable",
+        modeLabel: "Unavailable",
+        generatedAt: "unknown",
+        freshnessStatus: "unknown",
+        validationStatus: "unknown",
+        provider: null,
+        fallbackReason: null,
+        metadataSource: "none",
+        fallbackNote: "",
+        blocks: []
+      };
+    }
+
+    const manifest = asObject(manifestInput);
+    const modules = manifest && Array.isArray(manifest.modules) ? manifest.modules : [];
+    const moduleRecord = modules.map(asObject).find(function (item) {
+      return item && item.name === "grounded_ai_brief";
+    }) || null;
+    const artifacts = moduleRecord && Array.isArray(moduleRecord.artifacts)
+      ? moduleRecord.artifacts.map(asObject).filter(Boolean)
+      : [];
+    const artifactRecord = artifacts.find(function (item) {
+      return item.path === "ai_market_brief.md";
+    }) || null;
+    const explicit = normalizeGenerationMetadata(
+      moduleRecord && moduleRecord.generation_metadata
+    );
+    if (explicit) {
+      if (explicit.generationMode === "unavailable") {
+        return {
+          available: false,
+          mode: "unavailable",
+          modeLabel: "Unavailable",
+          generatedAt: explicit.generatedAt,
+          freshnessStatus: explicit.freshnessStatus,
+          validationStatus: explicit.validationStatus,
+          provider: explicit.provider,
+          fallbackReason: explicit.fallbackReason,
+          metadataSource: "explicit",
+          fallbackNote: "",
+          blocks: []
+        };
+      }
+      const explicitFallback = explicit.generationMode === "deterministic_fallback";
+      return {
+        available: true,
+        mode: explicit.generationMode,
+        modeLabel: explicitFallback ? "Deterministic fallback" : "Grounded AI",
+        generatedAt: explicit.generatedAt,
+        freshnessStatus: explicit.freshnessStatus,
+        validationStatus: explicit.validationStatus,
+        provider: explicit.provider,
+        fallbackReason: explicit.fallbackReason,
+        metadataSource: "explicit",
+        fallbackNote: explicitFallback
+          ? "AI generation was unavailable; the validated deterministic brief is shown instead."
+          : "",
+        blocks: parseSafeMarkdown(aiBriefInput)
+      };
+    }
+
+    const isFallback = typeof deterministicInput === "string"
+      && aiBriefInput === deterministicInput;
+    const validated = Boolean(
+      moduleRecord
+      && ["success", "partial"].includes(moduleRecord.status)
+      && artifactRecord
+      && artifactRecord.approved_for_publication === true
+    );
+    const freshness = moduleRecord
+      && ["current", "stale", "unavailable", "unknown"].includes(moduleRecord.freshness_status)
+      ? moduleRecord.freshness_status
+      : "unknown";
+    return {
+      available: true,
+      mode: isFallback ? "deterministic_fallback" : "grounded_ai",
+      modeLabel: isFallback ? "Deterministic fallback" : "Grounded AI",
+      generatedAt: (artifactRecord && artifactRecord.generated_at)
+        || (moduleRecord && moduleRecord.generated_at)
+        || "unknown",
+      freshnessStatus: freshness,
+      validationStatus: validated ? "validated" : "unknown",
+      provider: null,
+      fallbackReason: isFallback ? "missing_generation_metadata" : null,
+      metadataSource: "legacy_file_comparison",
+      fallbackNote: isFallback
+        ? "AI generation was unavailable; the validated deterministic brief is shown instead."
+        : "",
+      blocks: parseSafeMarkdown(aiBriefInput)
+    };
+  }
+
+  function normalizeGenerationMetadata(input) {
+    const metadata = asObject(input);
+    if (!metadata) {
+      return null;
+    }
+    const mode = metadata.generation_mode;
+    const status = metadata.generation_status;
+    const freshness = metadata.freshness_status;
+    const validation = metadata.validation_status;
+    const provider = metadata.provider;
+    const reason = metadata.fallback_reason;
+    if (!["grounded_ai", "deterministic_fallback", "unavailable"].includes(mode)) {
+      return null;
+    }
+    if (!["success", "fallback", "failed"].includes(status)) {
+      return null;
+    }
+    if (!["current", "stale", "unavailable", "unknown"].includes(freshness)) {
+      return null;
+    }
+    if (!["validated", "unavailable", "unknown"].includes(validation)) {
+      return null;
+    }
+    if (typeof metadata.generated_at !== "string" || !metadata.generated_at) {
+      return null;
+    }
+    if (provider !== null && (typeof provider !== "string" || !provider)) {
+      return null;
+    }
+    if (reason !== null && !GENERATION_FALLBACK_REASONS.includes(reason)) {
+      return null;
+    }
+    if (mode === "grounded_ai"
+      && (status !== "success" || validation !== "validated" || !provider || reason !== null)) {
+      return null;
+    }
+    if (mode === "deterministic_fallback"
+      && (status !== "fallback" || validation !== "validated" || !reason)) {
+      return null;
+    }
+    if (mode === "unavailable"
+      && (status !== "failed" || validation === "validated" || !reason)) {
+      return null;
+    }
+    return {
+      generationMode: mode,
+      generationStatus: status,
+      generatedAt: metadata.generated_at,
+      freshnessStatus: freshness,
+      validationStatus: validation,
+      provider: provider,
+      fallbackReason: reason
+    };
+  }
+
+  function parseSafeMarkdown(markdown) {
+    if (typeof markdown !== "string" || markdown.length > MAX_BRIEF_CHARACTERS) {
+      return [];
+    }
+    const blocks = [];
+    const paragraph = [];
+    let listItems = [];
+
+    function flushParagraph() {
+      if (paragraph.length) {
+        blocks.push({ kind: "paragraph", text: paragraph.join(" ") });
+        paragraph.length = 0;
+      }
+    }
+
+    function flushList() {
+      if (listItems.length) {
+        blocks.push({ kind: "list", items: listItems });
+        listItems = [];
+      }
+    }
+
+    markdown.replace(/\r\n?/g, "\n").split("\n").forEach(function (line) {
+      const heading = /^(#{1,6})\s+(.+)$/.exec(line);
+      const listItem = /^\s*[-*+]\s+(.+)$/.exec(line);
+      const isReference = /\[refs:\s*[^\]]+\]/i.test(line)
+        || /^\s*(Source\s*\/\s*Evidence|Evidence|References?)\s*:/i.test(line);
+
+      if (!line.trim()) {
+        flushParagraph();
+        flushList();
+      } else if (heading) {
+        flushParagraph();
+        flushList();
+        blocks.push({
+          kind: "heading",
+          level: Math.min(6, heading[1].length + 2),
+          text: heading[2].trim()
+        });
+      } else if (listItem) {
+        flushParagraph();
+        listItems.push(listItem[1].trim());
+      } else if (isReference) {
+        flushParagraph();
+        flushList();
+        blocks.push({ kind: "reference", text: line.trim() });
+      } else {
+        flushList();
+        paragraph.push(line.trim());
+      }
+    });
+    flushParagraph();
+    flushList();
+    return blocks;
+  }
+
+  function normalizeTopIntelligence(input) {
+    const artifact = asObject(input);
+    if (!artifact || artifact.status === "unavailable" || artifact.freshness_status !== "current") {
+      return {
+        status: "unavailable",
+        items: [],
+        message: "No current validated Top 3 intelligence is available."
+      };
+    }
+    const items = Array.isArray(artifact.items) ? artifact.items.map(function (raw) {
+      const item = asObject(raw);
+      if (!item || item.freshness_status !== "current" || item.validation_status !== "validated") {
+        return null;
+      }
+      return {
+        rank: item.rank,
+        id: item.item_id,
+        type: item.type,
+        storyKey: item.story_key,
+        headline: item.headline,
+        why: item.why,
+        monitor: item.monitor,
+        score: numberOrNull(item.total_score),
+        assets: Array.isArray(item.related_assets) ? item.related_assets.slice() : [],
+        references: normalizeReferences(item.evidence_refs),
+        sourceRefs: uniqueStrings(Array.isArray(item.source_refs) ? item.source_refs : [])
+      };
+    }).filter(Boolean) : [];
+    return {
+      status: items.length ? safeStatus(artifact.status) : "unavailable",
+      items: items,
+      message: items.length ? "" : "No current validated Top 3 intelligence is available."
     };
   }
 
@@ -283,12 +545,15 @@
     if (!daily) {
       return "unavailable";
     }
+    if (["current", "stale", "unavailable", "unknown"].indexOf(daily.freshness_status) !== -1) {
+      return daily.freshness_status;
+    }
     if (coverage.some(function (item) {
       return item.artifact_freshness_status === "stale" || item.freshness_status === "stale";
     })) {
       return "stale";
     }
-    return coverage.length === 4 ? "current" : "partial";
+    return coverage.length === 4 ? "current" : "unknown";
   }
 
   function overallValidation(daily, coverage) {
@@ -315,11 +580,96 @@
     setStatus(documentRef, "freshness-status", model.freshnessStatus, model.freshnessStatus);
     setStatus(documentRef, "validation-status", model.validationStatus, model.validationStatus);
     renderNotices(documentRef, model.warnings);
+    renderAIBrief(documentRef, model.aiBrief);
+    renderTopIntelligence(documentRef, model.topIntelligence);
     renderRegime(documentRef, model.regime);
     renderSignals(documentRef, model.signals);
     renderRisks(documentRef, model.risks);
     renderMarkets(documentRef, model.markets);
-    renderAudit(documentRef, model.audit, model.briefAvailable);
+    renderAudit(
+      documentRef,
+      model.audit,
+      model.aiBrief.available,
+      model.deterministicBriefAvailable
+    );
+  }
+
+  function renderAIBrief(documentRef, brief) {
+    setStatus(documentRef, "ai-brief-mode", brief.modeLabel, brief.mode);
+    setStatus(
+      documentRef,
+      "ai-brief-generated-at",
+      formatTimestamp(brief.generatedAt),
+      ""
+    );
+    setStatus(
+      documentRef,
+      "ai-brief-freshness",
+      brief.freshnessStatus,
+      brief.freshnessStatus
+    );
+    setStatus(
+      documentRef,
+      "ai-brief-validation",
+      brief.validationStatus,
+      brief.validationStatus
+    );
+    const note = documentRef.getElementById("ai-brief-note");
+    note.hidden = !brief.fallbackNote;
+    note.textContent = brief.fallbackNote;
+    const rootNode = documentRef.getElementById("ai-brief-content");
+    clear(rootNode);
+    if (!brief.available) {
+      rootNode.appendChild(element(
+        documentRef,
+        "p",
+        "empty",
+        "AI Market Brief unavailable."
+      ));
+      return;
+    }
+    renderSafeMarkdown(documentRef, rootNode, brief.blocks);
+  }
+
+  function renderSafeMarkdown(documentRef, rootNode, blocks) {
+    blocks.forEach(function (block) {
+      if (block.kind === "heading") {
+        rootNode.appendChild(element(documentRef, "h" + block.level, "", block.text));
+      } else if (block.kind === "list") {
+        const list = element(documentRef, "ul");
+        block.items.forEach(function (item) {
+          list.appendChild(element(documentRef, "li", "", item));
+        });
+        rootNode.appendChild(list);
+      } else if (block.kind === "reference") {
+        rootNode.appendChild(element(documentRef, "p", "brief-reference", block.text));
+      } else if (block.kind === "paragraph") {
+        rootNode.appendChild(element(documentRef, "p", "", block.text));
+      }
+    });
+  }
+
+  function renderTopIntelligence(documentRef, topIntelligence) {
+    const rootNode = documentRef.getElementById("top-intelligence-content");
+    clear(rootNode);
+    if (!topIntelligence.items.length) {
+      rootNode.appendChild(element(documentRef, "p", "empty", topIntelligence.message));
+      return;
+    }
+    topIntelligence.items.forEach(function (item) {
+      const card = element(documentRef, "article", "card");
+      card.appendChild(element(documentRef, "p", "brand", "Priority " + item.rank));
+      card.appendChild(element(documentRef, "h3", "", item.headline));
+      card.appendChild(element(documentRef, "p", "", item.why));
+      card.appendChild(element(documentRef, "p", "meta", "Monitor next: " + item.monitor));
+      card.appendChild(element(documentRef, "p", "meta", "Type: " + item.type + " · Score: " + formatNumber(item.score)));
+      card.appendChild(element(documentRef, "p", "meta", "Story: " + item.storyKey));
+      if (item.assets.length) {
+        card.appendChild(element(documentRef, "p", "meta", "Assets: " + item.assets.join(", ")));
+      }
+      card.appendChild(renderReferences(documentRef, item.references));
+      rootNode.appendChild(card);
+    });
   }
 
   function setStatus(documentRef, id, value, badgeClass) {
@@ -463,7 +813,7 @@
     });
   }
 
-  function renderAudit(documentRef, audit, briefAvailable) {
+  function renderAudit(documentRef, audit, aiBriefAvailable, deterministicBriefAvailable) {
     const rootNode = documentRef.getElementById("audit-content");
     clear(rootNode);
     const sourceGroup = auditGroup(documentRef, "Source references");
@@ -494,7 +844,14 @@
     rootNode.appendChild(auditListGroup(documentRef, "Timestamps", audit.timestamps));
     rootNode.appendChild(auditListGroup(documentRef, "Observation IDs", audit.observationIds));
     rootNode.appendChild(auditListGroup(documentRef, "Event IDs", audit.eventIds));
-    if (briefAvailable) {
+    if (aiBriefAvailable) {
+      const group = auditGroup(documentRef, "Grounded AI report artifact");
+      const link = element(documentRef, "a", "", "Open ai_market_brief.md");
+      link.href = "data/ai_market_brief.md";
+      group.appendChild(link);
+      rootNode.appendChild(group);
+    }
+    if (deterministicBriefAvailable) {
       const group = auditGroup(documentRef, "Deterministic report artifact");
       const link = element(documentRef, "a", "", "Open daily_market_brief.md");
       link.href = "data/daily_market_brief.md";
@@ -650,6 +1007,10 @@
     initialize: initialize,
     loadResources: loadResources,
     normalizeMarkets: normalizeMarkets,
+    normalizeAIBrief: normalizeAIBrief,
+    normalizeGenerationMetadata: normalizeGenerationMetadata,
+    normalizeTopIntelligence: normalizeTopIntelligence,
+    parseSafeMarkdown: parseSafeMarkdown,
     render: render
   };
 });

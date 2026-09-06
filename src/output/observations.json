@@ -1,26 +1,11 @@
 {
   "schema_version": "1.1",
   "artifact_type": "observations",
-  "run_id": "run_2026_08_27t17_27_37_141880z",
-  "report_date": "2026-08-28",
-  "generated_at": "2026-08-27T17:27:37.141880Z",
-  "status": "failed",
-  "warnings": [
-    "SPY omitted: market snapshot status is failed",
-    "QQQ omitted: market snapshot status is failed",
-    "NVDA omitted: market snapshot status is failed",
-    "AAPL omitted: market snapshot status is failed",
-    "TSLA omitted: market snapshot status is failed",
-    "BTC-USD omitted: market snapshot status is failed",
-    "ETH-USD omitted: market snapshot status is failed",
-    "GOLD omitted: market snapshot status is failed",
-    "EURUSD omitted: market snapshot status is failed",
-    "USDJPY omitted: market snapshot status is failed",
-    "DXY macro observations omitted: status is failed",
-    "US10Y macro observations omitted: status is failed",
-    "VIX macro observations omitted: status is failed",
-    "OIL macro observations omitted: status is failed"
-  ],
+  "run_id": "run_2026_09_03t09_49_38_576001z",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:38.576001Z",
+  "status": "complete",
+  "warnings": [],
   "sources": [
     {
       "source_id": "src_yahoo_finance",
@@ -31,8 +16,8 @@
       "title": "Yahoo Finance market snapshot",
       "url": "https://finance.yahoo.com/",
       "published_at": null,
-      "retrieved_at": "2026-08-27T17:27:37.124565Z",
-      "content_hash": "sha256:fc1ee35a62cf531be64752dc45aa503024ec3ada5b635038be4498a3107bce6b"
+      "retrieved_at": "2026-09-03T09:49:36.956680Z",
+      "content_hash": "sha256:4b82d81a0313ab773d199a99dde8b20df7ddb649594e02feb2fa4795b8da6b91"
     },
     {
       "source_id": "src_yahoo_finance_dxy",
@@ -43,8 +28,8 @@
       "title": "U.S. Dollar Index macro proxy",
       "url": "https://finance.yahoo.com/quote/DX-Y.NYB/",
       "published_at": null,
-      "retrieved_at": "2026-08-27T17:27:37.141880Z",
-      "content_hash": "sha256:963b8c4eb2f537054f7b78c2fafc708c0a861f518d7953f03a701eb4fa680a88"
+      "retrieved_at": "2026-09-03T09:49:38.576001Z",
+      "content_hash": "sha256:539da3cd6fef55110b0978bde4d3ad2d84652a57ed37bd73af78799405840b7a"
     },
     {
       "source_id": "src_yahoo_finance_us10y",
@@ -55,8 +40,8 @@
       "title": "U.S. 10-Year Treasury Yield macro proxy",
       "url": "https://finance.yahoo.com/quote/%5ETNX/",
       "published_at": null,
-      "retrieved_at": "2026-08-27T17:27:37.141880Z",
-      "content_hash": "sha256:a04aca0aaeaf0cf761e50394b3d805c929df86c82cbdebec259966a0a203f030"
+      "retrieved_at": "2026-09-03T09:49:38.576001Z",
+      "content_hash": "sha256:42ccc211df1634a63310b7c9b5fde0ca93295d08a62a37ce4db58a77a99d022d"
     },
     {
       "source_id": "src_yahoo_finance_vix",
@@ -67,8 +52,8 @@
       "title": "Cboe Volatility Index macro proxy",
       "url": "https://finance.yahoo.com/quote/%5EVIX/",
       "published_at": null,
-      "retrieved_at": "2026-08-27T17:27:37.141880Z",
-      "content_hash": "sha256:aea93283c31b5e07d4105a5578d55135a8828964a1911e5aebd0b2728e525f8c"
+      "retrieved_at": "2026-09-03T09:49:38.576001Z",
+      "content_hash": "sha256:3a8e5b4591d0494e6952fcdea5d70c7a5cc478d9d746b596ffee8964194650f1"
     },
     {
       "source_id": "src_yahoo_finance_oil",
@@ -79,9 +64,1587 @@
       "title": "WTI Crude Oil Front-Month Futures macro proxy",
       "url": "https://finance.yahoo.com/quote/CL%3DF/",
       "published_at": null,
-      "retrieved_at": "2026-08-27T17:27:37.141880Z",
-      "content_hash": "sha256:849a8c2e23c1cac027cf3040e763b01bdda438daac1b5cce930d815eead2ba1f"
+      "retrieved_at": "2026-09-03T09:49:38.576001Z",
+      "content_hash": "sha256:f89a96ebdd1d72ecc32fba5e604e0e0928e94781262bd79ed3b834a90ea94fcf"
     }
   ],
-  "observations": []
+  "observations": [
+    {
+      "observation_id": "obs_spy_price_2026_09_02t04_00_00z",
+      "observation_type": "market_price",
+      "subject": "SPY",
+      "metric": "price",
+      "value": 765.159973,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "SPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_spy_daily_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "SPY",
+      "metric": "daily_change_pct",
+      "value": 0.4437,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_spy_weekly_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "SPY",
+      "metric": "weekly_change_pct",
+      "value": -0.1201,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_spy_sma20_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "SPY",
+      "metric": "sma20",
+      "value": 768.975995,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_spy_volatility_20d_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "SPY",
+      "metric": "volatility_20d",
+      "value": 7.3736,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_spy_trend_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "SPY",
+      "metric": "trend",
+      "value": "below_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_qqq_price_2026_09_02t04_00_00z",
+      "observation_type": "market_price",
+      "subject": "QQQ",
+      "metric": "price",
+      "value": 709.23999,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "QQQ"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_qqq_daily_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "QQQ",
+      "metric": "daily_change_pct",
+      "value": 0.2261,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "QQQ"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_qqq_weekly_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "QQQ",
+      "metric": "weekly_change_pct",
+      "value": -0.2994,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "QQQ"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_qqq_sma20_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "QQQ",
+      "metric": "sma20",
+      "value": 717.563004,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "QQQ"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_qqq_volatility_20d_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "QQQ",
+      "metric": "volatility_20d",
+      "value": 12.8675,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "QQQ"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_qqq_trend_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "QQQ",
+      "metric": "trend",
+      "value": "below_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "QQQ"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_nvda_price_2026_09_02t04_00_00z",
+      "observation_type": "market_price",
+      "subject": "NVDA",
+      "metric": "price",
+      "value": 224.410004,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "NVDA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_nvda_daily_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "NVDA",
+      "metric": "daily_change_pct",
+      "value": 3.2055,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "NVDA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_nvda_weekly_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "NVDA",
+      "metric": "weekly_change_pct",
+      "value": 7.0352,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "NVDA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_nvda_sma20_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "NVDA",
+      "metric": "sma20",
+      "value": 219.289001,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "NVDA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_nvda_volatility_20d_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "NVDA",
+      "metric": "volatility_20d",
+      "value": 45.7374,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "NVDA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_nvda_trend_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "NVDA",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "NVDA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_aapl_price_2026_09_02t04_00_00z",
+      "observation_type": "market_price",
+      "subject": "AAPL",
+      "metric": "price",
+      "value": 324.959991,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "AAPL"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_aapl_daily_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "AAPL",
+      "metric": "daily_change_pct",
+      "value": -0.0523,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "AAPL"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_aapl_weekly_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "AAPL",
+      "metric": "weekly_change_pct",
+      "value": 3.672,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "AAPL"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_aapl_sma20_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "AAPL",
+      "metric": "sma20",
+      "value": 311.99104,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "AAPL"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_aapl_volatility_20d_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "AAPL",
+      "metric": "volatility_20d",
+      "value": 18.844,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "AAPL"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_aapl_trend_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "AAPL",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "AAPL"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_tsla_price_2026_09_02t04_00_00z",
+      "observation_type": "market_price",
+      "subject": "TSLA",
+      "metric": "price",
+      "value": 357.01001,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "TSLA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_tsla_daily_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "TSLA",
+      "metric": "daily_change_pct",
+      "value": 0.2584,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "TSLA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_tsla_weekly_change_pct_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "TSLA",
+      "metric": "weekly_change_pct",
+      "value": 3.2358,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "TSLA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_tsla_sma20_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "TSLA",
+      "metric": "sma20",
+      "value": 344.322499,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "TSLA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_tsla_volatility_20d_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "TSLA",
+      "metric": "volatility_20d",
+      "value": 42.4403,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "TSLA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_tsla_trend_2026_09_02t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "TSLA",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "TSLA"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_btc_usd_price_2026_09_03t00_00_00z",
+      "observation_type": "market_price",
+      "subject": "BTC-USD",
+      "metric": "price",
+      "value": 77607.023438,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "BTC-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_btc_usd_daily_change_pct_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "BTC-USD",
+      "metric": "daily_change_pct",
+      "value": 0.3966,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "BTC-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_btc_usd_weekly_change_pct_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "BTC-USD",
+      "metric": "weekly_change_pct",
+      "value": -0.8164,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "BTC-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_btc_usd_sma20_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "BTC-USD",
+      "metric": "sma20",
+      "value": 74596.030078,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "BTC-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_btc_usd_volatility_20d_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "BTC-USD",
+      "metric": "volatility_20d",
+      "value": 51.6333,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "BTC-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_btc_usd_trend_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "BTC-USD",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "BTC-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eth_usd_price_2026_09_03t00_00_00z",
+      "observation_type": "market_price",
+      "subject": "ETH-USD",
+      "metric": "price",
+      "value": 2394.25,
+      "unit": "USD",
+      "period": "latest",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "ETH-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eth_usd_daily_change_pct_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "ETH-USD",
+      "metric": "daily_change_pct",
+      "value": 0.1149,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "ETH-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eth_usd_weekly_change_pct_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "ETH-USD",
+      "metric": "weekly_change_pct",
+      "value": -2.5811,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "ETH-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eth_usd_sma20_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "ETH-USD",
+      "metric": "sma20",
+      "value": 2324.74704,
+      "unit": "USD",
+      "period": "20d",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "ETH-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eth_usd_volatility_20d_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "ETH-USD",
+      "metric": "volatility_20d",
+      "value": 87.4111,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "ETH-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eth_usd_trend_2026_09_03t00_00_00z",
+      "observation_type": "market_feature",
+      "subject": "ETH-USD",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-03T00:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "ETH-USD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_gold_price_2026_09_03t04_00_00z",
+      "observation_type": "market_price",
+      "subject": "GOLD",
+      "metric": "price",
+      "value": 4477.399902,
+      "unit": "USD_per_troy_ounce",
+      "period": "latest",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "GOLD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_gold_daily_change_pct_2026_09_03t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "GOLD",
+      "metric": "daily_change_pct",
+      "value": 2.5445,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "GOLD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_gold_weekly_change_pct_2026_09_03t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "GOLD",
+      "metric": "weekly_change_pct",
+      "value": -2.87,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "GOLD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_gold_sma20_2026_09_03t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "GOLD",
+      "metric": "sma20",
+      "value": 4461.984985,
+      "unit": "USD_per_troy_ounce",
+      "period": "20d",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "GOLD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_gold_volatility_20d_2026_09_03t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "GOLD",
+      "metric": "volatility_20d",
+      "value": 23.7045,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "GOLD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_gold_trend_2026_09_03t04_00_00z",
+      "observation_type": "market_feature",
+      "subject": "GOLD",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "GOLD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eurusd_price_2026_09_02t23_00_00z",
+      "observation_type": "market_price",
+      "subject": "EURUSD",
+      "metric": "price",
+      "value": 1.160901,
+      "unit": "USD_per_EUR",
+      "period": "latest",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "EURUSD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eurusd_daily_change_pct_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "EURUSD",
+      "metric": "daily_change_pct",
+      "value": 0.1161,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eurusd_weekly_change_pct_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "EURUSD",
+      "metric": "weekly_change_pct",
+      "value": -0.3936,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eurusd_sma20_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "EURUSD",
+      "metric": "sma20",
+      "value": 1.160408,
+      "unit": "USD_per_EUR",
+      "period": "20d",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eurusd_volatility_20d_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "EURUSD",
+      "metric": "volatility_20d",
+      "value": 4.3997,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_eurusd_trend_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "EURUSD",
+      "metric": "trend",
+      "value": "above_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_usdjpy_price_2026_09_02t23_00_00z",
+      "observation_type": "market_price",
+      "subject": "USDJPY",
+      "metric": "price",
+      "value": 156.212006,
+      "unit": "JPY_per_USD",
+      "period": "latest",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "USDJPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_usdjpy_daily_change_pct_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "USDJPY",
+      "metric": "daily_change_pct",
+      "value": -2.4869,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "daily_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "USDJPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_usdjpy_weekly_change_pct_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "USDJPY",
+      "metric": "weekly_change_pct",
+      "value": -1.9108,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "weekly_change_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "USDJPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_usdjpy_sma20_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "USDJPY",
+      "metric": "sma20",
+      "value": 159.043301,
+      "unit": "JPY_per_USD",
+      "period": "20d",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "USDJPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_usdjpy_volatility_20d_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "USDJPY",
+      "metric": "volatility_20d",
+      "value": 10.5608,
+      "unit": "annualized_percent",
+      "period": "20d",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "volatility_20d_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "USDJPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_usdjpy_trend_2026_09_02t23_00_00z",
+      "observation_type": "market_feature",
+      "subject": "USDJPY",
+      "metric": "trend",
+      "value": "below_sma20",
+      "unit": null,
+      "period": "20d",
+      "as_of": "2026-09-02T23:00:00Z",
+      "source_id": "src_yahoo_finance",
+      "status": "success",
+      "calculation": {
+        "rule_id": "trend_vs_sma20_v1",
+        "input_ids": [],
+        "source_artifact": "market_snapshot.json"
+      },
+      "asset_mapping": [
+        "USDJPY"
+      ],
+      "confidence_score": 0.95,
+      "confidence_label": "high"
+    },
+    {
+      "observation_id": "obs_dxy_index_level_2026_09_03t04_00_00z",
+      "observation_type": "macro_value",
+      "subject": "DXY",
+      "metric": "index_level",
+      "value": 99.238998,
+      "unit": "index_points",
+      "period": "latest",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance_dxy",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "EURUSD",
+        "USDJPY",
+        "GOLD",
+        "SPY",
+        "QQQ",
+        "BTC-USD"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_dxy_daily_change_pct_2026_09_03t04_00_00z",
+      "observation_type": "macro_value",
+      "subject": "DXY",
+      "metric": "daily_change_pct",
+      "value": -0.3224,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance_dxy",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_daily_change_pct_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD",
+        "USDJPY",
+        "GOLD",
+        "SPY",
+        "QQQ",
+        "BTC-USD"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_dxy_weekly_change_pct_2026_09_03t04_00_00z",
+      "observation_type": "macro_value",
+      "subject": "DXY",
+      "metric": "weekly_change_pct",
+      "value": 0.0696,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance_dxy",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_weekly_daily_change_pct_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "EURUSD",
+        "USDJPY",
+        "GOLD",
+        "SPY",
+        "QQQ",
+        "BTC-USD"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_us10y_yield_2026_09_02t05_00_00z",
+      "observation_type": "macro_value",
+      "subject": "US10Y",
+      "metric": "yield",
+      "value": 4.796,
+      "unit": "percent",
+      "period": "latest",
+      "as_of": "2026-09-02T05:00:00Z",
+      "source_id": "src_yahoo_finance_us10y",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "GOLD",
+        "DXY",
+        "USDJPY"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_us10y_daily_change_bps_2026_09_02t05_00_00z",
+      "observation_type": "macro_value",
+      "subject": "US10Y",
+      "metric": "daily_change_bps",
+      "value": 0.0,
+      "unit": "basis_points",
+      "period": "daily",
+      "as_of": "2026-09-02T05:00:00Z",
+      "source_id": "src_yahoo_finance_us10y",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_daily_change_bps_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "GOLD",
+        "DXY",
+        "USDJPY"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_us10y_weekly_change_bps_2026_09_02t05_00_00z",
+      "observation_type": "macro_value",
+      "subject": "US10Y",
+      "metric": "weekly_change_bps",
+      "value": 15.7,
+      "unit": "basis_points",
+      "period": "weekly",
+      "as_of": "2026-09-02T05:00:00Z",
+      "source_id": "src_yahoo_finance_us10y",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_weekly_daily_change_bps_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "GOLD",
+        "DXY",
+        "USDJPY"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_vix_index_level_2026_09_03t05_00_00z",
+      "observation_type": "macro_value",
+      "subject": "VIX",
+      "metric": "index_level",
+      "value": 15.22,
+      "unit": "index_points",
+      "period": "latest",
+      "as_of": "2026-09-03T05:00:00Z",
+      "source_id": "src_yahoo_finance_vix",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "BTC-USD"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_vix_daily_change_pct_2026_09_03t05_00_00z",
+      "observation_type": "macro_value",
+      "subject": "VIX",
+      "metric": "daily_change_pct",
+      "value": 0.1316,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-03T05:00:00Z",
+      "source_id": "src_yahoo_finance_vix",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_daily_change_pct_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "BTC-USD"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_vix_weekly_change_pct_2026_09_03t05_00_00z",
+      "observation_type": "macro_value",
+      "subject": "VIX",
+      "metric": "weekly_change_pct",
+      "value": 0.0657,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-03T05:00:00Z",
+      "source_id": "src_yahoo_finance_vix",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_weekly_daily_change_pct_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "BTC-USD"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_oil_futures_price_2026_09_03t04_00_00z",
+      "observation_type": "macro_value",
+      "subject": "OIL",
+      "metric": "futures_price",
+      "value": 91.629997,
+      "unit": "USD_per_barrel",
+      "period": "latest",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance_oil",
+      "status": "success",
+      "calculation": null,
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "GOLD",
+        "DXY"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_oil_daily_change_pct_2026_09_03t04_00_00z",
+      "observation_type": "macro_value",
+      "subject": "OIL",
+      "metric": "daily_change_pct",
+      "value": 0.6812,
+      "unit": "percent",
+      "period": "daily",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance_oil",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_daily_change_pct_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "GOLD",
+        "DXY"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    },
+    {
+      "observation_id": "obs_oil_weekly_change_pct_2026_09_03t04_00_00z",
+      "observation_type": "macro_value",
+      "subject": "OIL",
+      "metric": "weekly_change_pct",
+      "value": 9.6971,
+      "unit": "percent",
+      "period": "weekly",
+      "as_of": "2026-09-03T04:00:00Z",
+      "source_id": "src_yahoo_finance_oil",
+      "status": "success",
+      "calculation": {
+        "rule_id": "macro_weekly_daily_change_pct_v1",
+        "input_ids": [],
+        "source_artifact": "macro_snapshot.json"
+      },
+      "asset_mapping": [
+        "SPY",
+        "QQQ",
+        "GOLD",
+        "DXY"
+      ],
+      "confidence_score": 0.75,
+      "confidence_label": "medium"
+    }
+  ],
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:38.576001Z",
+  "age_seconds": 107378.576,
+  "freshness_status": "current",
+  "freshness_basis": "source_timestamp",
+  "stale_after_seconds": 172800,
+  "freshness_contract_version": "1.0"
 }

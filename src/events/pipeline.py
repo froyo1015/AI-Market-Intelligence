@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
+from src.data.freshness import enrich_artifact_freshness
 from src.events.normalizer import normalize_news_items
 from src.events.validator import (
     NewsNormalizationValidationError,
@@ -92,11 +93,15 @@ def read_news_items_artifact(input_path: Path = DEFAULT_INPUT_PATH) -> Mapping[s
 def write_events_artifact(
     artifact: EventsArtifact,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    supporting_artifacts: Sequence[Mapping[str, Any]] = (),
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(
+        artifact.to_dict(), supporting_artifacts=supporting_artifacts
+    )
     temporary_path.write_text(
-        json.dumps(artifact.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)
@@ -109,7 +114,7 @@ def run_events_pipeline(
 ) -> EventsArtifact:
     news_artifact = read_news_items_artifact(input_path)
     artifact = build_events_artifact(news_artifact)
-    write_events_artifact(artifact, output_path)
+    write_events_artifact(artifact, output_path, (news_artifact,))
     return artifact
 
 

@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
+from src.data.freshness import enrich_artifact_freshness
 from src.models.regime_schema import MarketRegimeArtifact
 from src.regime.classifier import build_market_regime_artifact
 from src.regime.validator import validate_market_regime_artifact
@@ -43,7 +44,9 @@ def run_market_regime_pipeline(
         evidence_bundle,
         market_signals,
     )
-    _write_artifact(artifact, output_path)
+    _write_artifact(
+        artifact, output_path, (evidence_bundle, market_signals)
+    )
     return artifact
 
 
@@ -72,11 +75,15 @@ def _read_artifact(
 def _write_artifact(
     artifact: MarketRegimeArtifact,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    supporting_artifacts: Sequence[Mapping[str, Any]] = (),
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(
+        artifact.to_dict(), supporting_artifacts=supporting_artifacts
+    )
     temporary_path.write_text(
-        json.dumps(artifact.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)

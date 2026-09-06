@@ -8,6 +8,7 @@ from datetime import date, datetime
 from typing import Any, Mapping, Sequence, Set
 from urllib.parse import urlsplit
 
+from src.data.freshness import validate_freshness_contract
 from src.events.normalizer import (
     BASE_MAPPING_RULES,
     DEDUPE_RULE_ID,
@@ -102,6 +103,8 @@ class NewsNormalizationValidationError(ValueError):
 
 def validate_news_items_artifact(artifact: Mapping[str, Any]) -> None:
     """Validate the accepted-item boundary consumed by C2."""
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
     _validate_envelope(artifact, "news_items", {"1.0"})
     if artifact.get("status") not in {"complete", "partial", "failed"}:
         raise NewsNormalizationValidationError("news_items.status is invalid")
@@ -198,6 +201,8 @@ def validate_events_artifact(
     news_artifact: Mapping[str, Any],
 ) -> None:
     """Validate provenance and enforce the no-intelligence C2 boundary."""
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
     validate_news_items_artifact(news_artifact)
     _validate_envelope(artifact, "events", {"1.1"})
     _reject_prohibited_keys(artifact)

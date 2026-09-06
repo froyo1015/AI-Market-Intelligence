@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Optional
 
+from src.data.freshness import enrich_artifact_freshness
 from src.data.market_adapter import (
     DEFAULT_INSTRUMENTS,
     MarketDataAdapter,
@@ -91,8 +92,9 @@ def write_snapshot(
     """Write formatted UTF-8 JSON atomically enough for the MVP batch job."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(snapshot.to_dict())
     temporary_path.write_text(
-        json.dumps(snapshot.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)
@@ -117,4 +119,3 @@ def _as_utc(value: datetime) -> datetime:
     if value.tzinfo is None:
         return value.replace(tzinfo=timezone.utc)
     return value.astimezone(timezone.utc)
-

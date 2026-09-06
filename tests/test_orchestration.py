@@ -26,7 +26,14 @@ def _artifact_payload(filename: str, status: str = "complete") -> dict:
     return {
         "schema_version": "1.0",
         "artifact_type": Path(filename).stem,
+        "freshness_contract_version": "1.0",
+        "source_timestamp": "2026-08-28T01:02:03Z",
+        "retrieved_at": "2026-08-28T01:02:03Z",
         "generated_at": "2026-08-28T01:02:03Z",
+        "age_seconds": 0.0,
+        "freshness_status": "current",
+        "freshness_basis": "source_timestamp",
+        "stale_after_seconds": 172800,
         "status": status,
         "warnings": [],
     }
@@ -41,7 +48,7 @@ def _successful_runners(
         if spec.name == "intelligence_web_view":
             continue
 
-        def runner(paths: RunPaths, current=spec) -> None:
+        def runner(paths: RunPaths, current=spec) -> object:
             if order is not None:
                 order.append(current.name)
             for filename in current.outputs:
@@ -50,6 +57,19 @@ def _successful_runners(
                     target.write_text("# Daily Market Intelligence\n", encoding="utf-8")
                 else:
                     _write_json(target, _artifact_payload(filename))
+            if current.name == "grounded_ai_brief":
+                return {
+                    "generation_metadata": {
+                        "generation_mode": "deterministic_fallback",
+                        "generation_status": "fallback",
+                        "generated_at": "2026-08-28T01:02:03Z",
+                        "freshness_status": "current",
+                        "validation_status": "validated",
+                        "provider": None,
+                        "fallback_reason": "no_provider_configured",
+                    }
+                }
+            return None
 
         runners[spec.name] = runner
     if overrides:
@@ -77,6 +97,8 @@ def test_full_successful_run_generates_manifest_and_approved_artifacts(
     assert manifest["status"] == "complete"
     assert manifest["run_id"].startswith("run_20260828T010203Z_orchestration_")
     assert manifest["execution_timestamp"] == "2026-08-28T01:02:03Z"
+    assert manifest["freshness_status"] == "current"
+    assert manifest["age_seconds"] == 0.0
     assert manifest["execution_order"] == list(EXECUTION_ORDER)
     assert all(module["status"] == "success" for module in manifest["modules"])
     assert not manifest["failures"]
@@ -86,6 +108,19 @@ def test_full_successful_run_generates_manifest_and_approved_artifacts(
         set(APPROVED_PUBLIC_FILES)
     )
     assert (docs / "intelligence.html").is_file()
+    grounded = next(
+        module for module in manifest["modules"]
+        if module["name"] == "grounded_ai_brief"
+    )
+    assert grounded["generation_metadata"] == {
+        "generation_mode": "deterministic_fallback",
+        "generation_status": "fallback",
+        "generated_at": "2026-08-28T01:02:03Z",
+        "freshness_status": "current",
+        "validation_status": "validated",
+        "provider": None,
+        "fallback_reason": "no_provider_configured",
+    }
 
 
 def test_partial_failure_isolated_and_soft_consumer_continues(tmp_path: Path) -> None:
@@ -110,6 +145,37 @@ def test_partial_failure_isolated_and_soft_consumer_continues(tmp_path: Path) ->
     assert any(item["module"] == "calendar" for item in manifest["failures"])
 
 
+def test_grounded_brief_failure_records_explicit_unavailable_metadata(
+    tmp_path: Path,
+) -> None:
+    def fail_grounded_brief(paths: RunPaths) -> None:
+        del paths
+        raise RuntimeError("provider response must not enter public metadata")
+
+    manifest, _, _ = _run(
+        tmp_path,
+        _successful_runners(
+            overrides={"grounded_ai_brief": fail_grounded_brief}
+        ),
+    )
+    grounded = next(
+        module for module in manifest["modules"]
+        if module["name"] == "grounded_ai_brief"
+    )
+
+    assert grounded["status"] == "failed"
+    assert grounded["generation_metadata"] == {
+        "generation_mode": "unavailable",
+        "generation_status": "failed",
+        "generated_at": "2026-08-28T01:02:03Z",
+        "freshness_status": "unavailable",
+        "validation_status": "unavailable",
+        "provider": None,
+        "fallback_reason": "pipeline_failure",
+    }
+    assert "provider response" not in json.dumps(grounded["generation_metadata"])
+
+
 def test_unavailable_source_artifact_does_not_block_pipeline(tmp_path: Path) -> None:
     def unavailable_calendar(paths: RunPaths) -> None:
         payload = _artifact_payload("economic_calendar.json", status="failed")
@@ -119,6 +185,11 @@ def test_unavailable_source_artifact_does_not_block_pipeline(tmp_path: Path) -> 
                 "retryable": True,
                 "warnings": ["Economic calendar unavailable: HTTP 403"],
                 "events": [],
+                "source_timestamp": None,
+                "retrieved_at": None,
+                "age_seconds": None,
+                "freshness_status": "unavailable",
+                "freshness_basis": "unavailable",
             }
         )
         _write_json(paths.artifact("economic_calendar.json"), payload)
@@ -133,7 +204,98 @@ def test_unavailable_source_artifact_does_not_block_pipeline(tmp_path: Path) -> 
     assert modules["evidence_consolidation"]["status"] == "success"
     assert modules["daily_intelligence"]["status"] == "success"
     assert manifest["status"] == "partial"
+    assert manifest["freshness_status"] == "unavailable"
     assert "Economic calendar unavailable: HTTP 403" in modules["calendar"]["warnings"]
+    for module in manifest["modules"]:
+        assert {
+            "source_timestamp",
+            "retrieved_at",
+            "generated_at",
+            "age_seconds",
+            "freshness_status",
+        }.issubset(module)
+
+
+def test_calendar_fallback_health_is_preserved_in_manifest(tmp_path: Path) -> None:
+    def fallback_calendar(paths: RunPaths) -> None:
+        payload = _artifact_payload("economic_calendar.json", status="partial")
+        payload.update(
+            {
+                "failure_type": "primary_source_access_error",
+                "retryable": True,
+                "warnings": ["Primary unavailable; official fallback used."],
+                "events": [],
+                "sources": [
+                    {
+                        "source": "bls_release_calendar",
+                        "status": "unavailable",
+                        "failure_type": "primary_source_access_error",
+                    },
+                    {
+                        "source": "bea_release_schedule",
+                        "status": "available",
+                        "failure_type": None,
+                    },
+                ],
+            }
+        )
+        _write_json(paths.artifact("economic_calendar.json"), payload)
+
+    manifest, _, _ = _run(
+        tmp_path,
+        _successful_runners(overrides={"calendar": fallback_calendar}),
+    )
+    calendar = next(
+        module for module in manifest["modules"] if module["name"] == "calendar"
+    )
+
+    assert calendar["status"] == "partial"
+    assert calendar["artifacts"][0]["source_health"] == [
+        {
+            "source": "bls_release_calendar",
+            "status": "unavailable",
+            "failure_type": "primary_source_access_error",
+        },
+        {
+            "source": "bea_release_schedule",
+            "status": "available",
+            "failure_type": None,
+        },
+    ]
+
+
+def test_provider_specific_failed_source_status_is_normalized_for_manifest(
+    tmp_path: Path,
+) -> None:
+    def unavailable_market(paths: RunPaths) -> None:
+        payload = _artifact_payload("market_snapshot.json", status="failed")
+        payload.update(
+            {
+                "freshness_status": "unavailable",
+                "freshness_basis": "unavailable",
+                "source_timestamp": None,
+                "age_seconds": None,
+                "sources": [
+                    {
+                        "source_id": "src_market_spy",
+                        "provider": "yahoo_finance",
+                        "status": "failed",
+                    }
+                ],
+            }
+        )
+        _write_json(paths.artifact("market_snapshot.json"), payload)
+
+    manifest, _, _ = _run(
+        tmp_path,
+        _successful_runners(overrides={"market_data": unavailable_market}),
+    )
+    market = next(item for item in manifest["modules"] if item["name"] == "market_data")
+    source = market["artifacts"][0]["source_health"][0]
+
+    assert source["source"] == "src_market_spy"
+    assert source["status"] == "unavailable"
+    assert source["raw_status"] == "failed"
 
 
 def test_artifact_generation_order_is_fixed(tmp_path: Path) -> None:

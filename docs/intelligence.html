@@ -76,6 +76,14 @@
     .badge.partial, .badge.stale, .badge.medium { color: var(--amber); border-color: rgba(243,201,105,.34); }
     .badge.unavailable, .badge.failed, .badge.high { color: var(--red); border-color: rgba(255,139,146,.34); }
     .notice { padding: 14px 16px; border: 1px solid rgba(243,201,105,.25); border-radius: 12px; color: #f7dfa3; background: rgba(121,87,21,.14); }
+    .brief-meta { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 0 18px; }
+    .brief-body { max-width: 860px; color: #d6e5ed; }
+    .brief-body h3, .brief-body h4, .brief-body h5, .brief-body h6 { margin: 1.35em 0 .45em; color: var(--text); line-height: 1.25; }
+    .brief-body h3:first-child { margin-top: 0; }
+    .brief-body p { margin: .7em 0; }
+    .brief-body ul { margin: .65em 0; padding-left: 1.35em; }
+    .brief-reference { color: var(--muted); font-family: ui-monospace, monospace; font-size: .78rem; overflow-wrap: anywhere; }
+    .fallback-note { margin: 0 0 18px; padding: 11px 13px; border-left: 3px solid var(--amber); color: #f7dfa3; background: rgba(121,87,21,.12); }
     .empty { margin: 0; color: var(--muted); }
     .refs { margin: 11px 0 0; padding: 0; list-style: none; color: var(--muted); font-family: ui-monospace, monospace; font-size: .72rem; }
     .refs li { margin-top: 4px; overflow-wrap: anywhere; }
@@ -88,14 +96,14 @@
     .loading { animation: pulse 1.4s ease-in-out infinite; }
     @keyframes pulse { 50% { opacity: .5; } }
     @media (max-width: 860px) {
-      .status-grid, .market-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .status-grid, .market-grid, .brief-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .card-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .shell { width: min(100% - 20px, 1180px); padding-top: 14px; }
       .topbar { align-items: flex-start; flex-direction: column; }
       .hero, .panel { border-radius: 16px; }
-      .status-grid, .market-grid { grid-template-columns: 1fr; }
+      .status-grid, .market-grid, .brief-meta { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -126,6 +134,23 @@
     </header>
 
     <div id="load-notices" class="section" aria-live="polite"></div>
+
+    <section class="section panel" id="ai-brief">
+      <div class="section-head"><div><p class="brand">AI MARKET BRIEF</p><h2>AI Market Brief</h2><p>Validated narrative presentation of canonical intelligence artifacts</p></div></div>
+      <div class="status-grid brief-meta" aria-label="AI brief publication metadata">
+        <div class="status-box"><span>Generation Mode</span><strong id="ai-brief-mode" class="loading">Loading…</strong></div>
+        <div class="status-box"><span>Generated At</span><strong id="ai-brief-generated-at" class="loading">Loading…</strong></div>
+        <div class="status-box"><span>Freshness</span><strong id="ai-brief-freshness" class="loading">Loading…</strong></div>
+        <div class="status-box"><span>Validation</span><strong id="ai-brief-validation" class="loading">Loading…</strong></div>
+      </div>
+      <p id="ai-brief-note" class="fallback-note" hidden></p>
+      <div id="ai-brief-content" class="brief-body" aria-live="polite"><p class="empty loading">Loading validated brief…</p></div>
+    </section>
+
+    <section class="section panel" id="top-intelligence">
+      <div class="section-head"><div><h2>Today's Top Market Intelligence</h2><p>Current, validated and evidence-linked priorities</p></div></div>
+      <div id="top-intelligence-content" class="card-grid"><p class="empty loading">Loading current priorities…</p></div>
+    </section>
 
     <section class="section panel" id="regime">
       <div class="section-head"><div><h2>Market Regime</h2><p>Current observed conditions only</p></div></div>

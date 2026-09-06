@@ -35,6 +35,9 @@ market-brief-regime = "src.regime.pipeline:cli"
 market-brief-risk = "src.risk.pipeline:cli"
 market-brief-intelligence = "src.intelligence.pipeline:cli"
 market-brief-render-intelligence = "src.brief.renderer_pipeline:cli"
+market-brief-grounded-ai = "src.grounded_brief.pipeline:cli"
+market-brief-evaluate-ai = "src.evaluation.pipeline:cli"
+market-brief-monitor-ai-trial = "src.evaluation.trial_monitor:cli"
 market-brief-orchestrate = "src.orchestration.pipeline:cli"
 
 [tool.setuptools.packages.find]

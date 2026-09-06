@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
+from src.data.freshness import enrich_artifact_freshness
 from src.intelligence.composer import build_daily_intelligence_artifact
 from src.intelligence.validator import validate_daily_intelligence_artifact
 from src.models.intelligence_schema import DailyIntelligenceArtifact
@@ -64,7 +65,11 @@ def run_daily_intelligence_pipeline(
         market_regime,
         risk_monitor,
     )
-    _write_artifact(artifact, output_path)
+    _write_artifact(
+        artifact,
+        output_path,
+        (evidence_bundle, market_signals, market_regime, risk_monitor),
+    )
     return artifact
 
 
@@ -93,11 +98,15 @@ def _read_artifact(
 def _write_artifact(
     artifact: DailyIntelligenceArtifact,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    supporting_artifacts: Sequence[Mapping[str, Any]] = (),
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(
+        artifact.to_dict(), supporting_artifacts=supporting_artifacts
+    )
     temporary_path.write_text(
-        json.dumps(artifact.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)

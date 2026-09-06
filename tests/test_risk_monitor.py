@@ -8,6 +8,7 @@ from typing import Dict, Optional, Set, Tuple
 
 import pytest
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.consolidation.builder import build_consolidated_evidence_artifact
 from src.regime.classifier import build_market_regime_artifact
 from src.risk.monitor import RiskMonitorError, build_risk_monitor_artifact
@@ -260,7 +261,9 @@ def test_pipeline_reads_three_artifact_types_and_writes_atomically(
         output_path,
     )
 
-    assert json.loads(output_path.read_text(encoding="utf-8")) == result.to_dict()
+    written = json.loads(output_path.read_text(encoding="utf-8"))
+    validate_freshness_contract(written)
+    assert strip_freshness_metadata(written) == result.to_dict()
     assert not (tmp_path / "risk_monitor.json.tmp").exists()
 
     wrong = tmp_path / "wrong.json"

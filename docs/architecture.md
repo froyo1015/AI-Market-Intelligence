@@ -88,7 +88,15 @@ flowchart TD
     RegimeFile --> Intelligence
     RiskFile --> Intelligence
     Intelligence --> IntelligenceFile["daily_intelligence.json v1"]
+    IntelligenceFile --> TopSelector["Deterministic Top Intelligence Selector"]
+    TopSelector --> TopFile["top_intelligence.json v1"]
     IntelligenceFile --> Renderer["Deterministic Brief Renderer"]
+    TopFile --> Renderer
+    TopFile --> Pages
+    IntelligenceFile --> GroundedWriter["Grounded LLM Writer + Validator"]
+    TopFile --> GroundedWriter
+    Renderer --> GroundedWriter
+    GroundedWriter --> AIBrief["ai_market_brief.md or deterministic fallback"]
     Renderer --> Markdown["daily_market_brief.md"]
     IntelligenceFile --> WebView["Static Intelligence View"]
     SignalFile --> WebView
@@ -186,14 +194,25 @@ src/output/
 ├── market_regime.json         # current observed regime or null when unavailable
 ├── risk_monitor.json          # observable event/data/stress risk conditions
 ├── daily_intelligence.json    # only structured input accepted by LLM
-├── daily_intelligence_brief.md
-└── ai_market_brief.md         # legacy output during migration
+├── daily_market_brief.md      # canonical deterministic presentation artifact
+└── run_manifest.json          # orchestration audit and publication contract
 ```
 
-Detailed fields and validation rules are defined in [data-schema.md](data-schema.md).
+`daily_brief.md` and `ai_market_brief.md` are deprecated manual compatibility
+outputs. They are not part of the scheduled production graph or deployment
+artifact set. `docs/index.html` remains a static compatibility market page;
+`docs/intelligence.html` is the canonical daily presentation.
 
-Phase 6.2-B initially bounds calendar coverage to the official BLS release ICS
-feed and the next 48 hours. `economic_calendar.json` is a provider artifact;
+Detailed fields and validation rules are defined in [data-schema.md](data-schema.md).
+All active JSON artifacts additionally implement the shared contract in
+[freshness-contract.md](freshness-contract.md), which keeps source, retrieval,
+artifact-generation, and run freshness as separate clocks.
+
+Phase 6.2-B initially bounds calendar coverage to official BLS releases and the
+next 48 hours. Phase 7.1-C uses the BLS release ICS as primary and the official
+BEA release schedule as an independently accessible, provenance-preserving
+fallback source.
+`economic_calendar.json` is a provider artifact;
 it does not yet replace canonical `events.json`. Impact and affected-asset
 labels are deterministic relevance metadata, not claims that an event will
 move those assets. Source failure produces an explicit failed artifact with no

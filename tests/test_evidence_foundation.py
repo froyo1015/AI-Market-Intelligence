@@ -5,6 +5,7 @@ import json
 
 import pytest
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.evidence.builder import (
     build_evidence_artifact,
     build_observation_artifact,
@@ -176,8 +177,12 @@ def test_pipeline_validates_before_writing_both_artifacts(tmp_path) -> None:
         evidence_path=evidence_path,
     )
 
-    assert json.loads(observations_path.read_text(encoding="utf-8")) == observations
-    assert json.loads(evidence_path.read_text(encoding="utf-8")) == evidence
+    written_observations = json.loads(observations_path.read_text(encoding="utf-8"))
+    written_evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    validate_freshness_contract(written_observations)
+    validate_freshness_contract(written_evidence)
+    assert strip_freshness_metadata(written_observations) == observations
+    assert strip_freshness_metadata(written_evidence) == evidence
     assert evidence["evidence"][0]["supporting_source_ids"] == [
         "src_yahoo_finance"
     ]

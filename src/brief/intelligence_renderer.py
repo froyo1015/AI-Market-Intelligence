@@ -32,6 +32,7 @@ CATALOG_FIELDS = (
 
 def render_daily_market_brief(
     artifact: Mapping[str, Any],
+    top_intelligence: Mapping[str, Any] | None = None,
 ) -> DeterministicBrief:
     validate_renderer_input(artifact)
     lines: List[str] = [
@@ -43,6 +44,10 @@ def render_daily_market_brief(
         f"- Intelligence generated at: {_inline(artifact['generated_at'])}",
         f"- Input contract: `{_inline(artifact['schema_contract'])}`",
         "- Render mode: `deterministic_structured_only`",
+        "",
+        "# Today's Top Market Intelligence",
+        "",
+        *_render_top_intelligence(top_intelligence),
         "",
         "## Data Quality and Coverage",
         "",
@@ -92,6 +97,45 @@ def render_daily_market_brief(
         source_status=str(artifact["status"]),
         markdown=markdown,
     )
+
+
+def _render_top_intelligence(artifact: Mapping[str, Any] | None) -> List[str]:
+    if not artifact or artifact.get("status") == "unavailable" or not artifact.get("items"):
+        return ["No current validated Top 3 intelligence is available."]
+    lines: List[str] = []
+    for item in artifact["items"]:
+        lines.extend(
+            (
+                f"## {item['rank']}. {_inline(item['headline'])}",
+                "",
+                f"- Type: `{_inline(item['type'])}`",
+                f"- Story key: `{_inline(item['story_key'])}`",
+                f"- Why it matters: {_inline(item['why'])}",
+                f"- Monitor next: {_inline(item['monitor'])}",
+                f"- Deterministic score: {_inline(item['total_score'])}",
+                f"- Theme: `{_inline(item['primary_theme'])}`",
+                f"- Related assets: {_inline(item['related_assets'])}",
+                f"- Freshness: `{_inline(item['freshness_status'])}`",
+                f"- Validation: `{_inline(item['validation_status'])}`",
+                "",
+                "Evidence references:",
+                "",
+            )
+        )
+        for key in REFERENCE_KEYS:
+            lines.append(f"- {REFERENCE_LABELS[key]}: {_code_values(item['evidence_refs'][key])}")
+        lines.extend(
+            (
+                f"- Source references: {_code_values(item['source_refs'])}",
+                f"- Observed at: {_inline(item['timestamps']['observed_at'])}",
+                f"- Scheduled at: {_inline(item['timestamps']['scheduled_at'])}",
+                f"- Detected at: {_inline(item['timestamps']['detected_at'])}",
+                "",
+            )
+        )
+    if artifact.get("warnings"):
+        lines.extend(("Top Intelligence warnings:", "", *_bullet_values(artifact["warnings"])))
+    return _trim_blank(lines)
 
 
 def _render_coverage(coverage: Sequence[Mapping[str, Any]]) -> List[str]:

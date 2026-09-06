@@ -1,115 +1,142 @@
 {
   "schema_version": "1.0",
   "artifact_type": "risk_monitor",
-  "run_id": "run_20260827T172737Z_risk_513224477d71c4e7",
-  "report_date": "2026-08-28",
-  "generated_at": "2026-08-27T17:27:37.167543Z",
+  "run_id": "run_20260903T094942Z_risk_7db934988052ef5e",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:42.034513Z",
   "status": "partial",
   "monitor_scope": "observable_risk_conditions",
   "rule_set_version": "risk_monitor_rules_v1",
   "input_refs": {
-    "evidence_bundle_run_id": "run_20260827T172737Z_consolidated_09d138d0e91042df",
-    "market_signals_run_id": "run_20260827T172737Z_relationships_2923ca683ae97030",
-    "market_regime_run_id": "run_20260827T172737Z_regime_29a799bae33da2c2"
+    "evidence_bundle_run_id": "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+    "market_signals_run_id": "run_20260903T094941Z_relationships_ec87c2fc99bc03db",
+    "market_regime_run_id": "run_20260903T094942Z_regime_104101e92401b5e8"
   },
   "input_freshness": {
     "status": "current",
-    "checked_at": "2026-08-27T17:27:37.167543Z",
+    "checked_at": "2026-09-03T09:49:42.034513Z",
     "maximum_artifact_age_hours": 24.0,
     "artifacts": {
       "evidence_bundle.json": {
-        "generated_at": "2026-08-27T17:27:37.159456Z",
-        "age_hours": 2e-06
+        "generated_at": "2026-09-03T09:49:41.942940Z",
+        "age_hours": 2.5e-05
       },
       "market_signals.json": {
-        "generated_at": "2026-08-27T17:27:37.160318Z",
-        "age_hours": 2e-06
+        "generated_at": "2026-09-03T09:49:41.980662Z",
+        "age_hours": 1.5e-05
       },
       "market_regime.json": {
-        "generated_at": "2026-08-27T17:27:37.163872Z",
-        "age_hours": 1e-06
+        "generated_at": "2026-09-03T09:49:42.005953Z",
+        "age_hours": 8e-06
       }
     },
     "stale_artifacts": [],
     "stale_supporting_observation_ids": []
   },
-  "risk_count": 7,
+  "risk_count": 3,
   "category_counts": {
-    "upcoming_event": 0,
-    "data_quality": 7,
+    "upcoming_event": 1,
+    "data_quality": 2,
     "market_stress": 0
   },
   "risks": [
     {
-      "risk_id": "rsk_input_coverage_degraded_v1_1cf1af0ddcc53a1e",
-      "rule_id": "input_coverage_degraded_v1",
-      "category": "data_quality",
-      "status": "detected",
-      "attention_level": "high",
-      "title": "Degraded input coverage: existing_evidence",
-      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
-      "related_assets": [],
+      "risk_id": "rsk_upcoming_official_event_v1_33fae68465aa5c86",
+      "rule_id": "upcoming_official_event_v1",
+      "category": "upcoming_event",
+      "status": "scheduled",
+      "attention_level": "low",
+      "title": "Scheduled official event: U.S. International Trade in Goods and Services, July 2026",
+      "description": "An official calendar event is scheduled within the next 48 hours.",
+      "related_assets": [
+        "DXY",
+        "QQQ",
+        "SPY",
+        "US10Y"
+      ],
       "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
+        "scheduled_at": "2026-09-03T12:30:00Z",
+        "window_start": "2026-09-03T09:49:42.034513Z",
+        "window_end": "2026-09-05T09:49:42.034513Z"
       },
       "observed_facts": {
-        "input_type": "existing_evidence",
-        "artifact": "evidence.json",
-        "coverage_status": "unavailable",
-        "record_count": 0,
-        "stale_record_count": 0
+        "event_id": "evt_20260903_u_s_international_trade_in_goods_and_5ed967ecb2",
+        "name": "U.S. International Trade in Goods and Services, July 2026",
+        "scheduled_at": "2026-09-03T12:30:00Z",
+        "country": "US",
+        "impact": "low",
+        "topics": [
+          "us_economy"
+        ]
       },
       "evidence_refs": {
         "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+          "run_20260903T094941Z_relationships_ec87c2fc99bc03db",
+          "run_20260903T094942Z_regime_104101e92401b5e8"
         ],
-        "evidence_bundle_ids": [],
-        "source_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_70eb06a1cf9a20519c76"
+        ],
+        "source_ids": [
+          "src_calendar_4a850d66272d3d7b"
+        ],
         "observation_ids": [],
-        "event_ids": [],
+        "event_ids": [
+          "evt_20260903_u_s_international_trade_in_goods_and_5ed967ecb2"
+        ],
         "evidence_ids": [],
         "signal_ids": [],
         "regime_dimension_ids": [],
-        "coverage_inputs": [
-          "existing_evidence"
-        ]
+        "coverage_inputs": []
       },
       "verification": {
-        "level": "verified",
-        "score": 1.0,
-        "basis": "artifact_coverage_metadata"
+        "level": "official",
+        "score": 0.9,
+        "basis": "official_calendar_record"
       },
       "limitations": [
-        "This item concerns data reliability, not market prices."
+        "The scheduled event does not imply a specific market response."
       ]
     },
     {
-      "risk_id": "rsk_input_coverage_degraded_v1_850c5ecba1c7d212",
+      "risk_id": "rsk_input_coverage_degraded_v1_de12ff42675c3d4b",
       "rule_id": "input_coverage_degraded_v1",
       "category": "data_quality",
       "status": "detected",
-      "attention_level": "high",
+      "attention_level": "medium",
       "title": "Degraded input coverage: economic_calendar",
       "description": "The consolidated Evidence input reports incomplete or stale coverage.",
-      "related_assets": [],
+      "related_assets": [
+        "DXY",
+        "QQQ",
+        "SPY",
+        "US10Y"
+      ],
       "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
+        "detected_at": "2026-09-03T09:49:42.034513Z"
       },
       "observed_facts": {
         "input_type": "economic_calendar",
         "artifact": "economic_calendar.json",
-        "coverage_status": "unavailable",
-        "record_count": 0,
+        "coverage_status": "partial",
+        "record_count": 1,
         "stale_record_count": 0
       },
       "evidence_refs": {
         "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df"
+          "run_20260903T094941Z_consolidated_b6515be033a2b0c9"
         ],
-        "evidence_bundle_ids": [],
-        "source_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_70eb06a1cf9a20519c76"
+        ],
+        "source_ids": [
+          "src_calendar_4a850d66272d3d7b"
+        ],
         "observation_ids": [],
-        "event_ids": [],
+        "event_ids": [
+          "evt_20260903_u_s_international_trade_in_goods_and_5ed967ecb2"
+        ],
         "evidence_ids": [],
         "signal_ids": [],
         "regime_dimension_ids": [],
@@ -127,230 +154,38 @@
       ]
     },
     {
-      "risk_id": "rsk_input_coverage_degraded_v1_accae6621acac1d4",
-      "rule_id": "input_coverage_degraded_v1",
-      "category": "data_quality",
-      "status": "detected",
-      "attention_level": "high",
-      "title": "Degraded input coverage: market_observations",
-      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
-      "related_assets": [],
-      "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
-      },
-      "observed_facts": {
-        "input_type": "market_observations",
-        "artifact": "observations.json",
-        "coverage_status": "unavailable",
-        "record_count": 0,
-        "stale_record_count": 0
-      },
-      "evidence_refs": {
-        "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df"
-        ],
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
-        "event_ids": [],
-        "evidence_ids": [],
-        "signal_ids": [],
-        "regime_dimension_ids": [],
-        "coverage_inputs": [
-          "market_observations"
-        ]
-      },
-      "verification": {
-        "level": "verified",
-        "score": 1.0,
-        "basis": "artifact_coverage_metadata"
-      },
-      "limitations": [
-        "This item concerns data reliability, not market prices."
-      ]
-    },
-    {
-      "risk_id": "rsk_input_coverage_degraded_v1_c0af9ca21691ff9e",
-      "rule_id": "input_coverage_degraded_v1",
-      "category": "data_quality",
-      "status": "detected",
-      "attention_level": "high",
-      "title": "Degraded input coverage: news_events",
-      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
-      "related_assets": [],
-      "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
-      },
-      "observed_facts": {
-        "input_type": "news_events",
-        "artifact": "events.json",
-        "coverage_status": "unavailable",
-        "record_count": 0,
-        "stale_record_count": 0
-      },
-      "evidence_refs": {
-        "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df"
-        ],
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
-        "event_ids": [],
-        "evidence_ids": [],
-        "signal_ids": [],
-        "regime_dimension_ids": [],
-        "coverage_inputs": [
-          "news_events"
-        ]
-      },
-      "verification": {
-        "level": "verified",
-        "score": 1.0,
-        "basis": "artifact_coverage_metadata"
-      },
-      "limitations": [
-        "This item concerns data reliability, not market prices."
-      ]
-    },
-    {
-      "risk_id": "rsk_input_coverage_degraded_v1_d473656ecece5f8e",
-      "rule_id": "input_coverage_degraded_v1",
-      "category": "data_quality",
-      "status": "detected",
-      "attention_level": "high",
-      "title": "Degraded input coverage: macro_observations",
-      "description": "The consolidated Evidence input reports incomplete or stale coverage.",
-      "related_assets": [],
-      "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
-      },
-      "observed_facts": {
-        "input_type": "macro_observations",
-        "artifact": "observations.json",
-        "coverage_status": "unavailable",
-        "record_count": 0,
-        "stale_record_count": 0
-      },
-      "evidence_refs": {
-        "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df"
-        ],
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
-        "event_ids": [],
-        "evidence_ids": [],
-        "signal_ids": [],
-        "regime_dimension_ids": [],
-        "coverage_inputs": [
-          "macro_observations"
-        ]
-      },
-      "verification": {
-        "level": "verified",
-        "score": 1.0,
-        "basis": "artifact_coverage_metadata"
-      },
-      "limitations": [
-        "This item concerns data reliability, not market prices."
-      ]
-    },
-    {
-      "risk_id": "rsk_market_regime_coverage_degraded_v1_20d52c4a1b0f550c",
-      "rule_id": "market_regime_coverage_degraded_v1",
-      "category": "data_quality",
-      "status": "detected",
-      "attention_level": "high",
-      "title": "Current market regime coverage degraded",
-      "description": "The current-condition classifier reports partial or insufficient eligible coverage.",
-      "related_assets": [],
-      "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
-      },
-      "observed_facts": {
-        "artifact_status": "unavailable",
-        "classification": null,
-        "eligible_dimension_count": 0,
-        "eligible_weight": 0.0
-      },
-      "evidence_refs": {
-        "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df",
-          "run_20260827T172737Z_regime_29a799bae33da2c2",
-          "run_20260827T172737Z_relationships_2923ca683ae97030"
-        ],
-        "evidence_bundle_ids": [],
-        "source_ids": [],
-        "observation_ids": [],
-        "event_ids": [],
-        "evidence_ids": [],
-        "signal_ids": [
-          "sig_crypto_co_movement_v1_53689a02d99c",
-          "sig_dollar_yield_co_movement_v1_c4a307baad88",
-          "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
-          "sig_equity_index_co_movement_v1_ff8d02ef65e2",
-          "sig_equity_volatility_inverse_move_v1_f1b870e3f543"
-        ],
-        "regime_dimension_ids": [
-          "cross_asset_alignment",
-          "crypto",
-          "dollar_yield",
-          "equity",
-          "volatility"
-        ],
-        "coverage_inputs": []
-      },
-      "verification": {
-        "level": "verified",
-        "score": 1.0,
-        "basis": "deterministic_regime_metadata"
-      },
-      "limitations": [
-        "No unavailable regime is treated as mixed."
-      ]
-    },
-    {
-      "risk_id": "rsk_market_signal_coverage_degraded_v1_19d895dc003dad90",
+      "risk_id": "rsk_market_signal_coverage_degraded_v1_d0f8d7f4dcaca1ae",
       "rule_id": "market_signal_coverage_degraded_v1",
       "category": "data_quality",
       "status": "detected",
-      "attention_level": "high",
+      "attention_level": "medium",
       "title": "Cross-asset relationship coverage degraded",
       "description": "One or more cross-asset relationship evaluations are stale or incomplete.",
       "related_assets": [],
       "time_window": {
-        "detected_at": "2026-08-27T17:27:37.167543Z"
+        "detected_at": "2026-09-03T09:49:42.034513Z"
       },
       "observed_facts": {
-        "artifact_status": "unavailable",
+        "artifact_status": "partial",
         "state_counts": {
-          "observed": 0,
-          "not_observed": 0,
+          "observed": 5,
+          "not_observed": 3,
           "stale_data": 0,
-          "insufficient_data": 8
+          "insufficient_data": 0
         }
       },
       "evidence_refs": {
         "artifact_run_ids": [
-          "run_20260827T172737Z_consolidated_09d138d0e91042df",
-          "run_20260827T172737Z_regime_29a799bae33da2c2",
-          "run_20260827T172737Z_relationships_2923ca683ae97030"
+          "run_20260903T094941Z_consolidated_b6515be033a2b0c9",
+          "run_20260903T094941Z_relationships_ec87c2fc99bc03db",
+          "run_20260903T094942Z_regime_104101e92401b5e8"
         ],
         "evidence_bundle_ids": [],
         "source_ids": [],
         "observation_ids": [],
         "event_ids": [],
         "evidence_ids": [],
-        "signal_ids": [
-          "sig_crypto_co_movement_v1_53689a02d99c",
-          "sig_dollar_fx_quote_alignment_v1_cb0110e8e493",
-          "sig_dollar_yield_co_movement_v1_c4a307baad88",
-          "sig_equity_crypto_co_movement_v1_e08cf7ffbcb7",
-          "sig_equity_index_co_movement_v1_ff8d02ef65e2",
-          "sig_equity_index_divergence_v1_5f45b91736c8",
-          "sig_equity_volatility_inverse_move_v1_f1b870e3f543",
-          "sig_gold_dollar_inverse_move_v1_4514042730ae"
-        ],
+        "signal_ids": [],
         "regime_dimension_ids": [],
         "coverage_inputs": []
       },
@@ -366,12 +201,18 @@
   ],
   "warnings": [
     "One or more monitor inputs have degraded coverage or freshness.",
-    "No eligible official events were found in the next 48 hours.",
     "No current market-stress rule is supported by eligible evidence."
   ],
   "limitations": [
     "Risk items describe scheduled events, data quality, or current observations.",
     "They do not establish causality, persistence, or later outcomes.",
     "No item is an investment or trading instruction."
-  ]
+  ],
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "age_seconds": 107382.035,
+  "freshness_status": "current",
+  "freshness_basis": "source_timestamp",
+  "stale_after_seconds": 172800,
+  "freshness_contract_version": "1.0"
 }

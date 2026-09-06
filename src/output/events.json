@@ -1,18 +1,25 @@
 {
   "schema_version": "1.1",
   "artifact_type": "events",
-  "run_id": "run_20260827T172737Z_news",
-  "report_date": "2026-08-28",
-  "generated_at": "2026-08-27T17:27:37.158003Z",
-  "status": "failed",
+  "run_id": "run_20260903T094941Z_news",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:41.926944Z",
+  "status": "complete",
   "warnings": [
-    "News input: News source unavailable: NewsSourceAccessError: Federal Reserve RSS download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>",
-    "News normalization skipped: input artifact failed."
+    "News input: No Federal Reserve press releases were published in the configured ingestion window.",
+    "No accepted NewsItems were available to normalize."
   ],
   "input_artifact": "news_items.json",
-  "input_run_id": "run_20260827T172737Z_news",
+  "input_run_id": "run_20260903T094941Z_news",
   "event_count": 0,
   "normalization_rejection_count": 0,
   "normalization_rejections": [],
-  "events": []
+  "events": [],
+  "source_timestamp": null,
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "age_seconds": 0.381,
+  "freshness_status": "current",
+  "freshness_basis": "retrieved_at",
+  "stale_after_seconds": 108000,
+  "freshness_contract_version": "1.0"
 }

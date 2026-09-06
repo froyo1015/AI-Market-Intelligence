@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from src.data.freshness import enrich_artifact_freshness
 from src.data.news_adapter import (
     FEDERAL_RESERVE_RSS_URL,
     FederalReserveNewsAdapter,
@@ -162,8 +163,9 @@ def write_news_items_artifact(
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    payload = enrich_artifact_freshness(artifact.to_dict())
     temporary_path.write_text(
-        json.dumps(artifact.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)

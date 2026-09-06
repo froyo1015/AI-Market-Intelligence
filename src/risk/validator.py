@@ -6,6 +6,7 @@ import re
 from datetime import datetime
 from typing import Any, Mapping
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.risk.monitor import build_risk_monitor_artifact
 
 
@@ -49,7 +50,10 @@ def validate_risk_monitor_artifact(
     market_signals: Mapping[str, Any],
     market_regime: Mapping[str, Any],
 ) -> None:
-    _scan_output(artifact)
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
+    domain_artifact = strip_freshness_metadata(artifact)
+    _scan_output(domain_artifact)
     generated_at = artifact.get("generated_at")
     if not isinstance(generated_at, str):
         raise RiskMonitorValidationError("generated_at must be a timestamp")
@@ -65,7 +69,7 @@ def validate_risk_monitor_artifact(
         market_regime,
         now=generated,
     ).to_dict()
-    if artifact != expected:
+    if domain_artifact != expected:
         raise RiskMonitorValidationError(
             "risk-monitor artifact does not match deterministic evaluation"
         )

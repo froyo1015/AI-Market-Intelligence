@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.regime.classifier import (
     RegimeClassificationError,
     build_market_regime_artifact,
@@ -218,7 +219,9 @@ def test_pipeline_reads_exactly_two_artifact_types_and_writes_atomically(
         output_path,
     )
 
-    assert json.loads(output_path.read_text(encoding="utf-8")) == result.to_dict()
+    written = json.loads(output_path.read_text(encoding="utf-8"))
+    validate_freshness_contract(written)
+    assert strip_freshness_metadata(written) == result.to_dict()
     assert not (tmp_path / "market_regime.json.tmp").exists()
 
     wrong_path = tmp_path / "wrong.json"

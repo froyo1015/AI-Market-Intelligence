@@ -21,6 +21,12 @@ def test_static_shell_has_dynamic_artifact_contract_and_safe_csp() -> None:
     page = generate_intelligence_page()
 
     assert "<!doctype html>" in page
+    assert 'id="ai-brief-content"' in page
+    assert 'id="ai-brief-mode"' in page
+    assert 'id="ai-brief-generated-at"' in page
+    assert 'id="ai-brief-freshness"' in page
+    assert 'id="ai-brief-validation"' in page
+    assert 'id="top-intelligence-content"' in page
     assert 'id="regime-content"' in page
     assert 'id="signals-content"' in page
     assert 'id="risks-content"' in page
@@ -31,6 +37,38 @@ def test_static_shell_has_dynamic_artifact_contract_and_safe_csp() -> None:
     assert "connect-src 'self'" in page
     assert "unpkg" not in page
     assert "react" not in page.lower()
+    assert page.index('id="ai-brief"') < page.index('id="top-intelligence"')
+    assert page.index('id="top-intelligence"') < page.index('id="regime"')
+    assert page.index('id="regime"') < page.index('id="signals"')
+    assert page.index('id="signals"') < page.index('id="risks"')
+    assert page.index('id="risks"') < page.index('id="markets"')
+    assert page.index('id="markets"') < page.index('id="audit"')
+
+
+def test_frontend_has_no_llm_execution_or_html_injection_path() -> None:
+    script = (
+        PROJECT_ROOT / "src" / "pages" / "static" / "intelligence.js"
+    ).read_text(encoding="utf-8")
+
+    assert "innerHTML" not in script
+    assert "insertAdjacentHTML" not in script
+    assert "eval(" not in script
+    assert "Function(" not in script
+    assert "llm_adapter" not in script
+    assert "grounded_brief" not in script
+    assert "api.openai.com" not in script
+    assert 'aiBrief: ["data/ai_market_brief.md", "text"]' in script
+    assert 'runManifest: ["data/run_manifest.json", "json"]' in script
+
+
+def test_ai_brief_web_integration_contract_is_documented() -> None:
+    contract = PROJECT_ROOT / "docs" / "ai-brief-web-integration.md"
+    text = contract.read_text(encoding="utf-8")
+
+    assert "deterministic_fallback" in text
+    assert "AI Market Brief unavailable." in text
+    assert "textContent" in text
+    assert "[refs: ...]" in text
 
 
 def test_generator_packages_valid_artifacts_and_handles_missing_inputs(

@@ -7,6 +7,7 @@ from datetime import date, datetime, timezone
 from typing import Any, Mapping, Sequence, Set
 
 from src.consolidation.builder import CAUSAL_OR_PREDICTIVE_LANGUAGE
+from src.data.freshness import validate_freshness_contract
 
 
 EXPECTED_COVERAGE = {
@@ -55,6 +56,8 @@ class ConsolidatedEvidenceValidationError(ValueError):
 
 
 def validate_consolidated_evidence_artifact(artifact: Mapping[str, Any]) -> None:
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
     if artifact.get("schema_version") != "1.0":
         raise ConsolidatedEvidenceValidationError("unsupported schema_version")
     if artifact.get("artifact_type") != "evidence_bundle":

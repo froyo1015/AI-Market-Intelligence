@@ -7,6 +7,10 @@ from datetime import datetime
 from typing import Any, Mapping
 
 from src.consolidation.validator import validate_consolidated_evidence_artifact
+from src.data.freshness import (
+    strip_freshness_metadata,
+    validate_freshness_contract,
+)
 from src.signals.engine import build_market_signals_artifact
 
 
@@ -50,7 +54,10 @@ def validate_market_signals_artifact(
     evidence_bundle: Mapping[str, Any],
 ) -> None:
     validate_consolidated_evidence_artifact(evidence_bundle)
-    _scan_output(artifact)
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
+    domain_artifact = strip_freshness_metadata(artifact)
+    _scan_output(domain_artifact)
     generated_at = artifact.get("generated_at")
     if not isinstance(generated_at, str):
         raise MarketSignalsValidationError("generated_at must be a timestamp")
@@ -64,7 +71,7 @@ def validate_market_signals_artifact(
         evidence_bundle,
         now=generated,
     ).to_dict()
-    if artifact != expected:
+    if domain_artifact != expected:
         raise MarketSignalsValidationError(
             "signal artifact does not match deterministic rule evaluation"
         )

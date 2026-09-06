@@ -5,8 +5,9 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence, Tuple
+from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
+from src.data.freshness import enrich_artifact_freshness
 from src.evidence.builder import (
     EvidenceBuildError,
     build_evidence_artifact,
@@ -53,8 +54,11 @@ def run_evidence_pipeline(
     evidence = build_evidence_artifact(observations)
     validate_observation_artifact(observations)
     validate_evidence_artifact(evidence, observations)
-    _write_json(observations, observations_path)
-    _write_json(evidence, evidence_path)
+    freshness_inputs = tuple(
+        item for item in (snapshot, macro_snapshot) if item is not None
+    )
+    _write_json(observations, observations_path, freshness_inputs)
+    _write_json(evidence, evidence_path, (observations,))
     return observations, evidence
 
 
@@ -99,11 +103,18 @@ def cli() -> None:
     raise SystemExit(main())
 
 
-def _write_json(payload: Dict[str, Any], output_path: Path) -> None:
+def _write_json(
+    payload: Dict[str, Any],
+    output_path: Path,
+    supporting_artifacts: Sequence[Mapping[str, Any]] = (),
+) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    serialized = enrich_artifact_freshness(
+        payload, supporting_artifacts=supporting_artifacts
+    )
     temporary_path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(serialized, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(output_path)

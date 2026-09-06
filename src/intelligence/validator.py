@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Mapping
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.intelligence.composer import build_daily_intelligence_artifact
 
 
@@ -40,7 +41,10 @@ def validate_daily_intelligence_artifact(
     market_regime: Mapping[str, Any],
     risk_monitor: Mapping[str, Any],
 ) -> None:
-    _scan_keys(artifact)
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
+    domain_artifact = strip_freshness_metadata(artifact)
+    _scan_keys(domain_artifact)
     generated_at = artifact.get("generated_at")
     if not isinstance(generated_at, str):
         raise DailyIntelligenceValidationError("generated_at must be a timestamp")
@@ -57,7 +61,7 @@ def validate_daily_intelligence_artifact(
         risk_monitor,
         now=generated,
     ).to_dict()
-    if artifact != expected:
+    if domain_artifact != expected:
         raise DailyIntelligenceValidationError(
             "daily-intelligence artifact does not match deterministic assembly"
         )

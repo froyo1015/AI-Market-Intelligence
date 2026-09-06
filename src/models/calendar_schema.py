@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -26,11 +26,37 @@ class EconomicCalendarEvent:
     confidence_label: str
     provider_event_id: Optional[str]
     content_hash: str
+    verification_level: str = "official_primary"
+    conflict_group_id: Optional[str] = None
+    provenance: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         payload = asdict(self)
         payload["scheduled_at"] = _iso_utc(self.scheduled_at)
         payload["retrieved_at"] = _iso_utc(self.retrieved_at)
+        return payload
+
+
+@dataclass(frozen=True)
+class CalendarSourceAttempt:
+    source: str
+    publisher: str
+    source_url: str
+    priority: int
+    source_format: str
+    status: str
+    retrieved_at: Optional[datetime]
+    failure_type: Optional[str]
+    retryable: bool
+    error: Optional[str]
+    parsed_event_count: int
+    accepted_event_count: int
+
+    def to_dict(self) -> Dict[str, Any]:
+        payload = asdict(self)
+        payload["retrieved_at"] = (
+            _iso_utc(self.retrieved_at) if self.retrieved_at is not None else None
+        )
         return payload
 
 
@@ -46,7 +72,8 @@ class EconomicCalendar:
     failure_type: Optional[str]
     retryable: bool
     warnings: List[str]
-    schema_version: str = "1.0"
+    sources: List[CalendarSourceAttempt] = field(default_factory=list)
+    schema_version: str = "1.1"
 
     def to_dict(self) -> Dict[str, Any]:
         generated_at = _as_utc(self.generated_at)
@@ -64,6 +91,7 @@ class EconomicCalendar:
             "failure_type": self.failure_type,
             "retryable": self.retryable,
             "warnings": list(self.warnings),
+            "sources": [source.to_dict() for source in self.sources],
             "events": [event.to_dict() for event in self.events],
         }
 

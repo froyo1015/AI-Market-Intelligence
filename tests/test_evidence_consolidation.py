@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.consolidation.builder import build_consolidated_evidence_artifact
 from src.consolidation.pipeline import run_consolidation_pipeline
 from src.consolidation.validator import (
@@ -461,6 +462,7 @@ def test_pipeline_writes_valid_artifact_atomically(tmp_path: Path) -> None:
     )
 
     written = json.loads(paths["output"].read_text(encoding="utf-8"))
-    assert written == result.to_dict()
+    validate_freshness_contract(written)
+    assert strip_freshness_metadata(written) == result.to_dict()
     assert written["artifact_type"] == "evidence_bundle"
     assert not (tmp_path / "evidence_bundle.json.tmp").exists()

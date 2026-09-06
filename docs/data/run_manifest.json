@@ -1,12 +1,17 @@
 {
   "schema_version": "1.0",
   "artifact_type": "run_manifest",
-  "run_id": "run_20260827T172737Z_orchestration_0b9bac2d514d",
-  "execution_timestamp": "2026-08-27T17:27:37.123839Z",
-  "execution_started_at": "2026-08-27T17:27:37.123839Z",
-  "execution_completed_at": "2026-08-27T17:27:37.200303Z",
+  "freshness_contract_version": "1.0",
+  "run_id": "run_20260903T094936Z_orchestration_036867c77e2c",
+  "execution_timestamp": "2026-09-03T09:49:36.955069Z",
+  "execution_started_at": "2026-09-03T09:49:36.955069Z",
+  "execution_completed_at": "2026-09-03T09:49:42.438489Z",
   "status": "partial",
-  "freshness_status": "mixed",
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "generated_at": "2026-09-03T09:49:42.438489Z",
+  "age_seconds": 107382.438,
+  "freshness_status": "current",
   "execution_order": [
     "market_data",
     "macro",
@@ -19,7 +24,10 @@
     "market_regime",
     "risk_monitor",
     "daily_intelligence",
+    "top_intelligence",
     "brief_renderer",
+    "grounded_ai_brief",
+    "ai_brief_evaluation",
     "intelligence_web_view"
   ],
   "modules": [
@@ -28,10 +36,14 @@
       "name": "market_data",
       "hard_dependencies": [],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.124551Z",
-      "completed_at": "2026-08-27T17:27:37.141863Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:36.956656Z",
+      "completed_at": "2026-09-03T09:49:38.575884Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:36.956680Z",
+      "generated_at": "2026-09-03T09:49:38.575884Z",
+      "age_seconds": 107378.576,
+      "freshness_status": "current",
       "declared_artifacts": [
         "market_snapshot.json"
       ],
@@ -39,33 +51,36 @@
         {
           "path": "market_snapshot.json",
           "artifact_type": "market_snapshot",
-          "sha256": "61a70c2287a28cf8c73a30e03a91c0302539e610ff81bd4497eec35e1b68be73",
+          "sha256": "e93e5216b8110f956d04c6bda663bdc777772bd40847f2ed0ff92abb2e2b90ff",
           "versions": {
             "schema_version": "1.0"
           },
-          "generated_at": "2026-08-27T17:27:37.124565Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:36.956680Z",
+          "generated_at": "2026-09-03T09:49:36.956680Z",
+          "age_seconds": 107376.957,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
       "warnings": [],
-      "failure": {
-        "module": "market_data",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 2,
       "name": "macro",
       "hard_dependencies": [],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.141873Z",
-      "completed_at": "2026-08-27T17:27:37.146059Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:38.575982Z",
+      "completed_at": "2026-09-03T09:49:39.034045Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T05:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:38.576001Z",
+      "generated_at": "2026-09-03T09:49:39.034045Z",
+      "age_seconds": 103779.034,
+      "freshness_status": "current",
       "declared_artifacts": [
         "macro_snapshot.json"
       ],
@@ -73,33 +88,36 @@
         {
           "path": "macro_snapshot.json",
           "artifact_type": "macro_snapshot",
-          "sha256": "695e8c16e0aed00dabf21ba91a361c59fe599e256d77a4171a466c704d5d8e6c",
+          "sha256": "7f6277f99158fab7ea7aeb7bb8285782cd31ee50b42ae64134cd0827df07c89e",
           "versions": {
             "schema_version": "1.0"
           },
-          "generated_at": "2026-08-27T17:27:37.141880Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T05:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:38.576001Z",
+          "generated_at": "2026-09-03T09:49:38.576001Z",
+          "age_seconds": 103778.576,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
       "warnings": [],
-      "failure": {
-        "module": "macro",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 3,
       "name": "calendar",
       "hard_dependencies": [],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.146067Z",
-      "completed_at": "2026-08-27T17:27:37.154602Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:39.034189Z",
+      "completed_at": "2026-09-03T09:49:41.546062Z",
+      "status": "partial",
+      "source_timestamp": null,
+      "retrieved_at": "2026-09-03T09:49:39.034222Z",
+      "generated_at": "2026-09-03T09:49:41.546062Z",
+      "age_seconds": 2.512,
+      "freshness_status": "current",
       "declared_artifacts": [
         "economic_calendar.json"
       ],
@@ -107,35 +125,67 @@
         {
           "path": "economic_calendar.json",
           "artifact_type": "economic_calendar",
-          "sha256": "d5f0d7f45dfbb36af5160e2c951f2f3c4acae29cca00d85bf574a515af6121f5",
+          "sha256": "c46b3d629537170b2f5901e6b6ac24aab16b82ccf62007d795e376857cb00ae6",
           "versions": {
-            "schema_version": "1.0"
+            "schema_version": "1.1"
           },
-          "generated_at": "2026-08-27T17:27:37.146074Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": null,
+          "retrieved_at": "2026-09-03T09:49:39.034222Z",
+          "generated_at": "2026-09-03T09:49:39.034222Z",
+          "age_seconds": 0.0,
+          "data_status": "partial",
+          "freshness_status": "current",
+          "source_health": [
+            {
+              "source": "bls_release_calendar",
+              "publisher": "U.S. Bureau of Labor Statistics",
+              "source_url": "https://www.bls.gov/schedule/news_release/bls.ics",
+              "priority": 1,
+              "source_format": "ics",
+              "status": "unavailable",
+              "retrieved_at": null,
+              "failure_type": "primary_source_access_error",
+              "retryable": true,
+              "error": "CalendarSourceAccessError: BLS calendar download failed: HTTP Error 403: Forbidden",
+              "parsed_event_count": 0,
+              "accepted_event_count": 0
+            },
+            {
+              "source": "bea_release_schedule",
+              "publisher": "U.S. Bureau of Economic Analysis",
+              "source_url": "https://www.bea.gov/news/schedule/full",
+              "priority": 2,
+              "source_format": "bea_html",
+              "status": "available",
+              "retrieved_at": "2026-09-03T09:49:39.034222Z",
+              "failure_type": null,
+              "retryable": false,
+              "error": null,
+              "parsed_event_count": 63,
+              "accepted_event_count": 1
+            }
+          ],
           "approved_for_publication": false
         }
       ],
       "warnings": [
-        "Economic calendar unavailable: CalendarSourceAccessError: BLS calendar download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+        "bls_release_calendar: CalendarSourceAccessError: BLS calendar download failed: HTTP Error 403: Forbidden"
       ],
-      "failure": {
-        "module": "calendar",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 4,
       "name": "news_ingestion",
       "hard_dependencies": [],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.154609Z",
-      "completed_at": "2026-08-27T17:27:37.157945Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:41.546157Z",
+      "completed_at": "2026-09-03T09:49:41.926650Z",
+      "status": "success",
+      "source_timestamp": null,
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:41.926650Z",
+      "age_seconds": 0.38,
+      "freshness_status": "current",
       "declared_artifacts": [
         "news_items.json"
       ],
@@ -143,25 +193,24 @@
         {
           "path": "news_items.json",
           "artifact_type": "news_items",
-          "sha256": "4153f9667a72d5a3b51dfe774a49036f928336d71172b3a6505ff675f345c805",
+          "sha256": "db629964857a040898f09b56a91389cfa97874c2e05961ece072ee3f424581db",
           "versions": {
             "schema_version": "1.0"
           },
-          "generated_at": "2026-08-27T17:27:37.154616Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": null,
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:41.546178Z",
+          "age_seconds": 0.0,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": false
         }
       ],
       "warnings": [
-        "News source unavailable: NewsSourceAccessError: Federal Reserve RSS download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+        "No Federal Reserve press releases were published in the configured ingestion window."
       ],
-      "failure": {
-        "module": "news_ingestion",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 5,
@@ -170,10 +219,14 @@
         "news_ingestion"
       ],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.157951Z",
-      "completed_at": "2026-08-27T17:27:37.158334Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:41.926732Z",
+      "completed_at": "2026-09-03T09:49:41.928264Z",
+      "status": "success",
+      "source_timestamp": null,
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:41.928264Z",
+      "age_seconds": 0.382,
+      "freshness_status": "current",
       "declared_artifacts": [
         "events.json"
       ],
@@ -181,26 +234,25 @@
         {
           "path": "events.json",
           "artifact_type": "events",
-          "sha256": "d0c60ad042fdff10e71253afcfd0bf191a87be637fc686c7f76516549390e561",
+          "sha256": "591bcae517e352342b3d02a3e78daae7c9f17046410f05db9a3970a5beaccfa2",
           "versions": {
             "schema_version": "1.1"
           },
-          "generated_at": "2026-08-27T17:27:37.158003Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": null,
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:41.926944Z",
+          "age_seconds": 0.381,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": false
         }
       ],
       "warnings": [
-        "News input: News source unavailable: NewsSourceAccessError: Federal Reserve RSS download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>",
-        "News normalization skipped: input artifact failed."
+        "News input: No Federal Reserve press releases were published in the configured ingestion window.",
+        "No accepted NewsItems were available to normalize."
       ],
-      "failure": {
-        "module": "event_normalization",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 6,
@@ -211,10 +263,14 @@
       "soft_dependencies": [
         "macro"
       ],
-      "started_at": "2026-08-27T17:27:37.158339Z",
-      "completed_at": "2026-08-27T17:27:37.159326Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:41.928328Z",
+      "completed_at": "2026-09-03T09:49:41.942424Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:38.576001Z",
+      "generated_at": "2026-09-03T09:49:41.942424Z",
+      "age_seconds": 107381.942,
+      "freshness_status": "current",
       "declared_artifacts": [
         "observations.json",
         "evidence.json"
@@ -223,50 +279,109 @@
         {
           "path": "observations.json",
           "artifact_type": "observations",
-          "sha256": "e3815bc12082011420470dcade9f3ead1e7a0f3a01aa90109e38fee3f8fc2372",
+          "sha256": "cadd4299ac8b03e5471f43392e9010523d9a285447f88a0f6a3949d67b7819ac",
           "versions": {
             "schema_version": "1.1"
           },
-          "generated_at": "2026-08-27T17:27:37.141880Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:38.576001Z",
+          "generated_at": "2026-09-03T09:49:38.576001Z",
+          "age_seconds": 107378.576,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [
+            {
+              "source_id": "src_yahoo_finance",
+              "provider": "yahoo_finance",
+              "publisher": "Yahoo Finance",
+              "source_type": "market_data",
+              "quality_tier": 3,
+              "title": "Yahoo Finance market snapshot",
+              "url": "https://finance.yahoo.com/",
+              "published_at": null,
+              "retrieved_at": "2026-09-03T09:49:36.956680Z",
+              "content_hash": "sha256:4b82d81a0313ab773d199a99dde8b20df7ddb649594e02feb2fa4795b8da6b91",
+              "status": "invalid",
+              "source": "src_yahoo_finance"
+            },
+            {
+              "source_id": "src_yahoo_finance_dxy",
+              "provider": "yahoo_finance",
+              "publisher": "Yahoo Finance",
+              "source_type": "macro_market_data",
+              "quality_tier": 3,
+              "title": "U.S. Dollar Index macro proxy",
+              "url": "https://finance.yahoo.com/quote/DX-Y.NYB/",
+              "published_at": null,
+              "retrieved_at": "2026-09-03T09:49:38.576001Z",
+              "content_hash": "sha256:539da3cd6fef55110b0978bde4d3ad2d84652a57ed37bd73af78799405840b7a",
+              "status": "invalid",
+              "source": "src_yahoo_finance_dxy"
+            },
+            {
+              "source_id": "src_yahoo_finance_us10y",
+              "provider": "yahoo_finance",
+              "publisher": "Yahoo Finance",
+              "source_type": "macro_market_data",
+              "quality_tier": 3,
+              "title": "U.S. 10-Year Treasury Yield macro proxy",
+              "url": "https://finance.yahoo.com/quote/%5ETNX/",
+              "published_at": null,
+              "retrieved_at": "2026-09-03T09:49:38.576001Z",
+              "content_hash": "sha256:42ccc211df1634a63310b7c9b5fde0ca93295d08a62a37ce4db58a77a99d022d",
+              "status": "invalid",
+              "source": "src_yahoo_finance_us10y"
+            },
+            {
+              "source_id": "src_yahoo_finance_vix",
+              "provider": "yahoo_finance",
+              "publisher": "Yahoo Finance",
+              "source_type": "macro_market_data",
+              "quality_tier": 3,
+              "title": "Cboe Volatility Index macro proxy",
+              "url": "https://finance.yahoo.com/quote/%5EVIX/",
+              "published_at": null,
+              "retrieved_at": "2026-09-03T09:49:38.576001Z",
+              "content_hash": "sha256:3a8e5b4591d0494e6952fcdea5d70c7a5cc478d9d746b596ffee8964194650f1",
+              "status": "invalid",
+              "source": "src_yahoo_finance_vix"
+            },
+            {
+              "source_id": "src_yahoo_finance_oil",
+              "provider": "yahoo_finance",
+              "publisher": "Yahoo Finance",
+              "source_type": "macro_market_data",
+              "quality_tier": 3,
+              "title": "WTI Crude Oil Front-Month Futures macro proxy",
+              "url": "https://finance.yahoo.com/quote/CL%3DF/",
+              "published_at": null,
+              "retrieved_at": "2026-09-03T09:49:38.576001Z",
+              "content_hash": "sha256:f89a96ebdd1d72ecc32fba5e604e0e0928e94781262bd79ed3b834a90ea94fcf",
+              "status": "invalid",
+              "source": "src_yahoo_finance_oil"
+            }
+          ],
           "approved_for_publication": false
         },
         {
           "path": "evidence.json",
           "artifact_type": "evidence",
-          "sha256": "dd6389f03e98631b37ff3a3ec208c758bcba9db7ba5a9ca36f3a844de879a271",
+          "sha256": "09205995cff5b12a76178ac79b46738727e3107d3efd06675fbb5d732bb289b0",
           "versions": {
             "schema_version": "1.1"
           },
-          "generated_at": "2026-08-27T17:27:37.141880Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:38.576001Z",
+          "generated_at": "2026-09-03T09:49:38.576001Z",
+          "age_seconds": 107378.576,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": false
         }
       ],
-      "warnings": [
-        "AAPL omitted: market snapshot status is failed",
-        "BTC-USD omitted: market snapshot status is failed",
-        "DXY macro observations omitted: status is failed",
-        "ETH-USD omitted: market snapshot status is failed",
-        "EURUSD omitted: market snapshot status is failed",
-        "GOLD omitted: market snapshot status is failed",
-        "NVDA omitted: market snapshot status is failed",
-        "OIL macro observations omitted: status is failed",
-        "QQQ omitted: market snapshot status is failed",
-        "SPY omitted: market snapshot status is failed",
-        "TSLA omitted: market snapshot status is failed",
-        "US10Y macro observations omitted: status is failed",
-        "USDJPY omitted: market snapshot status is failed",
-        "VIX macro observations omitted: status is failed"
-      ],
-      "failure": {
-        "module": "evidence_foundation",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "warnings": [],
+      "failure": null
     },
     {
       "sequence": 7,
@@ -278,10 +393,14 @@
         "calendar",
         "event_normalization"
       ],
-      "started_at": "2026-08-27T17:27:37.159334Z",
-      "completed_at": "2026-08-27T17:27:37.160233Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:41.942583Z",
+      "completed_at": "2026-09-03T09:49:41.976871Z",
+      "status": "partial",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:41.976871Z",
+      "age_seconds": 107381.977,
+      "freshness_status": "current",
       "declared_artifacts": [
         "evidence_bundle.json"
       ],
@@ -289,29 +408,24 @@
         {
           "path": "evidence_bundle.json",
           "artifact_type": "evidence_bundle",
-          "sha256": "cdffd5c5c0c987b35435ded66d9c37609afa463c65522f15235d0cfd1daccd44",
+          "sha256": "cc70f623f1d77118db8aa2e2d493ad84327a1aec315b19661765ea5991f9792c",
           "versions": {
             "schema_version": "1.0"
           },
-          "generated_at": "2026-08-27T17:27:37.159456Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:41.942940Z",
+          "age_seconds": 107381.943,
+          "data_status": "partial",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": false
         }
       ],
       "warnings": [
-        "economic_calendar coverage is unavailable.",
-        "existing_evidence coverage is unavailable.",
-        "macro_observations coverage is unavailable.",
-        "market_observations coverage is unavailable.",
-        "news_events coverage is unavailable."
+        "economic_calendar coverage is partial."
       ],
-      "failure": {
-        "module": "evidence_consolidation",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 8,
@@ -320,10 +434,14 @@
         "evidence_consolidation"
       ],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.160238Z",
-      "completed_at": "2026-08-27T17:27:37.163744Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:41.976934Z",
+      "completed_at": "2026-09-03T09:49:42.004312Z",
+      "status": "partial",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.004312Z",
+      "age_seconds": 107382.004,
+      "freshness_status": "current",
       "declared_artifacts": [
         "market_signals.json"
       ],
@@ -331,27 +449,25 @@
         {
           "path": "market_signals.json",
           "artifact_type": "market_signals",
-          "sha256": "86237207a41e8569c25df2843cba5e4083e0a696f5fc90a4d1a26c69664a6420",
+          "sha256": "726580b6005c9b6c7242b00ba3f5b178b840bbb983acff0bc6c6eff3052566c2",
           "versions": {
             "schema_version": "1.0",
             "rule_set_version": "cross_asset_rules_v1"
           },
-          "generated_at": "2026-08-27T17:27:37.160318Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:41.980662Z",
+          "age_seconds": 107381.981,
+          "data_status": "partial",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
       "warnings": [
-        "8 relationship rule(s) have insufficient data.",
-        "Input evidence coverage is unavailable."
+        "Input evidence coverage is partial."
       ],
-      "failure": {
-        "module": "cross_asset_signals",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 9,
@@ -361,9 +477,13 @@
         "cross_asset_signals"
       ],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.163752Z",
-      "completed_at": "2026-08-27T17:27:37.167374Z",
-      "status": "unavailable",
+      "started_at": "2026-09-03T09:49:42.004423Z",
+      "completed_at": "2026-09-03T09:49:42.033561Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.033561Z",
+      "age_seconds": 107382.034,
       "freshness_status": "current",
       "declared_artifacts": [
         "market_regime.json"
@@ -372,27 +492,23 @@
         {
           "path": "market_regime.json",
           "artifact_type": "market_regime",
-          "sha256": "13694821bb9f12f4da8d7a5d60ec9037c51499673ce0465bbeb72a5d4f73331c",
+          "sha256": "067b49d464ade8bc5a1a350eafcb26ef062fac6d0a24ee5ca60c685e09eeb91b",
           "versions": {
             "schema_version": "1.0",
             "rule_set_version": "market_regime_rules_v1"
           },
-          "generated_at": "2026-08-27T17:27:37.163872Z",
-          "data_status": "unavailable",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:42.005953Z",
+          "age_seconds": 107382.006,
+          "data_status": "success",
           "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
-      "warnings": [
-        "5 regime dimension(s) are unavailable.",
-        "Current evidence does not meet classification coverage rules."
-      ],
-      "failure": {
-        "module": "market_regime",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "warnings": [],
+      "failure": null
     },
     {
       "sequence": 10,
@@ -403,9 +519,13 @@
         "market_regime"
       ],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.167379Z",
-      "completed_at": "2026-08-27T17:27:37.172928Z",
+      "started_at": "2026-09-03T09:49:42.033610Z",
+      "completed_at": "2026-09-03T09:49:42.063929Z",
       "status": "partial",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.063929Z",
+      "age_seconds": 107382.064,
       "freshness_status": "current",
       "declared_artifacts": [
         "risk_monitor.json"
@@ -414,20 +534,23 @@
         {
           "path": "risk_monitor.json",
           "artifact_type": "risk_monitor",
-          "sha256": "0ffd6798c6c49a345020156aa9ad52a3a0caa07b26f7ffc1c70f9079204bedbe",
+          "sha256": "2e082e58147a8a5b1269573f6e46eec3aceac27d16c2edec5c536f9a7050281d",
           "versions": {
             "schema_version": "1.0",
             "rule_set_version": "risk_monitor_rules_v1"
           },
-          "generated_at": "2026-08-27T17:27:37.167543Z",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:42.034513Z",
+          "age_seconds": 107382.035,
           "data_status": "partial",
           "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
       "warnings": [
         "No current market-stress rule is supported by eligible evidence.",
-        "No eligible official events were found in the next 48 hours.",
         "One or more monitor inputs have degraded coverage or freshness."
       ],
       "failure": null
@@ -442,10 +565,14 @@
         "risk_monitor"
       ],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.172934Z",
-      "completed_at": "2026-08-27T17:27:37.187765Z",
-      "status": "unavailable",
-      "freshness_status": "unknown",
+      "started_at": "2026-09-03T09:49:42.063988Z",
+      "completed_at": "2026-09-03T09:49:42.135283Z",
+      "status": "partial",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.135283Z",
+      "age_seconds": 107382.135,
+      "freshness_status": "current",
       "declared_artifacts": [
         "daily_intelligence.json"
       ],
@@ -453,43 +580,87 @@
         {
           "path": "daily_intelligence.json",
           "artifact_type": "daily_intelligence",
-          "sha256": "7125644b69a177829fd1106847013f03ed315de409582b576d2295aecdce7d0a",
+          "sha256": "e81be4cde109ac990c90e66fcd7cad8aef2995f5111178e7272e8ec0f86ba547",
           "versions": {
             "schema_version": "1.0",
             "schema_contract": "daily_intelligence_v1"
           },
-          "generated_at": "2026-08-27T17:27:37.173176Z",
-          "data_status": "unavailable",
-          "freshness_status": "unknown",
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:42.065323Z",
+          "age_seconds": 107382.065,
+          "data_status": "partial",
+          "freshness_status": "current",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
       "warnings": [
-        "no_current_substantive_intelligence",
-        "provenance_catalog_empty",
-        "upstream_partial:risk_monitor.json",
-        "upstream_unavailable:evidence_bundle.json",
-        "upstream_unavailable:market_regime.json",
-        "upstream_unavailable:market_signals.json"
+        "upstream_partial:evidence_bundle.json",
+        "upstream_partial:market_signals.json",
+        "upstream_partial:risk_monitor.json"
       ],
-      "failure": {
-        "module": "daily_intelligence",
-        "failure_type": "source_or_data_unavailable",
-        "retryable": true,
-        "message": "Module produced a valid unavailable artifact."
-      }
+      "failure": null
     },
     {
       "sequence": 12,
-      "name": "brief_renderer",
+      "name": "top_intelligence",
       "hard_dependencies": [
         "daily_intelligence"
       ],
       "soft_dependencies": [],
-      "started_at": "2026-08-27T17:27:37.187772Z",
-      "completed_at": "2026-08-27T17:27:37.190373Z",
+      "started_at": "2026-09-03T09:49:42.135354Z",
+      "completed_at": "2026-09-03T09:49:42.141756Z",
       "status": "success",
-      "freshness_status": "unknown",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.141756Z",
+      "age_seconds": 107382.142,
+      "freshness_status": "current",
+      "declared_artifacts": [
+        "top_intelligence.json"
+      ],
+      "artifacts": [
+        {
+          "path": "top_intelligence.json",
+          "artifact_type": "top_intelligence",
+          "sha256": "52d40c5a3b4133cf685642dd0d4f313883d322b4b5e2ef50c5f7474a09722e0a",
+          "versions": {
+            "schema_version": "1.0",
+            "rule_set_version": "top_intelligence_rules_v1"
+          },
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:42.135872Z",
+          "age_seconds": 107382.136,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [
+        "duplicate_or_same_theme_candidates_suppressed",
+        "semantic_story_duplicates_suppressed"
+      ],
+      "failure": null
+    },
+    {
+      "sequence": 13,
+      "name": "brief_renderer",
+      "hard_dependencies": [
+        "daily_intelligence",
+        "top_intelligence"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-09-03T09:49:42.141799Z",
+      "completed_at": "2026-09-03T09:49:42.146109Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.146109Z",
+      "age_seconds": 107382.146,
+      "freshness_status": "current",
       "declared_artifacts": [
         "daily_market_brief.md"
       ],
@@ -497,11 +668,15 @@
         {
           "path": "daily_market_brief.md",
           "artifact_type": "daily_market_brief",
-          "sha256": "0589dd354fa4bd5d7b90e84f3b23287926a593c1ccd02d38956a10c6cdd8d6d3",
+          "sha256": "2eacc8bb8672e7faa645e8b27cbe8c20ee4c9c9d1d6c7841668258957402fd17",
           "versions": {},
-          "generated_at": null,
+          "source_timestamp": null,
+          "retrieved_at": null,
+          "generated_at": "2026-09-03T09:49:42.145819Z",
+          "age_seconds": null,
           "data_status": "success",
           "freshness_status": "unknown",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
@@ -509,19 +684,118 @@
       "failure": null
     },
     {
-      "sequence": 13,
+      "sequence": 14,
+      "name": "grounded_ai_brief",
+      "hard_dependencies": [
+        "top_intelligence",
+        "daily_intelligence",
+        "brief_renderer"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-09-03T09:49:42.146261Z",
+      "completed_at": "2026-09-03T09:49:42.156414Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.156414Z",
+      "age_seconds": 107382.156,
+      "freshness_status": "current",
+      "declared_artifacts": [
+        "ai_market_brief.md"
+      ],
+      "artifacts": [
+        {
+          "path": "ai_market_brief.md",
+          "artifact_type": "ai_market_brief",
+          "sha256": "2eacc8bb8672e7faa645e8b27cbe8c20ee4c9c9d1d6c7841668258957402fd17",
+          "versions": {},
+          "source_timestamp": null,
+          "retrieved_at": null,
+          "generated_at": "2026-09-03T09:49:42.156095Z",
+          "age_seconds": null,
+          "data_status": "success",
+          "freshness_status": "unknown",
+          "source_health": [],
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [],
+      "failure": null,
+      "generation_metadata": {
+        "generation_mode": "deterministic_fallback",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-03T09:49:42.156220Z",
+        "freshness_status": "current",
+        "validation_status": "validated",
+        "provider": null,
+        "fallback_reason": "no_provider_configured"
+      }
+    },
+    {
+      "sequence": 15,
+      "name": "ai_brief_evaluation",
+      "hard_dependencies": [
+        "grounded_ai_brief",
+        "top_intelligence",
+        "daily_intelligence",
+        "brief_renderer"
+      ],
+      "soft_dependencies": [],
+      "started_at": "2026-09-03T09:49:42.156862Z",
+      "completed_at": "2026-09-03T09:49:42.162972Z",
+      "status": "success",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.162972Z",
+      "age_seconds": 107382.163,
+      "freshness_status": "current",
+      "declared_artifacts": [
+        "ai_brief_evaluation.json"
+      ],
+      "artifacts": [
+        {
+          "path": "ai_brief_evaluation.json",
+          "artifact_type": "ai_brief_evaluation",
+          "sha256": "8512a6b70005c5e82c4104b83efd4e99864979b9ebe506efa20764cce75162af",
+          "versions": {
+            "schema_version": "2.0",
+            "schema_contract": "ai_brief_evaluation_v2"
+          },
+          "source_timestamp": "2026-09-02T04:00:00Z",
+          "retrieved_at": "2026-09-03T09:49:41.546178Z",
+          "generated_at": "2026-09-03T09:49:42.157476Z",
+          "age_seconds": 107382.157,
+          "data_status": "success",
+          "freshness_status": "current",
+          "source_health": [],
+          "approved_for_publication": true
+        }
+      ],
+      "warnings": [
+        "deterministic_fallback_used"
+      ],
+      "failure": null
+    },
+    {
+      "sequence": 16,
       "name": "intelligence_web_view",
       "hard_dependencies": [],
       "soft_dependencies": [
+        "grounded_ai_brief",
+        "top_intelligence",
         "daily_intelligence",
         "cross_asset_signals",
         "market_regime",
         "risk_monitor"
       ],
-      "started_at": "2026-08-27T17:27:37.190380Z",
-      "completed_at": "2026-08-27T17:27:37.196001Z",
+      "started_at": "2026-09-03T09:49:42.163013Z",
+      "completed_at": "2026-09-03T09:49:42.366378Z",
       "status": "success",
-      "freshness_status": "unknown",
+      "source_timestamp": "2026-09-02T04:00:00Z",
+      "retrieved_at": "2026-09-03T09:49:41.546178Z",
+      "generated_at": "2026-09-03T09:49:42.366378Z",
+      "age_seconds": 107382.366,
+      "freshness_status": "current",
       "declared_artifacts": [
         "docs/intelligence.html",
         "docs/assets/intelligence.js"
@@ -530,21 +804,29 @@
         {
           "path": "docs/intelligence.html",
           "artifact_type": "intelligence",
-          "sha256": "99dc642c21c7165153a070213736b3fdf85108cfd719aa362b69db6bfed318ce",
+          "sha256": "f249bf319dd95766549b374b1417d3dfaeccc001bb9328cb479462051168acf3",
           "versions": {},
-          "generated_at": null,
+          "source_timestamp": null,
+          "retrieved_at": null,
+          "generated_at": "2026-09-03T09:49:42.163460Z",
+          "age_seconds": null,
           "data_status": "success",
           "freshness_status": "unknown",
+          "source_health": [],
           "approved_for_publication": true
         },
         {
           "path": "docs/assets/intelligence.js",
           "artifact_type": "intelligence",
-          "sha256": "04728b5d974dc18c7115f9a583b0d535f2232300b6a714d2cb5feb0320e4994c",
+          "sha256": "79ad3053e5dc4060d30b12bc87de610e23947a5058691ebb73fb91e97d0918cd",
           "versions": {},
-          "generated_at": null,
+          "source_timestamp": null,
+          "retrieved_at": null,
+          "generated_at": "2026-09-03T09:49:42.177392Z",
+          "age_seconds": null,
           "data_status": "success",
           "freshness_status": "unknown",
+          "source_health": [],
           "approved_for_publication": true
         }
       ],
@@ -553,6 +835,11 @@
     }
   ],
   "artifact_versions": {
+    "ai_brief_evaluation.json": {
+      "schema_version": "2.0",
+      "schema_contract": "ai_brief_evaluation_v2"
+    },
+    "ai_market_brief.md": {},
     "daily_intelligence.json": {
       "schema_version": "1.0",
       "schema_contract": "daily_intelligence_v1"
@@ -561,7 +848,7 @@
     "docs/assets/intelligence.js": {},
     "docs/intelligence.html": {},
     "economic_calendar.json": {
-      "schema_version": "1.0"
+      "schema_version": "1.1"
     },
     "events.json": {
       "schema_version": "1.1"
@@ -598,73 +885,19 @@
     },
     "run_manifest.json": {
       "schema_version": "1.0"
+    },
+    "top_intelligence.json": {
+      "schema_version": "1.0",
+      "rule_set_version": "top_intelligence_rules_v1"
     }
   },
-  "failures": [
-    {
-      "module": "market_data",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "macro",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "calendar",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "news_ingestion",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "event_normalization",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "evidence_foundation",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "evidence_consolidation",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "cross_asset_signals",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "market_regime",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    },
-    {
-      "module": "daily_intelligence",
-      "failure_type": "source_or_data_unavailable",
-      "retryable": true,
-      "message": "Module produced a valid unavailable artifact."
-    }
-  ],
+  "failures": [],
   "publication": {
     "approved_files": [
+      "data/top_intelligence.json",
       "data/daily_intelligence.json",
+      "data/ai_market_brief.md",
+      "data/ai_brief_evaluation.json",
       "data/market_signals.json",
       "data/market_regime.json",
       "data/risk_monitor.json",
@@ -677,6 +910,8 @@
     ],
     "published_files": [
       "assets/intelligence.js",
+      "data/ai_brief_evaluation.json",
+      "data/ai_market_brief.md",
       "data/daily_intelligence.json",
       "data/daily_market_brief.md",
       "data/macro_snapshot.json",
@@ -685,6 +920,7 @@
       "data/market_snapshot.json",
       "data/risk_monitor.json",
       "data/run_manifest.json",
+      "data/top_intelligence.json",
       "intelligence.html"
     ],
     "omitted_files": []

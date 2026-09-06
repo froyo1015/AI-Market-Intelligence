@@ -1,0 +1,86 @@
+{
+  "schema_version": "2.0",
+  "schema_contract": "ai_brief_evaluation_v2",
+  "artifact_type": "ai_brief_evaluation",
+  "run_id": "run_20260903T094942Z_evaluation_850bd2e1f37ad4f4",
+  "generated_at": "2026-09-03T09:49:42.157476Z",
+  "status": "complete",
+  "evaluation_mode": "deterministic_fallback",
+  "evaluation_profile": "deterministic_fallback_profile",
+  "generation_metadata": {
+    "generation_mode": "deterministic_fallback",
+    "generation_status": "fallback",
+    "generated_at": "2026-09-03T09:49:42.156220Z",
+    "freshness_status": "current",
+    "validation_status": "validated",
+    "provider": null,
+    "fallback_reason": "no_provider_configured"
+  },
+  "validation_result": {
+    "validator": "deterministic_renderer_validator",
+    "status": "passed",
+    "reason_code": null,
+    "evaluated_at": "2026-09-03T09:49:42.157476Z"
+  },
+  "quality_metrics": {
+    "schema_validity": {
+      "status": "passed",
+      "valid": true,
+      "reason_code": null
+    },
+    "artifact_completeness": {
+      "status": "passed",
+      "required_artifact_count": 3,
+      "available_artifact_count": 3,
+      "missing_artifacts": [],
+      "complete": true
+    },
+    "freshness_metadata": {
+      "status": "passed",
+      "checked_artifact_count": 2,
+      "valid_contract_count": 2,
+      "current_count": 2,
+      "stale_count": 0,
+      "unavailable_count": 0,
+      "unknown_count": 0,
+      "invalid_count": 0
+    },
+    "reference_preservation": {
+      "status": "passed",
+      "required_reference_count": 71,
+      "preserved_reference_count": 71,
+      "missing_reference_count": 0,
+      "preservation_ratio": 1.0,
+      "missing_reference_hashes": []
+    },
+    "section_completeness": {
+      "status": "passed",
+      "required_section_count": 9,
+      "present_section_count": 9,
+      "missing_sections": [],
+      "complete": true
+    }
+  },
+  "fallback_status": {
+    "used": true,
+    "reason": "no_provider_configured",
+    "exact_match": true,
+    "consistent_with_metadata": true
+  },
+  "input_refs": {
+    "top_intelligence_run_id": "run_20260903T094942Z_top_2fe9871b5822097f",
+    "daily_intelligence_run_id": "run_20260903T094942Z_intelligence_8638df744a4ecf19",
+    "ai_brief_sha256": "2eacc8bb8672e7faa645e8b27cbe8c20ee4c9c9d1d6c7841668258957402fd17",
+    "deterministic_fallback_sha256": "2eacc8bb8672e7faa645e8b27cbe8c20ee4c9c9d1d6c7841668258957402fd17"
+  },
+  "warnings": [
+    "deterministic_fallback_used"
+  ],
+  "source_timestamp": "2026-09-02T04:00:00Z",
+  "retrieved_at": "2026-09-03T09:49:41.546178Z",
+  "age_seconds": 107382.157,
+  "freshness_status": "current",
+  "freshness_basis": "source_timestamp",
+  "stale_after_seconds": 172800,
+  "freshness_contract_version": "1.0"
+}

@@ -39,29 +39,35 @@ jobs:
         run: python -m pytest -q
 
       - name: Regenerate intelligence pipeline
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_GROUNDED_BRIEF_MODEL: ${{ vars.OPENAI_GROUNDED_BRIEF_MODEL || 'gpt-5.6-luna' }}
+          OPENAI_GROUNDED_BRIEF_TIMEOUT_SECONDS: "30"
+          OPENAI_GROUNDED_BRIEF_MAX_OUTPUT_TOKENS: "2400"
+          OPENAI_GROUNDED_BRIEF_MAX_INPUT_CHARS: "200000"
+          OPENAI_GROUNDED_BRIEF_TRANSIENT_RETRIES: "0"
         run: python -m src.orchestration.pipeline
-
-      - name: Generate deterministic brief
-        run: python -m src.brief.generator
-
-      - name: Generate mock analyst brief
-        run: python -m src.ai.analyst
-
-      - name: Generate static GitHub Pages site
-        run: python -m src.pages.generator
 
       - name: Verify generated outputs
         run: |
           test -s src/output/market_snapshot.json
           test -s src/output/run_manifest.json
           test -s src/output/daily_intelligence.json
+          test -s src/output/top_intelligence.json
           test -s src/output/daily_market_brief.md
-          test -s src/output/daily_brief.md
           test -s src/output/ai_market_brief.md
+          test -s src/output/ai_brief_evaluation.json
           test -s docs/index.html
           test -s docs/intelligence.html
           test -s docs/assets/intelligence.js
           test -s docs/data/run_manifest.json
+
+      - name: Monitor grounded AI production trial
+        run: >-
+          python -m src.evaluation.trial_monitor
+          --manifest src/output/run_manifest.json
+          --evaluation src/output/ai_brief_evaluation.json
+          --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Send Telegram market brief
         if: ${{ success() }}
@@ -69,7 +75,10 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python -m src.telegram.bot --skip-if-unconfigured
+        run: >-
+          python -m src.telegram.bot
+          --input src/output/daily_market_brief.md
+          --skip-if-unconfigured
 
       - name: Upload daily market brief artifact
         uses: actions/upload-artifact@v7
@@ -88,11 +97,11 @@ jobs:
             src/output/market_regime.json
             src/output/risk_monitor.json
             src/output/daily_intelligence.json
+            src/output/top_intelligence.json
             src/output/daily_market_brief.md
-            src/output/run_manifest.json
-            src/output/market_context.json
-            src/output/daily_brief.md
             src/output/ai_market_brief.md
+            src/output/ai_brief_evaluation.json
+            src/output/run_manifest.json
             docs/index.html
             docs/intelligence.html
             docs/assets/intelligence.js

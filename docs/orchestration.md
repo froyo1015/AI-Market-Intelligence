@@ -34,9 +34,12 @@ Every run uses the following stable order:
 | 9 | Market regime classifier | `market_regime.json` |
 | 10 | Risk monitor | `risk_monitor.json` |
 | 11 | Structured intelligence composer | `daily_intelligence.json` |
-| 12 | Deterministic brief renderer | `daily_market_brief.md` |
-| 13 | Intelligence Web View | `docs/intelligence.html` and approved data files |
-| 14 | Run manifest finalization | `run_manifest.json` |
+| 12 | Top Intelligence selector | `top_intelligence.json` |
+| 13 | Deterministic brief renderer | `daily_market_brief.md` |
+| 14 | Grounded AI brief writer | `ai_market_brief.md`, with deterministic fallback |
+| 15 | AI brief evaluator | `ai_brief_evaluation.json` |
+| 16 | Intelligence Web View | `docs/intelligence.html` and approved data files |
+| 17 | Run manifest finalization | `run_manifest.json` |
 
 Execution order is fixed even where two source modules are independent. This
 makes run history and test output reproducible and keeps module ordering visible
@@ -60,8 +63,11 @@ the data value contained in an artifact.
 | Market regime | `evidence_bundle.json`, `market_signals.json` | none |
 | Risk monitor | `evidence_bundle.json`, `market_signals.json`, `market_regime.json` | none |
 | Intelligence composer | evidence bundle, signals, regime, risk artifacts | none |
-| Brief renderer | `daily_intelligence.json` | none |
-| Web View | none | all display artifacts |
+| Top Intelligence selector | `daily_intelligence.json` | none |
+| Brief renderer | `daily_intelligence.json`, `top_intelligence.json` | none |
+| Grounded AI brief | Top Intelligence, daily intelligence, deterministic brief | injected LLM provider |
+| AI brief evaluator | AI brief, deterministic brief, Top Intelligence, daily intelligence, generation metadata | none |
+| Web View | none | all approved display artifacts, including both brief artifacts |
 
 A valid failure artifact satisfies availability. For example, a calendar artifact
 with `status: failed` proves that the source was attempted and unavailable; it is
@@ -96,8 +102,10 @@ Rules:
 
 Examples:
 
-- Calendar returns HTTP 403 and writes a valid failed artifact: calendar is
-  `unavailable`; evidence consolidation continues and the run is `partial`.
+- Calendar primary returns HTTP 403 and the official HTML fallback succeeds:
+  calendar is `partial`, fallback events remain available, and both attempts are
+  recorded in manifest `source_health`. If both approved sources fail, calendar
+  is `unavailable`; evidence consolidation still continues.
 - News ingestion raises before writing an artifact: news is `failed`, event
   normalization is `blocked`, and evidence consolidation continues without news.
 - Evidence consolidation raises: signals, regime, risk, intelligence, and brief
@@ -169,7 +177,10 @@ be tied to the exact files generated during its run.
 Only the following dynamic artifacts may be copied into `docs/data/` by the
 orchestrator:
 
+- `top_intelligence.json`
 - `daily_intelligence.json`
+- `ai_market_brief.md`
+- `ai_brief_evaluation.json`
 - `market_signals.json`
 - `market_regime.json`
 - `risk_monitor.json`

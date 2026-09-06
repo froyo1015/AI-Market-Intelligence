@@ -8,6 +8,7 @@ from typing import Dict, Optional, Set, Tuple
 
 import pytest
 
+from src.data.freshness import strip_freshness_metadata, validate_freshness_contract
 from src.consolidation.builder import build_consolidated_evidence_artifact
 from src.consolidation.validator import validate_consolidated_evidence_artifact
 from src.signals.engine import build_market_signals_artifact
@@ -340,7 +341,8 @@ def test_pipeline_uses_one_input_and_writes_atomically(tmp_path: Path) -> None:
     result = run_market_signals_pipeline(input_path, output_path)
 
     written = json.loads(output_path.read_text(encoding="utf-8"))
-    assert written == result.to_dict()
+    validate_freshness_contract(written)
+    assert strip_freshness_metadata(written) == result.to_dict()
     assert written["input_artifact"] == "evidence_bundle.json"
     assert not (tmp_path / "market_signals.json.tmp").exists()
 

@@ -1,18 +1,95 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "artifact_type": "economic_calendar",
-  "run_id": "run_20260827T172737Z_calendar",
-  "report_date": "2026-08-27",
-  "generated_at": "2026-08-27T17:27:37.146074Z",
-  "window_start": "2026-08-27T17:27:37.146074Z",
-  "window_end": "2026-08-29T17:27:37.146074Z",
-  "source": "bls_release_calendar",
-  "source_url": "https://www.bls.gov/schedule/news_release/bls.ics",
-  "status": "failed",
-  "failure_type": "source_access_error",
+  "run_id": "run_20260903T094939Z_calendar",
+  "report_date": "2026-09-03",
+  "generated_at": "2026-09-03T09:49:39.034222Z",
+  "window_start": "2026-09-03T09:49:39.034222Z",
+  "window_end": "2026-09-05T09:49:39.034222Z",
+  "source": "bea_release_schedule",
+  "source_url": "https://www.bea.gov/news/schedule/full",
+  "status": "partial",
+  "failure_type": "primary_source_access_error",
   "retryable": true,
   "warnings": [
-    "Economic calendar unavailable: CalendarSourceAccessError: BLS calendar download failed: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    "bls_release_calendar: CalendarSourceAccessError: BLS calendar download failed: HTTP Error 403: Forbidden"
   ],
-  "events": []
+  "sources": [
+    {
+      "source": "bls_release_calendar",
+      "publisher": "U.S. Bureau of Labor Statistics",
+      "source_url": "https://www.bls.gov/schedule/news_release/bls.ics",
+      "priority": 1,
+      "source_format": "ics",
+      "status": "unavailable",
+      "retrieved_at": null,
+      "failure_type": "primary_source_access_error",
+      "retryable": true,
+      "error": "CalendarSourceAccessError: BLS calendar download failed: HTTP Error 403: Forbidden",
+      "parsed_event_count": 0,
+      "accepted_event_count": 0
+    },
+    {
+      "source": "bea_release_schedule",
+      "publisher": "U.S. Bureau of Economic Analysis",
+      "source_url": "https://www.bea.gov/news/schedule/full",
+      "priority": 2,
+      "source_format": "bea_html",
+      "status": "available",
+      "retrieved_at": "2026-09-03T09:49:39.034222Z",
+      "failure_type": null,
+      "retryable": false,
+      "error": null,
+      "parsed_event_count": 63,
+      "accepted_event_count": 1
+    }
+  ],
+  "events": [
+    {
+      "event_id": "evt_20260903_u_s_international_trade_in_goods_and_5ed967ecb2",
+      "event_type": "economic_event",
+      "name": "U.S. International Trade in Goods and Services, July 2026",
+      "scheduled_at": "2026-09-03T12:30:00Z",
+      "country": "US",
+      "impact": "low",
+      "affected_assets": [
+        "SPY",
+        "QQQ",
+        "DXY",
+        "US10Y"
+      ],
+      "topics": [
+        "us_economy"
+      ],
+      "source": "bea_release_schedule",
+      "publisher": "U.S. Bureau of Economic Analysis",
+      "source_url": "https://www.bea.gov/news/schedule/full",
+      "retrieved_at": "2026-09-03T09:49:39.034222Z",
+      "status": "scheduled",
+      "confidence_score": 0.9,
+      "confidence_label": "high",
+      "provider_event_id": null,
+      "content_hash": "sha256:f1d5e8c05a4b75eab41e4233cc9b1618c8ee156ff23150d67f20cfbadea7c718",
+      "verification_level": "official_fallback",
+      "conflict_group_id": null,
+      "provenance": [
+        {
+          "source": "bea_release_schedule",
+          "publisher": "U.S. Bureau of Economic Analysis",
+          "source_url": "https://www.bea.gov/news/schedule/full",
+          "retrieved_at": "2026-09-03T09:49:39.034222Z",
+          "scheduled_at": "2026-09-03T12:30:00Z",
+          "content_hash": "sha256:f1d5e8c05a4b75eab41e4233cc9b1618c8ee156ff23150d67f20cfbadea7c718",
+          "priority": 2
+        }
+      ]
+    }
+  ],
+  "source_timestamp": null,
+  "retrieved_at": "2026-09-03T09:49:39.034222Z",
+  "age_seconds": 0.0,
+  "freshness_status": "current",
+  "freshness_basis": "retrieved_at",
+  "stale_after_seconds": 86400,
+  "freshness_contract_version": "1.0"
 }

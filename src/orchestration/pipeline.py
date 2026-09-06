@@ -15,9 +15,13 @@ from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Tuple
 from src.brief.renderer_pipeline import run_renderer_pipeline
 from src.calendar_pipeline import run_calendar_pipeline
 from src.consolidation.pipeline import run_consolidation_pipeline
+from src.data.freshness import aggregate_freshness_fields, aggregate_freshness_status
 from src.evidence.pipeline import run_evidence_pipeline
+from src.evaluation.pipeline import run_ai_brief_evaluation_pipeline
 from src.events.pipeline import run_events_pipeline
+from src.grounded_brief.pipeline import run_grounded_brief_pipeline
 from src.intelligence.pipeline import run_daily_intelligence_pipeline
+from src.top_intelligence.pipeline import run_top_intelligence_pipeline
 from src.macro_pipeline import run_macro_pipeline
 from src.models.run_manifest_schema import (
     ArtifactRunRecord,
@@ -37,9 +41,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT_DIRECTORY = PROJECT_ROOT / "src" / "output"
 DEFAULT_DOCS_DIRECTORY = PROJECT_ROOT / "docs"
 MANIFEST_FILENAME = "run_manifest.json"
+GENERATION_METADATA_FILENAME = "generation_metadata.json"
 
 APPROVED_DYNAMIC_FILES = (
+    "top_intelligence.json",
     "daily_intelligence.json",
+    "ai_market_brief.md",
+    "ai_brief_evaluation.json",
     "market_signals.json",
     "market_regime.json",
     "risk_monitor.json",
@@ -114,12 +122,39 @@ MODULE_SPECS = (
         ("daily_intelligence.json",),
         ("evidence_consolidation", "cross_asset_signals", "market_regime", "risk_monitor"),
     ),
-    ModuleSpec("brief_renderer", ("daily_market_brief.md",), ("daily_intelligence",)),
+    ModuleSpec("top_intelligence", ("top_intelligence.json",), ("daily_intelligence",)),
+    ModuleSpec(
+        "brief_renderer",
+        ("daily_market_brief.md",),
+        ("daily_intelligence", "top_intelligence"),
+    ),
+    ModuleSpec(
+        "grounded_ai_brief",
+        ("ai_market_brief.md",),
+        ("top_intelligence", "daily_intelligence", "brief_renderer"),
+    ),
+    ModuleSpec(
+        "ai_brief_evaluation",
+        ("ai_brief_evaluation.json",),
+        (
+            "grounded_ai_brief",
+            "top_intelligence",
+            "daily_intelligence",
+            "brief_renderer",
+        ),
+    ),
     ModuleSpec(
         "intelligence_web_view",
         ("docs/intelligence.html", "docs/assets/intelligence.js"),
         (),
-        ("daily_intelligence", "cross_asset_signals", "market_regime", "risk_monitor"),
+        (
+            "grounded_ai_brief",
+            "top_intelligence",
+            "daily_intelligence",
+            "cross_asset_signals",
+            "market_regime",
+            "risk_monitor",
+        ),
     ),
 )
 EXECUTION_ORDER = tuple(spec.name for spec in MODULE_SPECS)
@@ -171,9 +206,28 @@ def _default_runners() -> Dict[str, Runner]:
             p.artifact("risk_monitor.json"),
             p.artifact("daily_intelligence.json"),
         ),
+        "top_intelligence": lambda p: run_top_intelligence_pipeline(
+            p.artifact("daily_intelligence.json"),
+            p.artifact("top_intelligence.json"),
+        ),
         "brief_renderer": lambda p: run_renderer_pipeline(
             p.artifact("daily_intelligence.json"),
             p.artifact("daily_market_brief.md"),
+            p.artifact("top_intelligence.json"),
+        ),
+        "grounded_ai_brief": lambda p: run_grounded_brief_pipeline(
+            p.artifact("top_intelligence.json"),
+            p.artifact("daily_intelligence.json"),
+            p.artifact("daily_market_brief.md"),
+            p.artifact("ai_market_brief.md"),
+        ),
+        "ai_brief_evaluation": lambda p: run_ai_brief_evaluation_pipeline(
+            p.artifact("top_intelligence.json"),
+            p.artifact("daily_intelligence.json"),
+            p.artifact("ai_market_brief.md"),
+            p.artifact("daily_market_brief.md"),
+            p.artifact(GENERATION_METADATA_FILENAME),
+            p.artifact("ai_brief_evaluation.json"),
         ),
         "intelligence_web_view": _run_web_view,
     }
@@ -213,6 +267,7 @@ def run_daily_orchestration(
                 if not module_outputs.get(dependency, False)
             ]
             if missing_hard:
+                module_completed = _iso(now())
                 failure = {
                     "module": spec.name,
                     "failure_type": "missing_hard_dependency",
@@ -228,11 +283,19 @@ def run_daily_orchestration(
                         hard_dependencies=list(spec.hard_dependencies),
                         soft_dependencies=list(spec.soft_dependencies),
                         started_at=module_started,
-                        completed_at=_iso(now()),
+                        completed_at=module_completed,
                         status="blocked",
-                        freshness_status="unknown",
+                        source_timestamp=None,
+                        retrieved_at=None,
+                        generated_at=module_completed,
+                        age_seconds=None,
+                        freshness_status="unavailable",
                         declared_artifacts=list(spec.outputs),
                         failure=failure,
+                        generation_metadata=_unavailable_generation_metadata(
+                            module_completed,
+                            "pipeline_failure",
+                        ) if spec.name == "grounded_ai_brief" else None,
                     )
                 )
                 module_outputs[spec.name] = False
@@ -244,8 +307,9 @@ def run_daily_orchestration(
                 if not module_outputs.get(dependency, False)
             ]
             failure = None
+            runner_result = None
             try:
-                active_runners[spec.name](paths)
+                runner_result = active_runners[spec.name](paths)
             except Exception as exc:  # isolation boundary is intentional
                 failure = {
                     "module": spec.name,
@@ -279,6 +343,24 @@ def run_daily_orchestration(
                     }
                     failures.append(failure)
             warnings.extend(_artifact_warnings(spec, paths))
+            module_completed = _iso(now())
+            module_freshness = _module_freshness_fields(
+                spec,
+                artifact_records,
+                module_records,
+                module_completed,
+            )
+            generation_metadata = _module_generation_metadata(
+                spec,
+                runner_result,
+                module_completed,
+                failure,
+            )
+            if spec.name == "grounded_ai_brief" and generation_metadata is not None:
+                _write_json(
+                    generation_metadata,
+                    paths.artifact(GENERATION_METADATA_FILENAME),
+                )
             module_records.append(
                 ModuleRunRecord(
                     sequence=sequence,
@@ -286,15 +368,18 @@ def run_daily_orchestration(
                     hard_dependencies=list(spec.hard_dependencies),
                     soft_dependencies=list(spec.soft_dependencies),
                     started_at=module_started,
-                    completed_at=_iso(now()),
+                    completed_at=module_completed,
                     status=status,
-                    freshness_status=_aggregate_freshness(
-                        [record.freshness_status for record in artifact_records]
-                    ),
+                    source_timestamp=module_freshness["source_timestamp"],
+                    retrieved_at=module_freshness["retrieved_at"],
+                    generated_at=module_freshness["generated_at"],
+                    age_seconds=module_freshness["age_seconds"],
+                    freshness_status=module_freshness["freshness_status"],
                     declared_artifacts=list(spec.outputs),
                     artifacts=artifact_records,
                     warnings=sorted(set(warnings)),
                     failure=failure,
+                    generation_metadata=generation_metadata,
                 )
             )
 
@@ -303,14 +388,21 @@ def run_daily_orchestration(
         final_published = sorted(
             set(published) | {f"data/{MANIFEST_FILENAME}"}
         )
+        execution_completed = _iso(now())
+        manifest_freshness = aggregate_freshness_fields(
+            [record.to_dict() for record in module_records],
+            execution_completed,
+        )
         manifest = RunManifest(
             run_id=_run_id(started_at),
             execution_started_at=_iso(started_at),
-            execution_completed_at=_iso(now()),
+            execution_completed_at=execution_completed,
             status=_run_status(module_records),
-            freshness_status=_aggregate_freshness(
-                [record.freshness_status for record in module_records]
-            ),
+            source_timestamp=manifest_freshness["source_timestamp"],
+            retrieved_at=manifest_freshness["retrieved_at"],
+            generated_at=manifest_freshness["generated_at"],
+            age_seconds=manifest_freshness["age_seconds"],
+            freshness_status=manifest_freshness["freshness_status"],
             execution_order=list(EXECUTION_ORDER),
             modules=module_records,
             artifact_versions=_artifact_versions(module_records),
@@ -363,9 +455,28 @@ def _inspect_outputs(spec: ModuleSpec, paths: RunPaths) -> list[ArtifactRunRecor
                 ),
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 versions=versions,
+                source_timestamp=(
+                    str(payload.get("source_timestamp"))
+                    if payload is not None and payload.get("source_timestamp")
+                    else None
+                ),
+                retrieved_at=(
+                    str(payload.get("retrieved_at"))
+                    if payload is not None and payload.get("retrieved_at")
+                    else None
+                ),
                 generated_at=(
                     str(payload.get("generated_at"))
                     if payload is not None and payload.get("generated_at")
+                    else datetime.fromtimestamp(
+                        path.stat().st_mtime, tz=timezone.utc
+                    ).isoformat().replace("+00:00", "Z")
+                ),
+                age_seconds=(
+                    float(payload["age_seconds"])
+                    if payload is not None
+                    and isinstance(payload.get("age_seconds"), (int, float))
+                    and not isinstance(payload.get("age_seconds"), bool)
                     else None
                 ),
                 data_status=(
@@ -374,10 +485,41 @@ def _inspect_outputs(spec: ModuleSpec, paths: RunPaths) -> list[ArtifactRunRecor
                     else "success"
                 ),
                 freshness_status=_artifact_freshness(payload),
+                source_health=(
+                    [_manifest_source_health(item) for item in payload.get("sources", []) if isinstance(item, dict)]
+                    if payload is not None and isinstance(payload.get("sources"), list)
+                    else []
+                ),
                 approved_for_publication=_is_approved_path(declared),
             )
         )
     return records
+
+
+def _manifest_source_health(source: Mapping[str, Any]) -> Dict[str, Any]:
+    """Normalize provider-specific states to the manifest health vocabulary."""
+    item = dict(source)
+    raw_status = str(item.get("status", "invalid"))
+    if raw_status in {"available", "unavailable", "invalid"}:
+        normalized = raw_status
+    elif raw_status in {"success", "complete", "current", "partial", "stale", "failed"}:
+        normalized = (
+            "available"
+            if raw_status in {"success", "complete", "current", "partial"}
+            else "unavailable"
+        )
+    else:
+        normalized = "invalid"
+    item["status"] = normalized
+    if raw_status != normalized:
+        item["raw_status"] = raw_status
+    item["source"] = str(
+        item.get("source")
+        or item.get("source_id")
+        or item.get("provider")
+        or "unknown"
+    )
+    return item
 
 
 def _declared_path(declared: str, paths: RunPaths) -> Path:
@@ -426,6 +568,11 @@ def _artifact_data_status(payload: Optional[Mapping[str, Any]]) -> str:
 def _artifact_freshness(payload: Optional[Mapping[str, Any]]) -> str:
     if payload is None:
         return "unknown"
+    direct = payload.get("freshness_status")
+    if direct in {"current", "stale", "unavailable", "unknown"}:
+        return str(direct)
+    if _artifact_data_status(payload) == "unavailable":
+        return "unavailable"
     candidates = [payload.get("freshness_status")]
     input_freshness = payload.get("input_freshness")
     if isinstance(input_freshness, dict):
@@ -443,27 +590,45 @@ def _artifact_freshness(payload: Optional[Mapping[str, Any]]) -> str:
         isinstance(item, dict) and item.get("status") == "stale" for item in records
     ):
         candidates.append("stale")
-    normalized = [value for value in candidates if value in {"current", "stale", "mixed", "unknown"}]
-    if "mixed" in normalized:
-        return "mixed"
-    if "stale" in normalized and "current" in normalized:
-        return "mixed"
+    normalized = [
+        value
+        for value in candidates
+        if value in {"current", "stale", "unavailable", "unknown"}
+    ]
     if "stale" in normalized:
         return "stale"
     if "current" in normalized:
         return "current"
+    if "unavailable" in normalized:
+        return "unavailable"
     return "unknown"
 
 
 def _aggregate_freshness(statuses: Sequence[str]) -> str:
-    values = set(statuses)
-    if not values or values == {"unknown"}:
-        return "unknown"
-    if values == {"current"}:
-        return "current"
-    if values == {"stale"}:
-        return "stale"
-    return "mixed"
+    return aggregate_freshness_status(statuses)
+
+
+def _module_freshness_fields(
+    spec: ModuleSpec,
+    artifacts: Sequence[ArtifactRunRecord],
+    prior_modules: Sequence[ModuleRunRecord],
+    generated_at: str,
+) -> Dict[str, Any]:
+    records = [artifact.to_dict() for artifact in artifacts]
+    if not records or all(record["freshness_status"] == "unknown" for record in records):
+        dependencies = set(spec.hard_dependencies) | set(spec.soft_dependencies)
+        records = [
+            module.to_dict() for module in prior_modules if module.name in dependencies
+        ]
+    if not records:
+        return {
+            "source_timestamp": None,
+            "retrieved_at": None,
+            "generated_at": generated_at,
+            "age_seconds": None,
+            "freshness_status": "unknown",
+        }
+    return aggregate_freshness_fields(records, generated_at)
 
 
 def _artifact_warnings(spec: ModuleSpec, paths: RunPaths) -> list[str]:
@@ -473,6 +638,46 @@ def _artifact_warnings(spec: ModuleSpec, paths: RunPaths) -> list[str]:
         if payload is not None and isinstance(payload.get("warnings"), list):
             warnings.extend(str(value) for value in payload["warnings"])
     return warnings
+
+
+def _module_generation_metadata(
+    spec: ModuleSpec,
+    runner_result: Any,
+    generated_at: str,
+    failure: Optional[Mapping[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    if spec.name != "grounded_ai_brief":
+        return None
+    if failure is not None:
+        return _unavailable_generation_metadata(generated_at, "pipeline_failure")
+    metadata_builder = getattr(runner_result, "generation_metadata", None)
+    if callable(metadata_builder):
+        metadata = metadata_builder()
+        if isinstance(metadata, dict):
+            return metadata
+    if isinstance(runner_result, Mapping):
+        metadata = runner_result.get("generation_metadata")
+        if isinstance(metadata, dict):
+            return dict(metadata)
+    return _unavailable_generation_metadata(
+        generated_at,
+        "missing_generation_metadata",
+    )
+
+
+def _unavailable_generation_metadata(
+    generated_at: str,
+    fallback_reason: str,
+) -> Dict[str, Any]:
+    return {
+        "generation_mode": "unavailable",
+        "generation_status": "failed",
+        "generated_at": generated_at,
+        "freshness_status": "unavailable",
+        "validation_status": "unavailable",
+        "provider": None,
+        "fallback_reason": fallback_reason,
+    }
 
 
 def _versions(payload: Optional[Mapping[str, Any]]) -> Dict[str, str]:

@@ -152,32 +152,47 @@ One record failure never removes successful records.
 
 ## 3.2 `economic_calendar.json`
 
+Current schema version: `1.1`.
+
 Phase 6.2-B adds a bounded provider artifact for official BLS releases in the
-next 48 hours. It is an input to the future Event Normalizer, not a substitute
-for canonical `events.json`.
+next 48 hours. Phase 7.1-C retains the BLS ICS source as primary and adds the
+official BEA release schedule as a priority-2 independent fallback source. It is
+an input to the future Event Normalizer, not a substitute for canonical
+`events.json`.
 
 | Field | Meaning |
 |---|---|
 | `event_id` | Deterministic ID derived from normalized name and UTC schedule |
 | `event_type` | Fixed as `economic_event` at the provider-artifact boundary |
 | `name` / `scheduled_at` | Source-grounded release name and UTC time |
-| `country` | `US` for the BLS source |
+| `country` | `US` for approved BLS and BEA sources |
 | `impact` | Deterministic `high`, `medium` or `low` release-class rule |
 | `affected_assets` / `topics` | Candidate relevance mapping, not confirmed impact |
 | `source` / `publisher` / `source_url` | Provenance retained from the official feed |
 | `retrieved_at` / `content_hash` | Retrieval timestamp and exact VEVENT fingerprint |
 | `status` | `scheduled`; unavailable source produces no event records |
 | `confidence_score` / `confidence_label` | Confidence that the official schedule is represented accurately |
+| `verification_level` | `official_primary`, `official_fallback`, `official_corroborated`, or `official_conflict` |
+| `provenance` | Every official representation supporting this exact source schedule |
+| `conflict_group_id` | Shared deterministic ID when official representations publish different times |
 
-Artifact-level `status` is `complete`, `partial`, or `failed`. A source failure
-must produce a failed envelope, warning, and empty `events` list. The initial
-source does not cover FOMC, Treasury, BEA, or private-sector releases.
+The artifact-level `sources` array records both source attempts, priority,
+format, retrieval health, parsed/accepted counts, failure classification, and
+retryability. Agreeing representations produce one event with both provenance
+links. Conflicting schedules remain separate event records and make the artifact
+`partial`; they are never averaged or silently overwritten.
 
-`failure_type` is `null` for a valid source response, even when the bounded
-window contains no scheduled events. A transport or access failure uses
-`source_access_error` with `retryable: true`; an invalid source document uses
-`source_validation_error`; isolated malformed events use
-`event_validation_error` with artifact status `partial`.
+Artifact-level `status` is `complete`, `partial`, or `failed`. Both approved
+sources failing must produce a failed envelope, warnings, and an empty `events`
+list. Primary failure with official fallback success is partial but retains real
+events. The combined boundary covers selected BLS and BEA releases but not FOMC,
+Treasury, or private-sector calendars.
+
+`failure_type` is `null` when the primary representation is valid and no source
+conflict exists, even when the bounded window contains no scheduled events.
+Individual attempts classify primary/fallback access and validation errors. The
+artifact uses `all_sources_unavailable`, `source_conflict`, the degrading primary
+failure type, or `event_validation_error` as applicable.
 
 ## 4. `events.json`
 

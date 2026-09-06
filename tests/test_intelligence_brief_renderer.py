@@ -19,6 +19,8 @@ from src.brief.renderer_validator import (
     validate_renderer_input,
 )
 from src.intelligence.composer import build_daily_intelligence_artifact
+from src.data.freshness import enrich_artifact_freshness
+from src.top_intelligence.selector import build_top_intelligence_artifact
 from tests.test_cross_asset_signals import NOW
 from tests.test_daily_intelligence import _four_inputs
 from tests.test_evidence_consolidation import _calendar
@@ -32,9 +34,16 @@ def _intelligence(*, stale_hours: int = 0, calendar: bool = False) -> dict:
     ).to_dict()
 
 
+def _top(artifact: dict) -> dict:
+    return enrich_artifact_freshness(
+        build_top_intelligence_artifact(artifact, now=NOW).to_dict(),
+        supporting_artifacts=[artifact],
+    )
+
+
 def test_renders_complete_contract_sections_without_selecting_objects() -> None:
     artifact = _intelligence(calendar=True)
-    result = render_daily_market_brief(artifact)
+    result = render_daily_market_brief(artifact, _top(artifact))
     markdown = result.markdown
 
     assert result.schema_contract == "deterministic_brief_renderer_v1"
@@ -42,6 +51,7 @@ def test_renders_complete_contract_sections_without_selecting_objects() -> None:
     assert result.source_status == "available"
     for heading in (
         "# Daily Market Intelligence Brief",
+        "# Today's Top Market Intelligence",
         "## Data Quality and Coverage",
         "## Current Market Regime",
         "## Cross-Asset Observations",
@@ -151,9 +161,11 @@ def test_pipeline_reads_one_artifact_and_writes_atomically(tmp_path: Path) -> No
     artifact = _intelligence(calendar=True)
     input_path = tmp_path / "daily_intelligence.json"
     output_path = tmp_path / "daily_market_brief.md"
+    top_path = tmp_path / "top_intelligence.json"
     input_path.write_text(json.dumps(artifact), encoding="utf-8")
+    top_path.write_text(json.dumps(_top(artifact)), encoding="utf-8")
 
-    result = run_renderer_pipeline(input_path, output_path)
+    result = run_renderer_pipeline(input_path, output_path, top_path)
 
     assert output_path.read_text(encoding="utf-8") == result.markdown
     assert not (tmp_path / "daily_market_brief.md.tmp").exists()

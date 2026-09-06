@@ -126,11 +126,12 @@ def validate_renderer_input(artifact: Mapping[str, Any]) -> None:
 def validate_rendered_brief(
     markdown: str,
     artifact: Mapping[str, Any],
+    top_intelligence: Mapping[str, Any] | None = None,
 ) -> None:
     validate_renderer_input(artifact)
     from src.brief.intelligence_renderer import render_daily_market_brief
 
-    expected = render_daily_market_brief(artifact).markdown
+    expected = render_daily_market_brief(artifact, top_intelligence).markdown
     if markdown != expected:
         raise BriefRendererValidationError(
             "rendered brief does not match deterministic rendering"

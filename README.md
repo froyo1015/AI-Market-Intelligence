@@ -214,3 +214,58 @@ current Regime, observed cross-asset relationships, observable Risk categories,
 the existing market/macro snapshots and a collapsible audit trail. Missing,
 partial and unavailable artifacts degrade visibly without creating replacement
 facts. No framework, server, LLM, prediction or trade recommendation is added.
+
+## Production Pipeline (Phase 7.1-A)
+
+The scheduled production presentation has one owner:
+
+```bash
+python -m src.orchestration.pipeline
+```
+
+It generates `daily_intelligence.json`, deterministically selects up to three
+current and distinct priorities into `top_intelligence.json`, renders
+`daily_market_brief.md`, builds the Intelligence Web View, packages the approved
+`docs/data/` files, and writes `run_manifest.json`. The brief and Web View both
+consume the same Top Intelligence artifact; GitHub Actions does not invoke
+another ranking, brief, analyst, or Pages generator after orchestration.
+
+Phase 7.2-B adds a provider-neutral grounded writing step. An injected LLM may
+rewrite only `top_intelligence.json` and `daily_intelligence.json`; its output is
+validated before publication as `ai_market_brief.md`. With no provider, provider
+failure, or invalid generated text, the file is an unchanged byte-for-byte copy
+of `daily_market_brief.md`, so the production pipeline continues safely.
+
+The following commands remain available only for backward-compatible manual
+use and are deprecated as production presentation paths:
+
+- `market-brief-generate` / `python -m src.brief.generator`
+- `market-brief-analyst` / `python -m src.ai.analyst`
+- `market-brief-pages` / `python -m src.pages.generator`
+
+Their historical `daily_brief.md` and Mock-Analyst ownership of
+`ai_market_brief.md` are not used by the production workflow. Phase 7.2-B
+reactivates the latter filename only as the validated grounded output or exact
+deterministic fallback owned by orchestration. The existing root
+`docs/index.html` market/Crypto page is retained as a static compatibility page.
+The optional Telegram workflow step reads the canonical
+`src/output/daily_market_brief.md` explicitly; the Telegram CLI default remains
+unchanged for existing manual callers.
+
+See [pipeline-consolidation.md](docs/pipeline-consolidation.md) for the execution
+graph, compatibility policy, and validation contract.
+
+## Shared Freshness Contract (Phase 7.1-B)
+
+Production JSON artifacts now expose one top-level freshness envelope:
+`source_timestamp`, `retrieved_at`, `generated_at`, `age_seconds`, and
+`freshness_status`. The only status values are `current`, `stale`,
+`unavailable`, and `unknown`; data coverage and execution health remain separate.
+Derived artifacts inherit source time instead of becoming current merely because
+they were regenerated. See [freshness-contract.md](docs/freshness-contract.md)
+for thresholds, aggregation, unavailable behavior, and validation rules.
+
+The economic-calendar boundary keeps the official BLS ICS feed as primary and
+uses only the official BEA release schedule as fallback. Every source attempt
+and event provenance link is retained; conflicting official times remain
+separate records. See [calendar-resilience.md](docs/calendar-resilience.md).

@@ -7,6 +7,7 @@ from datetime import date, datetime
 from typing import Any, Dict, Iterable, Mapping, Sequence, Set
 
 from src.evidence.schema import EvidenceRelation, confidence_label
+from src.data.freshness import validate_freshness_contract
 
 
 CAUSAL_LANGUAGE = re.compile(
@@ -22,6 +23,8 @@ class EvidenceValidationError(ValueError):
 
 
 def validate_observation_artifact(artifact: Mapping[str, Any]) -> None:
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
     _validate_envelope(artifact, "observations")
     raw_sources = artifact.get("sources")
     raw_observations = artifact.get("observations")
@@ -127,6 +130,8 @@ def validate_evidence_artifact(
     observation_artifact: Mapping[str, Any],
     known_event_ids: Iterable[str] = (),
 ) -> None:
+    if "freshness_contract_version" in artifact:
+        validate_freshness_contract(artifact)
     validate_observation_artifact(observation_artifact)
     _validate_envelope(artifact, "evidence")
     if artifact.get("run_id") != observation_artifact.get("run_id"):
