@@ -8,3 +8,5 @@ dist/
 build/
 *.egg-info/
 work/
+# Private scheduler receipts/checkpoints must never enter repository history.
+/outputs/shadow/derivatives/scheduled/

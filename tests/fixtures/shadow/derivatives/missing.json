@@ -1,0 +1,259 @@
+{
+  "schema_contract": "derivatives_fixture_v2",
+  "synthetic": true,
+  "run_id": "synthetic-phase-a",
+  "cutoff": "2026-09-09T00:02:00Z",
+  "replay_mode": "archived_point_in_time",
+  "assets": [
+    {
+      "asset_id": "asset:bitcoin",
+      "asset_class": "cryptoasset",
+      "symbol": "BTC",
+      "identifiers": {}
+    },
+    {
+      "asset_id": "asset:usdt",
+      "asset_class": "cryptoasset",
+      "symbol": "USDT",
+      "identifiers": {}
+    },
+    {
+      "asset_id": "asset:equity",
+      "asset_class": "equity",
+      "symbol": "EXAMPLE",
+      "identifiers": {}
+    },
+    {
+      "asset_id": "asset:token",
+      "asset_class": "tokenized_security",
+      "symbol": "tEXAMPLE",
+      "identifiers": {}
+    }
+  ],
+  "venues": [
+    {
+      "venue_id": "venue:fixture",
+      "name": "Synthetic venue; not an exchange"
+    }
+  ],
+  "instruments": [
+    {
+      "instrument_id": "instrument:btc-perp",
+      "version": 1,
+      "venue_ref": "venue:fixture",
+      "instrument_type": "perpetual",
+      "base_asset_ref": "asset:bitcoin",
+      "quote_asset_ref": "asset:usdt",
+      "settlement_asset_ref": "asset:usdt",
+      "underlying_asset_ref": "asset:bitcoin",
+      "contract": {
+        "size": "1",
+        "unit": "base_asset",
+        "expiry": null
+      },
+      "token": null
+    },
+    {
+      "instrument_id": "instrument:token-share",
+      "version": 1,
+      "venue_ref": "venue:fixture",
+      "instrument_type": "tokenized_share",
+      "base_asset_ref": "asset:token",
+      "quote_asset_ref": "asset:usdt",
+      "settlement_asset_ref": "asset:usdt",
+      "underlying_asset_ref": "asset:equity",
+      "contract": null,
+      "token": {
+        "chain": "fixture",
+        "network": "test-only",
+        "address": "synthetic-contract",
+        "issuer": "synthetic-issuer",
+        "decimals": 8,
+        "redemption_ratio": null,
+        "documentation_refs": []
+      }
+    },
+    {
+      "instrument_id": "instrument:token-perp",
+      "version": 1,
+      "venue_ref": "venue:fixture",
+      "instrument_type": "perpetual",
+      "base_asset_ref": "asset:token",
+      "quote_asset_ref": "asset:usdt",
+      "settlement_asset_ref": "asset:usdt",
+      "underlying_asset_ref": "asset:token",
+      "contract": {
+        "size": "1",
+        "unit": "base_asset",
+        "expiry": null
+      },
+      "token": null
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "source:fixture",
+      "version": 1,
+      "venue_ref": "venue:fixture",
+      "publisher": "Synthetic fixture publisher",
+      "definition_version": "fixture-v1",
+      "retrieved_at": "2026-09-09T00:01:00Z",
+      "data_reliability": 1,
+      "raw_locator": "/measurements",
+      "raw_payload": {
+        "fixture": true,
+        "measurements": [
+          {
+            "instrument_ref": "instrument:btc-perp@1",
+            "payload": {
+              "metric": "funding_rate",
+              "value": "0.0001",
+              "unit": "fraction_per_interval",
+              "rate_kind": "settled",
+              "interval_seconds": 28800,
+              "settlement_at": "2026-09-09T00:00:00Z",
+              "sign_convention": "positive_long_pays_short"
+            },
+            "observed_at": "2026-09-09T00:00:00Z"
+          }
+        ]
+      },
+      "raw_hash": "sha256:5ef69d4cb14c327687476f29117d5031259d622581bad94f99ac05f4506cde2c"
+    }
+  ],
+  "observations": [
+    {
+      "schema_contract": "derivatives_observation_v2",
+      "record_id": "derivatives:observation:funding",
+      "record_version": 1,
+      "instrument_ref": "instrument:btc-perp@1",
+      "related_assets": [
+        "asset:bitcoin"
+      ],
+      "source_refs": [
+        "source:fixture@1"
+      ],
+      "observation_refs": [],
+      "payload": {
+        "metric": "funding_rate",
+        "value": "0.0001",
+        "unit": "fraction_per_interval",
+        "rate_kind": "settled",
+        "interval_seconds": 28800,
+        "settlement_at": "2026-09-09T00:00:00Z",
+        "sign_convention": "positive_long_pays_short"
+      },
+      "timestamps": {
+        "observed_at": "2026-09-09T00:00:00Z",
+        "published_at": null,
+        "retrieved_at": "2026-09-09T00:01:00Z",
+        "generated_at": "2026-09-09T00:02:00Z"
+      },
+      "freshness": {
+        "source_timestamp": "2026-09-09T00:00:00Z",
+        "retrieved_at": "2026-09-09T00:01:00Z",
+        "generated_at": "2026-09-09T00:02:00Z",
+        "age_seconds": 120,
+        "freshness_status": "current",
+        "policy_id": "derivatives-freshness-v1"
+      },
+      "evidence_quality": {
+        "quality_policy_version": "derivatives-quality-v1",
+        "score": 1,
+        "components": {
+          "data_reliability": 1,
+          "timeliness": 1,
+          "temporal_coverage": 1,
+          "definition_consistency": 1
+        }
+      },
+      "known_at": "2026-09-09T00:01:00Z",
+      "content_hash": "sha256:22331c41d9485d9d5d8a19360ee5bc544659c8379ef4de54bf3a6ef77b61f882"
+    }
+  ],
+  "evidence": [
+    {
+      "schema_contract": "derivatives_evidence_v2",
+      "record_id": "derivatives:evidence:funding",
+      "record_version": 1,
+      "instrument_ref": "instrument:btc-perp@1",
+      "related_assets": [
+        "asset:bitcoin"
+      ],
+      "source_refs": [
+        "source:fixture@1"
+      ],
+      "observation_refs": [
+        "derivatives:observation:funding@1"
+      ],
+      "payload": {
+        "metric": "funding_rate",
+        "value": "0.0001",
+        "unit": "fraction_per_interval",
+        "rate_kind": "settled",
+        "interval_seconds": 28800,
+        "settlement_at": "2026-09-09T00:00:00Z",
+        "sign_convention": "positive_long_pays_short"
+      },
+      "timestamps": {
+        "observed_at": "2026-09-09T00:00:00Z",
+        "published_at": null,
+        "retrieved_at": "2026-09-09T00:01:00Z",
+        "generated_at": "2026-09-09T00:02:00Z"
+      },
+      "freshness": {
+        "source_timestamp": "2026-09-09T00:00:00Z",
+        "retrieved_at": "2026-09-09T00:01:00Z",
+        "generated_at": "2026-09-09T00:02:00Z",
+        "age_seconds": 120,
+        "freshness_status": "current",
+        "policy_id": "derivatives-freshness-v1"
+      },
+      "evidence_quality": {
+        "quality_policy_version": "derivatives-quality-v1",
+        "score": 1,
+        "components": {
+          "data_reliability": 1,
+          "timeliness": 1,
+          "temporal_coverage": 1,
+          "definition_consistency": 1
+        }
+      },
+      "known_at": "2026-09-09T00:01:00Z",
+      "content_hash": "sha256:f5900c0f62cc4fed8302d99bb42eb3a8f93444a9a080d70f4f62f9295c1101d6",
+      "claim_type": "measurement_report"
+    }
+  ],
+  "coverage": [
+    {
+      "instrument_ref": "instrument:btc-perp@1",
+      "metric": "funding_rate",
+      "status": "available",
+      "missing_reason": null
+    },
+    {
+      "instrument_ref": "instrument:btc-perp@1",
+      "metric": "open_interest",
+      "status": "unavailable",
+      "missing_reason": "not_collected"
+    },
+    {
+      "instrument_ref": "instrument:btc-perp@1",
+      "metric": "liquidation_quantity",
+      "status": "unavailable",
+      "missing_reason": "not_collected"
+    },
+    {
+      "instrument_ref": "instrument:btc-perp@1",
+      "metric": "long_short_ratio",
+      "status": "unavailable",
+      "missing_reason": "not_collected"
+    },
+    {
+      "instrument_ref": "instrument:btc-perp@1",
+      "metric": "positioning_change",
+      "status": "unavailable",
+      "missing_reason": "not_collected"
+    }
+  ]
+}
