@@ -51,7 +51,7 @@ jobs:
               if (r.id >= context.runId || r.head_repository.full_name !== `${owner}/${repo}`) continue;
               const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts,{owner,repo,run_id:r.id,per_page:100});
               const a = artifacts.find(a=>!a.expired && a.name.startsWith('daily-market-brief-'));
-              if (a) { core.setOutput('id',String(a.id)); return; }
+              if (a) { core.setOutput('id',String(a.id)); core.setOutput('run_id',String(r.id)); return; }
             }
             core.setOutput('id','');
       - name: Download previous report
@@ -59,6 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           artifact-ids: ${{ steps.previous.outputs.id }}
+          run-id: ${{ steps.previous.outputs.run_id }}
           github-token: ${{ github.token }}
           merge-multiple: true
           path: work/previous-report
@@ -107,7 +108,7 @@ jobs:
               if (r.path !== '.github/workflows/derivatives_shadow.yml' ||
                   r.head_repository.full_name !== `${owner}/${repo}`) continue;
               if (a.expired) break;
-              core.setOutput('id', String(a.id)); return;
+              core.setOutput('id', String(a.id)); core.setOutput('run_id', String(r.id)); return;
             }
             core.setOutput('id', '');
       - name: Download shadow public projection
@@ -115,6 +116,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           artifact-ids: ${{ steps.shadow.outputs.id }}
+          run-id: ${{ steps.shadow.outputs.run_id }}
           github-token: ${{ github.token }}
           merge-multiple: true
           path: work/shadow-public
