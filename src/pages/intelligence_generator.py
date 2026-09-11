@@ -242,9 +242,37 @@ PAGE_TEMPLATE = Template(
       html { scroll-behavior: auto; }
       .loading { animation: none; }
     }
+    .research-banner { margin-top: 20px; padding: 16px; border-left: 3px solid var(--cyan); background: var(--surface-2); border-radius: 8px; }
+    .research-banner p { margin: 4px 0; }
+    .research-nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 18px; font-size: .85rem; }
+    .research-nav a:focus-visible, summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+    .trace-entry { margin: 10px 0; }
+    .trace-entry code { display: block; padding: 5px 8px; margin-top: 4px; background: rgba(0,0,0,.15); border-radius: 4px; white-space: pre-wrap; }
+    .explanation-label { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--cyan); margin-top: 18px; }
+    #derivatives-content .card p { font-size: .83rem; overflow-wrap: anywhere; }
+    .shell > *, .card, .panel, .status-box, .section-head > * { min-width: 0; }
+    .card, .panel, .hero, .badge, summary, .research-nav a { overflow-wrap: anywhere; }
+    .badge { max-width: 100%; white-space: normal; }
+    .section-head { flex-wrap: wrap; }
+    .onboarding { margin-top: 18px; }
+    .onboarding dt { color: var(--cyan); font-weight: 700; margin-top: 12px; }
+    .onboarding dd { margin: 4px 0 0; color: var(--muted); }
+    .product-flow { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; list-style: none; }
+    .product-flow li { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+    .research-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+    .skip-link { position: absolute; left: -9999px; }
+    .skip-link:focus { position: static; display: block; padding: 12px; }
+    @media (max-width: 560px) {
+      .card-grid, .market-grid, .status-grid, .brief-meta { grid-template-columns: minmax(0, 1fr); }
+      .panel { padding: 18px; }
+      .research-nav { gap: 4px 14px; }
+      h1 { overflow-wrap: anywhere; }
+      .trace-entry code { max-width: 100%; }
+    }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#executive-summary">Skip to daily research</a>
   <main class="shell">
     <div class="topbar">
       <div class="brand">AI Market Intelligence · Evidence View</div>
@@ -258,15 +286,58 @@ PAGE_TEMPLATE = Template(
       <p class="brand">Daily Intelligence Overview</p>
       <h1>Market Intelligence</h1>
       <p class="lede">Validated market relationships, current-condition regime and observable risks with a complete evidence trail.</p>
+      <div id="product-overview" class="onboarding">
+        <h2>Market research you can trace</h2>
+        <p>AI Market Intelligence brings market observations, events and their supporting evidence into a daily research report.</p>
+        <ol class="product-flow" aria-label="Evidence-first architecture">
+          <li>1. Data — recorded observations</li><li>2. Evidence — validated, traceable records</li><li>3. Intelligence — structured context</li>
+        </ol>
+        <p class="meta">AI writes from validated intelligence when available; deterministic fallback is labeled. It does not choose the ranked stories, discover new facts, forecast prices or provide investment advice.</p>
+      </div>
+      <div class="research-banner" aria-live="polite">
+        <strong id="research-status">Daily research status unavailable</strong>
+        <p id="research-updated" class="muted">Last update unavailable</p>
+        <p class="meta">Research context only. Source freshness and report generation time are different checks.</p>
+      </div>
       <div class="status-grid" aria-label="Intelligence status">
         <div class="status-box"><span>Generated</span><strong id="generated-at" class="loading">Loading…</strong></div>
         <div class="status-box"><span>Data status</span><strong id="data-status" class="loading">Loading…</strong></div>
         <div class="status-box"><span>Freshness</span><strong id="freshness-status" class="loading">Loading…</strong></div>
         <div class="status-box"><span>Validation</span><strong id="validation-status" class="loading">Loading…</strong></div>
       </div>
+      <nav class="research-nav" aria-label="Research sections">
+        <a href="#executive-summary">Daily Intelligence</a><a href="#markets">Market Overview</a>
+        <a href="#regime">Macro &amp; Risk</a><a href="#risks">Risks Ahead</a>
+        <a href="#derivatives-shadow">Crypto / Derivatives Shadow</a><a href="#methodology">Evidence &amp; Methodology</a>
+      </nav>
     </header>
 
+    <section class="section panel" id="methodology">
+      <details class="onboarding">
+        <summary>New here? How to read this report</summary>
+        <p>Start with status and Executive Summary. Read What Changed, then Why It Matters. Review risks and open Evidence Trail to inspect references.</p>
+        <dl>
+          <dt>Freshness</dt><dd>Current meets the recorded freshness policy; stale is outside that window. Unknown means timing cannot be established. Unavailable means usable data is absent. A new report timestamp does not make old observations current.</dd>
+          <dt>Validation</dt><dd>Validated means the record passed the applicable input and reference checks. It is not a guarantee of market truth or future outcomes.</dd>
+          <dt>Shadow Validated</dt><dd>Derivatives records passed shadow checks but are not used for AI decisions. Passing readiness does not enable production.</dd>
+          <dt>Missing modules</dt><dd>Optional history or shadow data may be unavailable while other sections remain usable. No missing evidence is replaced with invented content.</dd>
+        </dl>
+        <a href="#audit">Open Evidence Trail below</a>
+      </details>
+      <div id="onboarding-state" aria-live="polite"></div>
+    </section>
+
     <div id="load-notices" class="section" aria-live="polite"></div>
+
+    <section class="section panel" id="executive-summary">
+      <h2>1. Executive Summary</h2>
+      <div id="executive-content"><p class="empty">Validated stories unavailable.</p></div>
+    </section>
+    <section class="section panel" id="what-changed">
+      <h2>2. What Changed</h2>
+      <p class="meta">Observed market snapshot differences only. No causal interpretation. Recorded status does not imply live data.</p>
+      <div id="changes-content"><p class="empty">Previous available run unavailable.</p></div>
+    </section>
 
     <section class="section panel" id="ai-brief">
       <div class="section-head"><div><p class="brand">AI MARKET BRIEF</p><h2>AI Market Brief</h2><p>Validated narrative presentation of canonical intelligence artifacts</p></div></div>
@@ -281,7 +352,8 @@ PAGE_TEMPLATE = Template(
     </section>
 
     <section class="section panel" id="top-intelligence">
-      <div class="section-head"><div><h2>Today's Top Market Intelligence</h2><p>Current, validated and evidence-linked priorities</p></div></div>
+      <div class="section-head"><div><h2>3. Why It Matters</h2><p>Today's Top Market Intelligence · Existing validated explanations and evidence</p></div></div>
+      <p class="meta">Read the observation, why it matters, then what to monitor. Order and explanations come from validated artifacts; the page does not re-rank them. Scores are selection scores, not probabilities.</p>
       <div id="top-intelligence-content" class="card-grid"><p class="empty loading">Loading current priorities…</p></div>
     </section>
 
@@ -295,17 +367,24 @@ PAGE_TEMPLATE = Template(
       <div id="signals-content" class="card-grid"><p class="empty loading">Loading observed relationships…</p></div>
     </section>
 
-    <section class="section panel" id="risks">
-      <div class="section-head"><div><h2>Risk Monitor</h2><p>Scheduled, data-quality and observed stress conditions</p></div></div>
-      <div id="risks-content"><p class="empty loading">Loading observable risks…</p></div>
-    </section>
-
     <section class="section panel" id="markets">
-      <div class="section-head"><div><h2>Market Overview</h2><p>Existing market and macro snapshots</p></div></div>
+      <div class="section-head"><div><h2>4. Market Structure</h2><p>Equity · Macro · Crypto · Existing market snapshots</p></div></div>
       <div id="markets-content" class="market-grid"><p class="empty loading">Loading market observations…</p></div>
     </section>
 
+    <section class="section panel" id="derivatives-shadow">
+      <div class="section-head"><div><h2>Derivatives Shadow</h2><p>Shadow Validated · Not used for AI decisions</p></div></div>
+      <p class="notice">Research preview only · Production disabled. Stale measurements are historical observations, not current evidence for decisions.</p>
+      <div id="derivatives-content" class="card-grid"><p class="empty">Derivatives unavailable.</p></div>
+    </section>
+
+    <section class="section panel" id="risks">
+      <div class="section-head"><div><h2>5. Risks Ahead</h2><p>Existing risk monitor: upcoming events, observed stress and data quality warnings</p></div></div>
+      <div id="risks-content"><p class="empty loading">Loading observable risks…</p></div>
+      <div id="report-quality-content"></div>
+    </section>
     <section class="section" id="audit">
+      <h2>6. Evidence Trail</h2>
       <details>
         <summary>Evidence / Audit</summary>
         <div id="audit-content" class="audit-body"><p class="empty loading">Loading provenance…</p></div>

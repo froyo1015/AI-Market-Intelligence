@@ -244,8 +244,9 @@ def test_no_production_imports_or_publication():
             # Phase 8.1 permits isolated scheduling, never raw/public publication.
             text = p.read_text()
             assert "upload-pages-artifact" not in text
-            assert text.count("uses: actions/upload-artifact") == 1
+            assert text.count("uses: actions/upload-artifact") == 2
             upload = text.split("- name: Persist ciphertext only")[1]
             assert "path: outputs/shadow/derivatives/scheduled/checkpoint.gpg" in upload
+            assert "path: outputs/shadow/derivatives/scheduled/run/derivatives-shadow.json" in upload
             continue
         assert "shadow/derivatives" not in p.read_text()

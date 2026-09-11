@@ -14,6 +14,8 @@
   "use strict";
 
   const ENDPOINTS = {
+    previousMarket: ["previous-market-snapshot.json", "json"],
+    derivatives: ["derivatives-shadow.json", "json"],
     topIntelligence: ["data/top_intelligence.json", "json"],
     dailyIntelligence: ["data/daily_intelligence.json", "json"],
     marketSignals: ["data/market_signals.json", "json"],
@@ -98,10 +100,14 @@
     return {
       generatedAt: generatedAt || "unavailable",
       dataStatus: intelligenceStatus,
+      reportAvailable: Boolean(daily),
+      previousAvailable: Boolean(resources.previousMarket),
       freshnessStatus: freshness,
       validationStatus: validation,
       warnings: uniqueStrings(warnings),
       aiBrief: aiBrief,
+      derivatives: resources.derivatives,
+      changes: observedChanges(resources.marketSnapshot, resources.previousMarket),
       topIntelligence: topIntelligence,
       regime: regime,
       signals: signals,
@@ -575,6 +581,18 @@
   }
 
   function render(documentRef, model) {
+    const onboarding = documentRef.getElementById("onboarding-state");
+    if (onboarding) {
+      onboarding.textContent = "";
+      onboardingHints(model).forEach(function (hint) { onboarding.appendChild(element(documentRef, "p", "meta", hint)); });
+    }
+    renderReport(documentRef, model);
+    const header = researchHeader(model, Date.now());
+    const statusNode = documentRef.getElementById("research-status");
+    const updatedNode = documentRef.getElementById("research-updated");
+    if (statusNode) statusNode.textContent = header.status;
+    if (updatedNode) updatedNode.textContent = header.updated;
+    renderDerivatives(documentRef, model.derivatives);
     setStatus(documentRef, "generated-at", formatTimestamp(model.generatedAt), "");
     setStatus(documentRef, "data-status", model.dataStatus, model.dataStatus);
     setStatus(documentRef, "freshness-status", model.freshnessStatus, model.freshnessStatus);
@@ -660,7 +678,9 @@
       const card = element(documentRef, "article", "card");
       card.appendChild(element(documentRef, "p", "brand", "Priority " + item.rank));
       card.appendChild(element(documentRef, "h3", "", item.headline));
+      card.appendChild(element(documentRef, "h4", "explanation-label", "Why this matters"));
       card.appendChild(element(documentRef, "p", "", item.why));
+      card.appendChild(element(documentRef, "h4", "explanation-label", "Monitor next"));
       card.appendChild(element(documentRef, "p", "meta", "Monitor next: " + item.monitor));
       card.appendChild(element(documentRef, "p", "meta", "Type: " + item.type + " · Score: " + formatNumber(item.score)));
       card.appendChild(element(documentRef, "p", "meta", "Story: " + item.storyKey));
@@ -796,6 +816,7 @@
     markets.forEach(function (market) {
       const card = element(documentRef, "article", "card");
       card.appendChild(element(documentRef, "h3", "", market.symbol));
+      card.appendChild(element(documentRef, "p", "brand", ["SPY", "QQQ", "NVDA", "AAPL", "TSLA"].includes(market.symbol) ? "Equity" : ["BTC-USD", "ETH-USD"].includes(market.symbol) ? "Crypto" : "Macro"));
       card.appendChild(element(
         documentRef,
         "p",
@@ -870,7 +891,13 @@
         return;
       }
       count += values.length;
-      list.appendChild(element(documentRef, "li", "", key + ": " + values.join(", ")));
+      const labels = {source_ids: "Sources", observation_ids: "Observations", event_ids: "Events",
+        evidence_ids: "Evidence", evidence_bundle_ids: "Evidence bundles", signal_ids: "Signals",
+        risk_ids: "Risks", regime_dimension_ids: "Regime dimensions", coverage_inputs: "Coverage inputs"};
+      const entry = element(documentRef, "li", "trace-entry");
+      entry.appendChild(element(documentRef, "strong", "", (labels[key] || key) + " · " + values.length));
+      values.forEach(function (value) { entry.appendChild(element(documentRef, "code", "", value)); });
+      list.appendChild(entry);
     });
     const summary = element(
       documentRef,
@@ -1000,8 +1027,131 @@
     return model;
   }
 
+  function derivativesLines(payload, now) {
+    if (!payload || payload.schema_contract !== "derivatives_public_v1" ||
+        !Array.isArray(payload.measurements) || payload.measurements.length !== 4 ||
+        !payload.readiness || payload.readiness.production_enabled !== false) {
+      return ["Derivatives unavailable."];
+    }
+    const lines = ["Validation: " + (payload.validation_status === "validated" ? "validated" : "unavailable"),
+      "Snapshot: " + formatTimestamp(payload.generated_at)];
+    ["BTC", "ETH"].forEach(function (asset) {
+      lines.push(asset + " Perpetual");
+      ["funding_rate", "open_interest"].forEach(function (metric) {
+        const r = payload.measurements.find(function (x) { return x.asset === asset && x.metric === metric; });
+        const title = metric === "funding_rate" ? "Funding rate" : "Open interest";
+        if (!r || r.value === null || !/^-?\d+(\.\d+)?$/.test(String(r.value))) {
+          lines.push(title + ": unavailable"); return;
+        }
+        const age = now - Date.parse(r.source_timestamp);
+        const freshness = r.freshness_status === "current" && age >= 0 && age <= r.ttl_seconds * 1000 ? "current" : "stale";
+        lines.push(title + ": " + r.value + (metric === "funding_rate" ? " (fraction)" : " " + asset));
+        lines.push("Observation timestamp: " + formatTimestamp(r.source_timestamp));
+        lines.push("Freshness: " + freshness);
+        lines.push("Evidence quality: " + (typeof r.evidence_quality === "number" ? String(r.evidence_quality) : "unknown") + " (at snapshot)");
+        lines.push("Provenance: " + (r.provenance_status === "complete" ? "complete" : "unavailable"));
+      });
+    });
+    const r = payload.readiness;
+    lines.push("Readiness history: " + r.current_history_days + " / " + r.required_history_days + " days (at snapshot)");
+    lines.push("production_enabled: false");
+    if (r.tracking) {
+      const t = r.tracking;
+      lines.push("Missing days: " + (Array.isArray(t.missing_days) ? t.missing_days.join(", ") || "none" : "unknown"));
+      lines.push("Freshness pass rate: " + (typeof t.freshness_pass_rate === "number" ? (t.freshness_pass_rate * 100).toFixed(1) + "%" : "unknown"));
+      lines.push("Provenance completeness: " + (typeof t.provenance_completeness === "number" ? (t.provenance_completeness * 100).toFixed(1) + "%" : "unknown"));
+      lines.push("Validation failures: " + (Number.isInteger(t.validation_failures) ? t.validation_failures : "unknown"));
+    }
+    const allowed = ["history", "availability", "freshness", "provenance", "coverage", "safety", "input_integrity", "invalid_archive", "unavailable"];
+    const reasons = Array.isArray(r.blocking_reasons) ? r.blocking_reasons.filter(function (x) { return allowed.includes(x); }) : ["unavailable"];
+    lines.push("Blocking reasons: " + (reasons.join(", ") || "none at snapshot"));
+    if (now - Date.parse(payload.generated_at) > 86400000) lines.push("Readiness snapshot stale; awaiting refresh.");
+    return lines;
+  }
+
+  function renderDerivatives(documentRef, payload) {
+    const container = documentRef.getElementById("derivatives-content");
+    if (!container) return;
+    container.textContent = "";
+    let group = element(documentRef, "div", "card");
+    container.appendChild(group);
+    derivativesLines(payload, Date.now()).forEach(function (line) {
+      if (line === "BTC Perpetual" || line === "ETH Perpetual" || line.startsWith("Readiness history:")) {
+        group = element(documentRef, "article", "card");
+        container.appendChild(group);
+      }
+      const freshnessBadge = line === "Freshness: current" ? "badge current" : line === "Freshness: stale" ? "badge stale" : "muted";
+      group.appendChild(element(documentRef, line.endsWith("Perpetual") ? "h3" : "p", freshnessBadge, line));
+    });
+  }
+
+  function researchHeader(model, now) {
+    const statuses = ["available", "complete", "partial", "unavailable", "failed"];
+    const state = statuses.includes(model.dataStatus) ? model.dataStatus : "unavailable";
+    const freshness = ["current", "stale", "unknown", "unavailable"].includes(model.freshnessStatus) ? model.freshnessStatus : "unknown";
+    const generated = Date.parse(model.generatedAt);
+    const age = now - generated;
+    let updated = "Last update unavailable";
+    if (Number.isFinite(generated) && age >= 0) {
+      updated = "Last report update: " + formatTimestamp(model.generatedAt) + " · " + Math.floor(age / 3600000) + "h ago (artifact age)";
+      if (age > 86400000) updated += " · Older snapshot — awaiting refresh";
+    } else if (Number.isFinite(generated)) {
+      updated = "Last update timestamp is in the future; check the source clock";
+    }
+    return {status: "Daily research status: " + state + " · Recorded source freshness: " + freshness, updated: updated};
+  }
+
+  function onboardingHints(model) {
+    const hints = [];
+    if (!model.reportAvailable) hints.push("Daily report unavailable. This may be a first run or a missing artifact; consult available source sections and return after the next published run.");
+    if (model.dataStatus === "partial") hints.push("Partial pipeline: some inputs are missing or unusable. Read the data quality warnings before using this report.");
+    if (model.freshnessStatus === "stale") hints.push("Stale data: use the displayed observation timestamps as historical context, not a live market view.");
+    if (!model.previousAvailable) hints.push("Previous run unavailable: What Changed cannot provide a comparison yet.");
+    if (!model.derivatives || model.derivatives.validation_status !== "validated") hints.push("Optional derivatives shadow data unavailable. This does not enable or disable other research sections.");
+    return hints;
+  }
+
+  function observedChanges(current, previous) {
+    if (!current || !Array.isArray(current.records)) return ["Current market snapshot unavailable."];
+    if (!previous || !Array.isArray(previous.records)) return ["Previous available run unavailable; comparison omitted."];
+    const a = Date.parse(previous.generated_at), b = Date.parse(current.generated_at);
+    if (!Number.isFinite(a) || !Number.isFinite(b) || a >= b) return ["Previous run timestamp is not earlier; comparison omitted."];
+    const lines = ["Snapshot comparison: " + formatTimestamp(previous.generated_at) + " → " + formatTimestamp(current.generated_at)];
+    current.records.forEach(function (r) {
+      const matches = previous.records.filter(function (p) { return p.symbol === r.symbol; });
+      if (matches.length !== 1) return;
+      const p = matches[0];
+      if (![p,r].every(function (x) { return ["success","stale"].includes(x.status) && typeof x.price === "number" && Number.isFinite(x.price) && typeof x.source === "string"; }) || p.source !== r.source) return;
+      const oldTime = Date.parse(p.timestamp), newTime = Date.parse(r.timestamp);
+      if (!Number.isFinite(oldTime) || !Number.isFinite(newTime) || newTime < oldTime || newTime > b || oldTime > a) return;
+      if (p.price !== r.price || p.status !== r.status) {
+        lines.push(r.symbol + ": " + p.price + " → " + r.price + "; recorded status " + p.status + " → " + r.status + "; source " + r.source + "; observations " + p.timestamp + " → " + r.timestamp);
+      }
+    });
+    if (lines.length === 1) lines.push("No comparable changed observations in the supplied snapshots.");
+    return lines;
+  }
+
+  function renderReport(doc, model) {
+    function lines(id, values) {
+      const box = doc.getElementById(id); if (!box) return;
+      box.textContent = "";
+      values.forEach(function (v) { box.appendChild(element(doc,"p","meta",v)); });
+    }
+    lines("executive-content", [researchHeader(model, Date.now()).status].concat(
+      model.topIntelligence.items.length ? model.topIntelligence.items.map(function (s) { return s.rank + ". " + s.headline; }) : ["No current validated stories available."]));
+    lines("changes-content", model.changes || ["Previous available run unavailable."]);
+    lines("report-quality-content", model.warnings.length ? model.warnings : ["No additional data quality warnings in supplied artifacts."]);
+  }
+
   return {
     ENDPOINTS: ENDPOINTS,
+    researchHeader: researchHeader,
+    onboardingHints: onboardingHints,
+    observedChanges: observedChanges,
+    renderReferences: renderReferences,
+    derivativesLines: derivativesLines,
+    renderDerivatives: renderDerivatives,
     MARKET_ORDER: MARKET_ORDER,
     buildViewModel: buildViewModel,
     initialize: initialize,

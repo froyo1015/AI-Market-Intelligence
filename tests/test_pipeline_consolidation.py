@@ -143,6 +143,8 @@ def test_deployment_allowlist_matches_canonical_presentation_contract() -> None:
         MANIFEST_FILENAME
     }
     assert set(APPROVED_STATIC_FILES) == {
+        "previous-market-snapshot.json",
+        "derivatives-shadow.json",
         "intelligence.html",
         "assets/intelligence.js",
     }

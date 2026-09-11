@@ -101,3 +101,10 @@ jobs:
           path: outputs/shadow/derivatives/scheduled/checkpoint.gpg
           if-no-files-found: error
           retention-days: 30
+      - name: Publish validated public projection only
+        uses: actions/upload-artifact@v7
+        with:
+          name: derivatives-shadow-public
+          path: outputs/shadow/derivatives/scheduled/run/derivatives-shadow.json
+          if-no-files-found: error
+          retention-days: 30

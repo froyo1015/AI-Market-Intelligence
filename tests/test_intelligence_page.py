@@ -40,8 +40,8 @@ def test_static_shell_has_dynamic_artifact_contract_and_safe_csp() -> None:
     assert page.index('id="ai-brief"') < page.index('id="top-intelligence"')
     assert page.index('id="top-intelligence"') < page.index('id="regime"')
     assert page.index('id="regime"') < page.index('id="signals"')
-    assert page.index('id="signals"') < page.index('id="risks"')
-    assert page.index('id="risks"') < page.index('id="markets"')
+    assert page.index('id="signals"') < page.index('id="markets"')
+    assert page.index('id="markets"') < page.index('id="risks"')
     assert page.index('id="markets"') < page.index('id="audit"')
 
 

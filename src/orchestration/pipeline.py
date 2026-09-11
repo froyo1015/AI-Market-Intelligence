@@ -57,6 +57,8 @@ APPROVED_DYNAMIC_FILES = (
     MANIFEST_FILENAME,
 )
 APPROVED_STATIC_FILES = (
+    "previous-market-snapshot.json",
+    "derivatives-shadow.json",
     "intelligence.html",
     "assets/intelligence.js",
 )
@@ -736,6 +738,25 @@ def _remove_unapproved_public_data(data_directory: Path) -> None:
 
 
 def _published_files(paths: RunPaths) -> Tuple[list[str], list[str]]:
+    from src.pages.previous_report import project
+    previous_public = paths.docs_directory / "previous-market-snapshot.json"
+    if previous_public.exists():
+        try:
+            payload = json.loads(previous_public.read_text())
+            valid_previous = payload == project(payload)
+        except (ValueError, OSError, KeyError, TypeError):
+            valid_previous = False
+        if not valid_previous:
+            previous_public.unlink()
+    from src.pages.derivatives_schema import validate_public
+    shadow_public = paths.docs_directory / "derivatives-shadow.json"
+    if shadow_public.exists():
+        try:
+            valid = validate_public(json.loads(shadow_public.read_text()))
+        except (ValueError, OSError):
+            valid = False
+        if not valid:
+            shadow_public.unlink()
     published = []
     for relative in APPROVED_PUBLIC_FILES:
         path = paths.docs_directory / relative

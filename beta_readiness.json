@@ -1,0 +1,239 @@
+{
+  "schema_contract": "beta_readiness_v1",
+  "policy_id": "limited-public-beta-v1",
+  "assessed_at": "2026-09-11T13:43:00Z",
+  "beta_status": "blocked",
+  "production_enablement": false,
+  "blockers": [
+    "mobile_readiness",
+    "release_parity"
+  ],
+  "conditions": [
+    "debug_artifacts",
+    "freshness",
+    "onboarding",
+    "pipeline_completion",
+    "provenance_completeness",
+    "replay_capability",
+    "source_availability",
+    "unsupported_claims"
+  ],
+  "checks": [
+    {
+      "id": "actions_success_rate",
+      "status": "pass",
+      "scope": "production",
+      "finding": "20/20 most recent listed completed Daily Market Brief runs succeeded (2026-08-24 through 2026-09-11). Bounded sample, not lifetime uptime.",
+      "evidence": [
+        "https://github.com/froyo1015/AI-Market-Intelligence/actions"
+      ]
+    },
+    {
+      "id": "artifact_generation",
+      "status": "pass",
+      "scope": "production",
+      "finding": "Latest manifest, daily intelligence, market/macro snapshots, risk monitor and AI brief/evaluation return HTTP 200.",
+      "evidence": [
+        "https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/34564035533"
+      ]
+    },
+    {
+      "id": "debug_artifacts",
+      "status": "warn",
+      "scope": "mixed",
+      "finding": "No debug marker matches in local public JSON/HTML scan; remote site inventory, historical artifacts and logs not exhaustively enumerated.",
+      "evidence": [
+        "docs/"
+      ]
+    },
+    {
+      "id": "deployment_status",
+      "status": "pass",
+      "scope": "production",
+      "finding": "Latest generation and Deploy GitHub Pages jobs succeeded; Intelligence HTML returns HTTP 200.",
+      "evidence": [
+        "https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/34564035533"
+      ]
+    },
+    {
+      "id": "fallback",
+      "status": "pass",
+      "scope": "production",
+      "finding": "Published deterministic fallback evaluation completed and passed; fallback artifact is available.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/ai_brief_evaluation.json"
+      ]
+    },
+    {
+      "id": "freshness",
+      "status": "warn",
+      "scope": "production",
+      "finding": "Manifest labels current at generation, but observation dates differ: equities 2026-09-10, crypto 2026-09-11, US10Y/VIX 2026-09-10. Not live synchronized data.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/macro_snapshot.json"
+      ]
+    },
+    {
+      "id": "internal_paths",
+      "status": "pass",
+      "scope": "mixed",
+      "finding": "No /Users/, /home/runner/ or /tmp/ paths found in sampled deployed payloads; local public artifact scan also clean.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/daily_intelligence.json"
+      ]
+    },
+    {
+      "id": "investment_advice",
+      "status": "pass",
+      "scope": "local",
+      "finding": "Existing validator rejects buy/sell/hold and target language; local safety regression tests pass. Not a universal semantic guarantee.",
+      "evidence": [
+        "src/grounded_brief/validator.py"
+      ]
+    },
+    {
+      "id": "mobile_readiness",
+      "status": "unknown",
+      "scope": "local",
+      "finding": "Responsive CSS checks pass, but real viewport, overflow and badge visual QA remains unverified: no browser executable.",
+      "evidence": [
+        "docs/product-ux-polish.md"
+      ]
+    },
+    {
+      "id": "onboarding",
+      "status": "fail",
+      "scope": "mixed",
+      "finding": "Local onboarding exists; live Intelligence HTML lacks Phase 9.3 New here guidance.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/intelligence.html"
+      ]
+    },
+    {
+      "id": "pipeline_completion",
+      "status": "warn",
+      "scope": "production",
+      "finding": "Latest manifest is partial despite successful workflow; calendar, consolidation, signals, risk, daily intelligence and Top Intelligence are partial.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/run_manifest.json"
+      ]
+    },
+    {
+      "id": "prediction_logic",
+      "status": "pass",
+      "scope": "local",
+      "finding": "Inspected grounding guard and local tests reject predictive/causal/trading language; audit adds no prediction logic. No exhaustive formal verification claimed.",
+      "evidence": [
+        "src/grounded_brief/validator.py"
+      ]
+    },
+    {
+      "id": "provenance_completeness",
+      "status": "warn",
+      "scope": "mixed",
+      "finding": "Local reference and receipt replay tests pass. Full production provenance catalog was not replayed; evidence_bundle is not available at the attempted public data path.",
+      "evidence": [
+        "tests/test_derivatives_archive.py"
+      ]
+    },
+    {
+      "id": "raw_responses",
+      "status": "pass",
+      "scope": "mixed",
+      "finding": "No body_base64/normalized_bytes/raw_response matches in sampled published HTML and JSON/brief; local publication allowlist tests pass.",
+      "evidence": [
+        "tests/test_derivatives_dashboard.py"
+      ]
+    },
+    {
+      "id": "reference_preservation",
+      "status": "pass",
+      "scope": "local",
+      "finding": "Composer provenance resolution and rendering preservation tests pass; scope is fixture-based regression checks.",
+      "evidence": [
+        "tests/test_daily_intelligence.py"
+      ]
+    },
+    {
+      "id": "release_parity",
+      "status": "fail",
+      "scope": "mixed",
+      "finding": "Live revision 430fe66 differs from local HEAD ad2f008 plus uncommitted 8.2–9.3 changes. Local product UX is not the deployed candidate.",
+      "evidence": [
+        "git:HEAD=ad2f00824b7d1f60138430e8266c59780bdcfbff"
+      ]
+    },
+    {
+      "id": "replay_capability",
+      "status": "warn",
+      "scope": "local",
+      "finding": "Shadow archive receipt replay and tamper rejection tested; real GnuPG round-trip remains skipped and no deployed archive recovery trial verified.",
+      "evidence": [
+        "tests/test_derivatives_archive.py"
+      ]
+    },
+    {
+      "id": "secrets",
+      "status": "pass",
+      "scope": "mixed",
+      "finding": "Known credential-pattern scans found no matches in inspected local/public payloads. Not a complete entropy scan of all Git history, Actions artifacts or logs.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/run_manifest.json"
+      ]
+    },
+    {
+      "id": "source_availability",
+      "status": "warn",
+      "scope": "production",
+      "finding": "All 10 market and 4 macro records report success; calendar and downstream coverage remain partial.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/market_snapshot.json"
+      ]
+    },
+    {
+      "id": "stale_handling",
+      "status": "pass",
+      "scope": "local",
+      "finding": "Stale exclusion, display and browser re-aging covered by deterministic local tests; not a live browser verification.",
+      "evidence": [
+        "tests/test_derivatives_dashboard.py"
+      ]
+    },
+    {
+      "id": "unavailable_handling",
+      "status": "pass",
+      "scope": "local",
+      "finding": "Missing sources produce unavailable states; scheduler/renderer unavailable paths tested.",
+      "evidence": [
+        "tests/test_derivatives_scheduler.py"
+      ]
+    },
+    {
+      "id": "unavailable_ux",
+      "status": "pass",
+      "scope": "local",
+      "finding": "Local unavailable/partial/first-run-unknown navigation and DOM tests pass.",
+      "evidence": [
+        "tests/test_product_ux_polish.py"
+      ]
+    },
+    {
+      "id": "unsupported_claims",
+      "status": "unknown",
+      "scope": "production",
+      "finding": "Latest run is deterministic_fallback, not a real LLM output trial. Production grounded-AI quality not established by this run.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/ai_brief_evaluation.json"
+      ]
+    },
+    {
+      "id": "validation_status",
+      "status": "pass",
+      "scope": "production",
+      "finding": "Published AI evaluation reports deterministic_renderer_validator passed. This does not certify every external fact.",
+      "evidence": [
+        "https://froyo1015.github.io/AI-Market-Intelligence/data/ai_brief_evaluation.json"
+      ]
+    }
+  ]
+}

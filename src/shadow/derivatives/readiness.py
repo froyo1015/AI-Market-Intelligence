@@ -81,7 +81,14 @@ def assess(history, as_of):
     history_ok = observed == dates and latest is not None and cutoff - latest <= 86400000
     status = "blocked" if not all(checks.values()) else "passing" if history_ok else "insufficient_history"
     checks["history"] = history_ok
+    count = len(rows)
+    summary = {"collected_days": len(observed), "missing_days": sorted(dates - observed),
+               "sample_count": count,
+               "freshness_pass_rate": sum(bool(r.get("checks", {}).get("freshness")) for r in rows) / count if count else None,
+               "provenance_completeness": sum(bool(r.get("checks", {}).get("provenance")) for r in rows) / count if count else None,
+               "validation_failures": sum(not r.get("checks", {}).get("input_integrity", False) for r in rows)}
     return {"schema_contract": "derivatives_readiness_v1", "policy_id": POLICY,
+            "tracking": summary,
             "evaluated_at": as_of, "status": status, "production_enabled": False,
             "checks": checks, "history": {"required_dates": sorted(dates), "observed_dates": sorted(observed),
                 "unique_sample_count": len(times), "duplicate_count": duplicates, "outside_window_count": outside,

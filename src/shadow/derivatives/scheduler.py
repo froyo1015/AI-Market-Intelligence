@@ -46,6 +46,11 @@ def run(root, output, daily, upstream, run_id, clock=utc_now, adapters=None):
     result = readiness(root, clock())
     write_context(fact_index(root), output / "observation_index.json")
     write_context(result, output / "derivatives_readiness.json")
+    from .dashboard import project
+    from src.pages.derivatives_schema import validate_public
+    public = project(root, result["evaluated_at"])
+    require(validate_public(public), "invalid public projection")
+    write_context(public, output / "derivatives-shadow.json")
     write_context({"schema_contract": "derivatives_shadow_run_v1", "production_enabled": False,
                    "archive_entry": read(path)["entry_hash"],
                    "provider_status": [a["status"] for a in wrappers],
