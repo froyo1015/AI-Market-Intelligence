@@ -28,9 +28,9 @@ def test_beta_partial_fallback():
 
 def test_beta_notice_and_safe_feedback():
     page = generate_intelligence_page()
-    assert 'Readiness: conditional' in page
-    assert 'Last validated deployed commit:' in page
+    assert '測試狀態：有條件開放' in page
+    assert '上次通過部署驗證的版本：' in page
     assert 'https://github.com/froyo1015/AI-Market-Intelligence/issues/new' in page
-    assert 'not trading recommendations or a promise of prediction' in page
-    assert 'Feedback is public' in page
+    assert '不提供買賣建議，也不承諾預測市場走勢' in page
+    assert '意見會公開顯示' in page
     assert not any(x in page for x in ['/Users/', '/home/runner/', 'body_base64', 'raw_response', 'sk-proj-'])

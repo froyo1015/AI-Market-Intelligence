@@ -90,7 +90,7 @@ def test_render_dom_and_no_directional_language(root):
       createElement(tag){return {tag,textContent:'',className:'',children:[],appendChild(x){this.children.push(x)}}}};
     v.renderDerivatives(doc,JSON.parse(process.argv[2]));
     const nodes=box.children.flatMap(x=>x.children);
-    if(!nodes.some(x=>x.textContent==='BTC Perpetual'))process.exit(1);
+    if(!nodes.some(x=>x.textContent==='BTC 永續合約'))process.exit(1);
     console.log(nodes.map(x=>x.textContent).join('\\n'));'''
     text = subprocess.check_output(["node", "-e", code, str(Path("src/pages/static/intelligence.js").resolve()), json.dumps(p)], text=True)
     assert all(x not in text.lower() for x in ("bullish", "bearish", "buy", "sell", "predict"))

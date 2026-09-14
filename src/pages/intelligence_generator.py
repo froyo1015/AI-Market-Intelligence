@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from string import Template
 from typing import Dict, Mapping, Optional, Sequence
+from src.pages.zh_hant import localize_shell
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -39,7 +40,7 @@ def default_artifact_paths() -> Dict[str, Path]:
 
 
 def generate_intelligence_page() -> str:
-    return PAGE_TEMPLATE.substitute(script_path="assets/intelligence.js")
+    return localize_shell(PAGE_TEMPLATE.substitute(script_path="assets/intelligence.js"))
 
 
 def package_artifacts(
@@ -143,7 +144,7 @@ PAGE_TEMPLATE = Template(
   >
   <meta
     name="description"
-    content="Evidence-linked market regime, cross-asset observations and risk monitoring."
+    content="以可追溯證據整理市場環境、跨資產觀察及風險，提供每日市場情報。"
   >
   <title>Market Intelligence View</title>
   <style>
@@ -358,6 +359,7 @@ PAGE_TEMPLATE = Template(
       </div>
       <p id="ai-brief-note" class="fallback-note" hidden></p>
       <div id="ai-brief-content" class="brief-body" aria-live="polite"><p class="empty loading">Loading validated brief…</p></div>
+      <p class="meta">來源與報告中的原始敘述可能保留英文，方便核對；介面不會重新撰寫或補充市場事實。引用 ID 與時間維持原樣。</p>
     </section>
 
     <section class="section panel" id="top-intelligence">

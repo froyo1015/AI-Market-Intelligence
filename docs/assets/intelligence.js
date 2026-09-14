@@ -13,6 +13,84 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
+  // Presentation translations only. Contract values and source prose stay intact.
+  const ZH = {
+    "No current validated Top 3 intelligence is available.": "目前暫無符合新鮮度與驗證要求的市場重點。",
+    "Market regime unavailable due to insufficient fresh evidence.": "目前有效證據不足，暫時無法判定市場環境。",
+    "Observable risk condition": "可觀察的風險狀況",
+    "Current observed regime classification from validated evidence.": "依據已驗證證據，描述目前的市場環境。",
+    current: "目前有效", stale: "資料已過期", unavailable: "暫無資料", unknown: "時間不明",
+    partial: "部分資料可用", complete: "資料完整", available: "資料可用", success: "成功",
+    failed: "未能取得資料", validated: "已驗證", invalid: "未通過驗證",
+    risk_on: "風險偏好較強（risk_on）", risk_off: "避險傾向較強（risk_off）", mixed: "走勢分歧（mixed）",
+    "Unavailable": "暫無資料", "Deterministic fallback": "規則式備援模式", "Grounded AI": "依據證據撰寫的 AI 模式",
+    "AI generation was unavailable; the validated deterministic brief is shown instead.": "AI 暫時無法產生簡報，目前顯示已驗證的規則式備援簡報。",
+    "AI Market Brief unavailable.": "AI 市場簡報暫無資料。",
+    "Why this matters": "為何重要", "Monitor next": "接下來留意甚麼",
+    "Data availability notices": "資料取得狀況", "Regime unavailable": "市場環境暫無資料",
+    "No current observed cross-asset relationships are available.": "目前沒有可用的跨資產觀察。",
+    "No validated observable risk items are available.": "暫無通過驗證的風險觀察。",
+    "Market snapshots unavailable.": "行情暫無資料。", "Daily change unavailable": "暫無單日變化資料",
+    "Equity": "美股", "Crypto": "加密資產", "Macro": "宏觀",
+    "Source references": "來源參考", "Source catalog unavailable.": "暫無來源目錄。",
+    "Timestamps": "時間紀錄", "Observation IDs": "觀察 ID", "Event IDs": "事件 ID",
+    "Grounded AI report artifact": "AI 簡報原始檔", "Deterministic report artifact": "規則式簡報原始檔",
+    "Open ai_market_brief.md": "開啟 ai_market_brief.md", "Open daily_market_brief.md": "開啟 daily_market_brief.md",
+    "References unavailable": "暫無引用資料", "None in validated input.": "已驗證資料中沒有此項記錄。",
+    "Upcoming Events": "即將發生的事件", "Data Quality Risks": "資料品質風險", "Observed Market Stress": "已觀察到的市場壓力",
+    "Derivatives unavailable.": "衍生品暫無資料。", "BTC Perpetual": "BTC 永續合約", "ETH Perpetual": "ETH 永續合約",
+    "production_enabled: false": "尚未用於正式分析", "Readiness snapshot stale; awaiting refresh.": "準備度記錄已過期，等待更新。",
+    "Daily report unavailable. This may be a first run or a missing artifact; consult available source sections and return after the next published run.": "暫無每日報告，可能是首次執行或檔案缺漏。可先查看其他有資料的章節，稍後再試。",
+    "Partial pipeline: some inputs are missing or unusable. Read the data quality warnings before using this report.": "部分資料缺漏或無法使用，閱讀報告前請先留意資料品質警告。",
+    "Stale data: use the displayed observation timestamps as historical context, not a live market view.": "資料已過期，請按顯示的觀察時間作歷史參考，不要當成即時行情。",
+    "Previous run unavailable: What Changed cannot provide a comparison yet.": "暫無上次報告，因此未能比較市場變化。",
+    "Optional derivatives shadow data unavailable. This does not enable or disable other research sections.": "衍生品測試資料暫缺，不影響其他研究章節的啟用狀態。",
+    "Current market snapshot unavailable.": "目前行情暫無資料。",
+    "Previous available run unavailable; comparison omitted.": "暫無上次行情，未進行比較。",
+    "Previous available run unavailable.": "暫無上次報告。",
+    "Previous run timestamp is not earlier; comparison omitted.": "前次報告時間不早於本次，因此不作比較。",
+    "No comparable changed observations in the supplied snapshots.": "兩次記錄之間沒有可比較的觀察變化。",
+    "No current validated stories available.": "目前暫無已驗證的市場重點。",
+    "No additional data quality warnings in supplied artifacts.": "提供的資料中沒有其他品質警告。",
+    "Last update unavailable": "上次更新：暫無資料",
+    "Last update timestamp is in the future; check the source clock": "更新時間晚於目前時間，來源時鐘有待確認。"
+  };
+  const ZH_PREFIXES = {
+    "Current data status: ": "目前資料狀態：", "AI generation mode: ": "AI 簡報模式：",
+    "Derivatives shadow: ": "衍生品測試狀態：", "Last successful report update: ": "上次成功產生報告：",
+    "Recorded freshness: ": "記錄的資料新鮮度：", "Daily research status: ": "今日報告狀態：",
+    "Last report update: ": "上次報告更新：", "Priority ": "重點 ",
+    "Monitor next: ": "後續觀察：", "Type: ": "類型：", "Story: ": "主題代碼：",
+    "Assets: ": "相關資產：", "Confidence: ": "判定可靠程度：", "Relationship: ": "觀察關係：",
+    "Severity: ": "程度：", "Daily change: ": "單日變化：", "Observed: ": "觀察時間：", "Source: ": "來源：",
+    "Validation: ": "驗證狀態：", "Snapshot: ": "記錄時間：", "Funding rate: ": "資金費率（Funding Rate）：",
+    "Open interest: ": "未平倉量（OI）：", "Observation timestamp: ": "觀察時間：", "Freshness: ": "資料新鮮度：",
+    "Evidence quality: ": "證據品質：", "Provenance: ": "來源追溯：", "Readiness history: ": "準備度觀察天數：",
+    "Missing days: ": "缺漏日期：", "Freshness pass rate: ": "新鮮度合格比例：", "Provenance completeness: ": "來源完整比例：",
+    "Validation failures: ": "驗證未通過次數：", "Blocking reasons: ": "尚未通過的項目：", "Snapshot comparison: ": "行情記錄比較：",
+    "Evidence references (": "證據引用 ("
+  };
+  function uiText(value) {
+    const text = String(value);
+    if (Object.prototype.hasOwnProperty.call(ZH, text)) return ZH[text];
+    const prefix = Object.keys(ZH_PREFIXES).find(x => text.startsWith(x));
+    if (!prefix) return text; // Never guess translations of source facts or IDs.
+    let tail = text.slice(prefix.length);
+    if (Object.prototype.hasOwnProperty.call(ZH, tail)) tail = ZH[tail];
+    tail = tail.replace(" · Not used for AI decisions", " · 尚未用於 AI 決策")
+      .replace(" (validated report timestamp; not proof of full pipeline success)", "（已驗證報告的時間，不代表所有資料均取得成功）")
+      .replace(" · Recorded source freshness: ", " · 來源資料新鮮度：")
+      .replace(" · Older snapshot — awaiting refresh", " · 舊記錄，等待更新")
+      .replace("h ago (artifact age)", " 小時前（報告檔案時間）")
+      .replace(" (at snapshot)", "（記錄當時）").replace(" days", " 天")
+      .replace(" (fraction)", "（小數比例）");
+    // Only translate standalone status tokens in known UI-generated lines.
+    if (!["Source: ", "Story: ", "Assets: ", "Observed: ", "Snapshot comparison: ", "Observation timestamp: ", "Snapshot: "].includes(prefix)) {
+      tail = tail.replace(/\b(current|stale|unavailable|unknown|partial|complete|available|success|failed|validated|invalid)\b/g, x => ZH[x]);
+    }
+    return ZH_PREFIXES[prefix] + tail;
+  }
+
   const ENDPOINTS = {
     previousMarket: ["previous-market-snapshot.json", "json"],
     derivatives: ["derivatives-shadow.json", "json"],
@@ -597,8 +675,8 @@
     const header = researchHeader(model, Date.now());
     const statusNode = documentRef.getElementById("research-status");
     const updatedNode = documentRef.getElementById("research-updated");
-    if (statusNode) statusNode.textContent = header.status;
-    if (updatedNode) updatedNode.textContent = header.updated;
+    if (statusNode) statusNode.textContent = uiText(header.status);
+    if (updatedNode) updatedNode.textContent = uiText(header.updated);
     renderDerivatives(documentRef, model.derivatives);
     setStatus(documentRef, "generated-at", formatTimestamp(model.generatedAt), "");
     setStatus(documentRef, "data-status", model.dataStatus, model.dataStatus);
@@ -641,7 +719,7 @@
     );
     const note = documentRef.getElementById("ai-brief-note");
     note.hidden = !brief.fallbackNote;
-    note.textContent = brief.fallbackNote;
+    note.textContent = uiText(brief.fallbackNote);
     const rootNode = documentRef.getElementById("ai-brief-content");
     clear(rootNode);
     if (!brief.available) {
@@ -707,7 +785,7 @@
       const badge = element(documentRef, "span", "badge " + badgeClass, value);
       target.appendChild(badge);
     } else {
-      target.textContent = value;
+      target.textContent = uiText(value);
     }
   }
 
@@ -898,9 +976,9 @@
         return;
       }
       count += values.length;
-      const labels = {source_ids: "Sources", observation_ids: "Observations", event_ids: "Events",
-        evidence_ids: "Evidence", evidence_bundle_ids: "Evidence bundles", signal_ids: "Signals",
-        risk_ids: "Risks", regime_dimension_ids: "Regime dimensions", coverage_inputs: "Coverage inputs"};
+      const labels = {source_ids: "來源", observation_ids: "觀察", event_ids: "事件",
+        evidence_ids: "證據", evidence_bundle_ids: "證據組合", signal_ids: "跨資產觀察",
+        risk_ids: "風險", regime_dimension_ids: "市場環境構面", coverage_inputs: "資料涵蓋範圍"};
       const entry = element(documentRef, "li", "trace-entry");
       entry.appendChild(element(documentRef, "strong", "", (labels[key] || key) + " · " + values.length));
       values.forEach(function (value) { entry.appendChild(element(documentRef, "code", "", value)); });
@@ -950,7 +1028,7 @@
       node.className = className;
     }
     if (text !== undefined) {
-      node.textContent = String(text);
+      node.textContent = tag === "code" || tag === "a" ? String(text) : uiText(text);
     }
     return node;
   }
@@ -1169,6 +1247,7 @@
   }
 
   return {
+    uiText: uiText,
     betaStatusLines: betaStatusLines,
     ENDPOINTS: ENDPOINTS,
     researchHeader: researchHeader,
