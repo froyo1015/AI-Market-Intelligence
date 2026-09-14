@@ -25,6 +25,10 @@ def validate_top_intelligence_artifact(
 ) -> None:
     if "freshness_contract_version" in artifact:
         validate_freshness_contract(artifact)
+    if "freshness_items" in artifact:
+        from src.data.item_freshness import build_item_freshness
+        if artifact["freshness_items"] != build_item_freshness(strip_freshness_metadata(artifact), (daily,)):
+            raise TopIntelligenceValidationError("item freshness does not match referenced evidence")
     domain = strip_freshness_metadata(artifact)
     _scan(domain)
     generated_at = domain.get("generated_at")

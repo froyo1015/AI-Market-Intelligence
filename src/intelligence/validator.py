@@ -43,6 +43,8 @@ def validate_daily_intelligence_artifact(
 ) -> None:
     if "freshness_contract_version" in artifact:
         validate_freshness_contract(artifact)
+    from src.data.item_freshness import validate_scoped_evidence
+    validate_scoped_evidence(artifact, (evidence_bundle, market_signals, market_regime, risk_monitor))
     domain_artifact = strip_freshness_metadata(artifact)
     _scan_keys(domain_artifact)
     generated_at = artifact.get("generated_at")

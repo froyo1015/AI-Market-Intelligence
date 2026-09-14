@@ -56,6 +56,8 @@ def validate_market_signals_artifact(
     validate_consolidated_evidence_artifact(evidence_bundle)
     if "freshness_contract_version" in artifact:
         validate_freshness_contract(artifact)
+    from src.data.item_freshness import validate_scoped_evidence
+    validate_scoped_evidence(artifact, (evidence_bundle,))
     domain_artifact = strip_freshness_metadata(artifact)
     _scan_output(domain_artifact)
     generated_at = artifact.get("generated_at")

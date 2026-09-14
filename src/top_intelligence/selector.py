@@ -52,6 +52,10 @@ def build_top_intelligence_artifact(
     generated = _as_utc(now or datetime.now(timezone.utc))
     _validate_input_shape(daily)
     _validate_input_traceability(daily)
+    if "freshness_items" in daily:
+        from src.data.item_freshness import build_item_freshness
+        if daily["freshness_items"] != build_item_freshness(daily):
+            raise TopIntelligenceSelectionError("daily item freshness does not match its evidence catalog")
     coverage = {
         str(item.get("artifact")): item for item in daily.get("coverage", [])
     }
@@ -74,10 +78,12 @@ def build_top_intelligence_artifact(
             if isinstance(obj, Mapping):
                 objects.append((item_type, obj))
 
+    scoped = daily.get("freshness_items", {}).get("items", {}) if "freshness_items" in daily else None
     candidates = [
         candidate
         for item_type, obj in objects
-        for candidate in [_build_candidate(item_type, obj, coverage, source_catalog, generated)]
+        for candidate in [_build_candidate(item_type, obj, coverage, source_catalog, generated,
+            scoped.get(str(obj.get("object_id")), {}) if scoped is not None else None)]
         if candidate is not None
     ]
     candidates.sort(key=_sort_key)
@@ -140,15 +146,25 @@ def _build_candidate(
     coverage: Mapping[str, Mapping[str, Any]],
     source_catalog: Mapping[str, Mapping[str, Any]],
     generated: datetime,
+    scoped_freshness: Optional[Mapping[str, Any]] = None,
 ) -> Optional[Dict[str, Any]]:
     if obj.get("validation_status") != "validated":
         return None
+    if scoped_freshness is not None:
+        from src.data.freshness import validate_freshness_contract
+        try:
+            validate_freshness_contract(scoped_freshness)
+            source_time = datetime.fromisoformat(str(scoped_freshness["source_timestamp"] or scoped_freshness["retrieved_at"]).replace("Z", "+00:00"))
+            if scoped_freshness["freshness_status"] != "current" or (generated - source_time).total_seconds() > scoped_freshness["stale_after_seconds"]:
+                return None
+        except (ValueError, TypeError, KeyError):
+            return None
     source_artifact = str(obj.get("source_artifact", ""))
     source_coverage = coverage.get(source_artifact)
     if not source_coverage or not _coverage_current(
         source_coverage,
         generated,
-        allow_degraded_record=item_type == "data_quality",
+        allow_degraded_record=item_type == "data_quality" or scoped_freshness is not None,
     ):
         return None
     payload = obj.get("payload")

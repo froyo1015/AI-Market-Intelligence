@@ -406,9 +406,29 @@
     return blocks;
   }
 
-  function normalizeTopIntelligence(input) {
+  function scopedFreshness(artifact, id, now) {
+    const extension = asObject(artifact && artifact.freshness_items);
+    if (!extension) return null; // Conservative compatibility for old artifacts.
+    const record = extension.version === "reference_scoped_v1" && asObject(extension.items) && asObject(extension.items[id]);
+    if (!record || !["current", "stale"].includes(record.freshness_status)) return "unavailable";
+    const eventReceiptBasis = record.freshness_basis === "retrieved_at" && Array.isArray(record.event_ids) && record.event_ids.length > 0 && Array.isArray(record.observation_ids) && record.observation_ids.length === 0;
+    const source = Date.parse(eventReceiptBasis ? record.retrieved_at : record.source_timestamp);
+    const generated = Date.parse(record.generated_at);
+    const age = record.age_seconds;
+    const limit = record.stale_after_seconds;
+    if (!Number.isFinite(source) || !Number.isFinite(generated) || !Number.isFinite(now) ||
+        record.generated_at !== artifact.generated_at || (record.freshness_basis !== "source_timestamp" && !eventReceiptBasis) ||
+        !Number.isFinite(age) || !Number.isInteger(limit) || limit <= 0 ||
+        Math.abs(Math.max(0, (generated - source) / 1000) - age) > 0.002 ||
+        source > generated + 300000 || generated > now + 300000 ||
+        (record.freshness_status === "current" && age > limit)) return "unavailable";
+    return record.freshness_status === "stale" || now - source > limit * 1000 ? "stale" : "current";
+  }
+
+  function normalizeTopIntelligence(input, now) {
+    now = now === undefined ? Date.now() : now;
     const artifact = asObject(input);
-    if (!artifact || artifact.status === "unavailable" || artifact.freshness_status !== "current") {
+    if (!artifact || artifact.status === "unavailable" || (!artifact.freshness_items && artifact.freshness_status !== "current")) {
       return {
         status: "unavailable",
         items: [],
@@ -417,11 +437,13 @@
     }
     const items = Array.isArray(artifact.items) ? artifact.items.map(function (raw) {
       const item = asObject(raw);
-      if (!item || item.freshness_status !== "current" || item.validation_status !== "validated") {
+      const freshness = item && (scopedFreshness(artifact, item.item_id, now) || item.freshness_status);
+      if (!item || !["current", "stale"].includes(freshness) || item.validation_status !== "validated") {
         return null;
       }
       return {
         rank: item.rank,
+        freshnessStatus: freshness,
         id: item.item_id,
         type: item.type,
         storyKey: item.story_key,
@@ -491,6 +513,7 @@
       }
       return {
         id: payload.signal_id || (wrapper && wrapper.object_id) || "unknown",
+        freshnessStatus: scopedFreshness(wrapped ? daily : fallback, wrapper ? wrapper.object_id : payload.signal_id, Date.now()),
         name: payload.label || payload.rule_id || "Observed relationship",
         assets: Array.isArray(payload.required_assets) ? payload.required_assets.slice() : [],
         status: payload.state,
@@ -558,6 +581,7 @@
             dailyChange: numberOrNull(item.daily_change),
             changeUnit: "percent",
             status: item.status || "unavailable",
+            freshnessStatus: scopedFreshness(snapshot, item.symbol, Date.now()),
             timestamp: item.timestamp || "unavailable",
             source: item.source || "unavailable"
           });
@@ -575,6 +599,7 @@
             dailyChange: numberOrNull(item.daily_change),
             changeUnit: item.change_unit || "change",
             status: item.status || "unavailable",
+            freshnessStatus: scopedFreshness(macro, item.symbol, Date.now()),
             timestamp: item.timestamp || "unavailable",
             source: item.source || "unavailable"
           });
@@ -763,6 +788,8 @@
       const card = element(documentRef, "article", "card");
       card.appendChild(element(documentRef, "p", "brand", "Priority " + item.rank));
       card.appendChild(element(documentRef, "h3", "", item.headline));
+      card.appendChild(badge(documentRef, item.freshnessStatus || "unknown"));
+      if (item.freshnessStatus === "stale") card.appendChild(element(documentRef, "p", "meta", "資料已過期：僅供歷史參考，不代表目前市場狀況。"));
       card.appendChild(element(documentRef, "h4", "explanation-label", "Why this matters"));
       card.appendChild(element(documentRef, "p", "", item.why));
       card.appendChild(element(documentRef, "h4", "explanation-label", "Monitor next"));
@@ -849,6 +876,7 @@
       ));
       card.appendChild(element(documentRef, "p", "meta", "Relationship: " + signal.relationship));
       card.appendChild(badge(documentRef, signal.status));
+      if (signal.freshnessStatus) card.appendChild(badge(documentRef, signal.freshnessStatus));
       card.appendChild(renderReferences(documentRef, signal.references));
       rootNode.appendChild(card);
     });
@@ -915,6 +943,7 @@
       card.appendChild(element(documentRef, "p", "meta", "Observed: " + market.timestamp));
       card.appendChild(element(documentRef, "p", "meta", "Source: " + market.source));
       card.appendChild(badge(documentRef, market.status));
+      if (market.freshnessStatus) card.appendChild(badge(documentRef, market.freshnessStatus));
       rootNode.appendChild(card);
     });
   }
@@ -1224,7 +1253,7 @@
       values.forEach(function (v) { box.appendChild(element(doc,"p","meta",v)); });
     }
     lines("executive-content", [researchHeader(model, Date.now()).status].concat(
-      model.topIntelligence.items.length ? model.topIntelligence.items.map(function (s) { return s.rank + ". " + s.headline; }) : ["No current validated stories available."]));
+      model.topIntelligence.items.length ? model.topIntelligence.items.map(function (s) { return s.rank + ". " + (s.freshnessStatus === "stale" ? "[資料已過期／歷史參考] " : "") + s.headline; }) : ["No current validated stories available."]));
     lines("changes-content", model.changes || ["Previous available run unavailable."]);
     lines("report-quality-content", model.warnings.length ? model.warnings : ["No additional data quality warnings in supplied artifacts."]);
   }
@@ -1247,6 +1276,7 @@
   }
 
   return {
+    scopedFreshness: scopedFreshness,
     uiText: uiText,
     betaStatusLines: betaStatusLines,
     ENDPOINTS: ENDPOINTS,

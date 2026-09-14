@@ -241,6 +241,8 @@ def _collect_observations(
                 reasons.append("missing_source_reference")
             if not _valid_timestamp(raw_observation.get("as_of")):
                 reasons.append("invalid_observation_timestamp")
+            elif _parse_timestamp(raw_observation["as_of"]) - now > timedelta(minutes=5):
+                reasons.append("future_observation_timestamp")
             if raw_observation.get("status") not in {"success", "stale"}:
                 reasons.append("invalid_observation_status")
             if raw_observation.get("value") is None:
@@ -258,7 +260,7 @@ def _collect_observations(
     if artifact_stale:
         stale_record_ids.update(observations)
     for observation_id, observation in observations.items():
-        if observation.get("status") == "stale":
+        if observation.get("status") == "stale" or now - _parse_timestamp(observation["as_of"]) > INPUT_STALE_AFTER:
             stale_record_ids.add(observation_id)
 
     by_type = {
@@ -280,6 +282,8 @@ def _collect_observations(
         warnings = list(root_warnings)
         if artifact_stale:
             warnings.append(f"{artifact_name} is older than 48 hours.")
+        if stale_count:
+            warnings.append(f"{stale_count} observation(s) are older than 48 hours or marked stale.")
         if root_status == "failed" or not records:
             status = "unavailable"
         elif stale_count or root_status == "partial" or any(
@@ -702,7 +706,6 @@ def _build_bundle(
                 "observed_at",
                 "occurred_at",
                 "published_at",
-                "retrieved_at",
             )
             for timestamp in timestamps[field]
         }
@@ -737,7 +740,7 @@ def _build_bundle(
         },
         freshness={
             "status": freshness_status,
-            "as_of": as_of_candidates[-1] if as_of_candidates else None,
+            "as_of": as_of_candidates[0] if as_of_candidates else None,
             "stale_record_ids": stale_ids,
         },
         provenance={

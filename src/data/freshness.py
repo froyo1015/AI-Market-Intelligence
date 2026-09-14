@@ -117,11 +117,17 @@ def enrich_artifact_freshness(
             )
 
     payload.update(metadata.to_dict())
+    from src.data.item_freshness import targets, build_item_freshness
+    if targets(payload):
+        payload["freshness_items"] = build_item_freshness(payload, supporting_artifacts)
     validate_freshness_contract(payload)
     return payload
 
 
 def validate_freshness_contract(payload: Mapping[str, Any]) -> None:
+    if "freshness_items" in payload:
+        from src.data.item_freshness import validate_item_freshness
+        validate_item_freshness(payload["freshness_items"], payload.get("generated_at"))
     missing = sorted(FRESHNESS_FIELDS - set(payload))
     if missing:
         raise FreshnessValidationError(f"freshness fields missing: {missing}")
@@ -262,7 +268,7 @@ def validate_freshness_summary(payload: Mapping[str, Any]) -> None:
 
 def strip_freshness_metadata(payload: Mapping[str, Any]) -> dict[str, Any]:
     """Return the domain artifact without top-level freshness envelope fields."""
-    return {key: value for key, value in payload.items() if key not in FRESHNESS_FIELDS}
+    return {key: value for key, value in payload.items() if key not in FRESHNESS_FIELDS and key != "freshness_items"}
 
 
 def _is_unavailable(payload: Mapping[str, Any]) -> bool:
@@ -290,6 +296,8 @@ def _walk_source_timestamps(value: Any, output: list[datetime]) -> None:
     if isinstance(value, Mapping):
         record_unavailable = value.get("status") in UNAVAILABLE_DATA_STATUSES
         for key, child in value.items():
+            if key == "freshness_items":
+                continue
             if key in FRESHNESS_FIELDS - {"source_timestamp"}:
                 continue
             if key in SOURCE_TIMESTAMP_KEYS and not record_unavailable:

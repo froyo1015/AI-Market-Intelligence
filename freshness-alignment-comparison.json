@@ -1,0 +1,26 @@
+{
+  "audit_only": true,
+  "production_modified": false,
+  "source_run": 34821085882,
+  "source_commit": "1bd76780faac1861bc82fc65bd06ec262eb9427e",
+  "replay_at": "2026-09-14T08:08:21.712312Z",
+  "before": {"top_envelope": "stale", "top_selected": 3, "top_visible_current": 0, "daily_status": "partial", "regime": null},
+  "after": {
+    "top_envelope": "stale",
+    "top_selected": 2,
+    "top_visible_current": 2,
+    "daily_status": "partial",
+    "regime": null,
+    "current_items": [
+      {"headline": "Observed: Gold and DXY inverse daily movement", "score_before": 68, "score_after": 68, "source_timestamp": "2026-09-14T04:00:00Z", "age_seconds": 14901.712, "freshness_status": "current", "stale_after_seconds": 172800},
+      {"headline": "Observed: BTC-USD and ETH-USD daily co-movement", "score_before": 61, "score_after": 61, "source_timestamp": "2026-09-14T00:00:00Z", "age_seconds": 29301.712, "freshness_status": "current", "stale_after_seconds": 172800}
+    ],
+    "corrected_stale_rules": ["equity_index_co_movement_v1", "equity_index_divergence_v1"],
+    "browser_after_three_days": ["stale", "stale"]
+  },
+  "thresholds_increased": false,
+  "scores_changed": false,
+  "regime_rules_changed": false,
+  "derivatives_gate_changed": false,
+  "remaining_limitations": ["calendar partial coverage", "source session timestamp semantics not redesigned", "not a live production deployment"]
+}
