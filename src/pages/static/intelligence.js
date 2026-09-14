@@ -581,6 +581,13 @@
   }
 
   function render(documentRef, model) {
+    const beta = documentRef.getElementById("beta-live-status");
+    if (beta) {
+      beta.textContent = "";
+      betaStatusLines(model, Date.now()).forEach(function (line) {
+        beta.appendChild(element(documentRef, "p", "meta", line));
+      });
+    }
     const onboarding = documentRef.getElementById("onboarding-state");
     if (onboarding) {
       onboarding.textContent = "";
@@ -1144,7 +1151,25 @@
     lines("report-quality-content", model.warnings.length ? model.warnings : ["No additional data quality warnings in supplied artifacts."]);
   }
 
+  function betaStatusLines(model, now) {
+    const lines = derivativesLines(model.derivatives, now);
+    const available = lines[0] === "Validation: validated";
+    const derivativeStatus = !available ? "unavailable" :
+      lines.some(x => /stale/.test(x)) ? "stale" :
+      lines.some(x => /: unavailable/.test(x)) ? "partial" : "available";
+    const validReport = model.reportAvailable && model.validationStatus === "validated";
+    return [
+      "Current data status: " + (model.dataStatus || "unavailable"),
+      "AI generation mode: " + (model.aiBrief ? model.aiBrief.modeLabel : "unavailable"),
+      "Derivatives shadow: " + derivativeStatus + " · Not used for AI decisions",
+      "Last successful report update: " + (validReport ? formatTimestamp(model.generatedAt) : "unavailable") +
+        " (validated report timestamp; not proof of full pipeline success)",
+      "Recorded freshness: " + (model.freshnessStatus || "unknown")
+    ];
+  }
+
   return {
+    betaStatusLines: betaStatusLines,
     ENDPOINTS: ENDPOINTS,
     researchHeader: researchHeader,
     onboardingHints: onboardingHints,
