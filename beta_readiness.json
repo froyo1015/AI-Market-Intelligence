@@ -1,13 +1,10 @@
 {
   "schema_contract": "beta_readiness_v1",
   "policy_id": "limited-public-beta-v1",
-  "assessed_at": "2026-09-11T13:43:00Z",
-  "beta_status": "blocked",
+  "assessed_at": "2026-09-12T05:46:15Z",
+  "beta_status": "conditional",
   "production_enablement": false,
-  "blockers": [
-    "mobile_readiness",
-    "release_parity"
-  ],
+  "blockers": [],
   "conditions": [
     "debug_artifacts",
     "freshness",
@@ -93,11 +90,11 @@
     },
     {
       "id": "mobile_readiness",
-      "status": "unknown",
-      "scope": "local",
-      "finding": "Responsive CSS checks pass, but real viewport, overflow and badge visual QA remains unverified: no browser executable.",
+      "status": "pass",
+      "scope": "production",
+      "finding": "mobile_validation_status=passed: Chrome for Testing 151.0.7922.34 live QA at 375/390/768px and desktop 1440px passed document overflow, stacking, section availability and 500-character evidence ID stress checks; zero page errors. Scope is Chrome, not native iOS/Safari.",
       "evidence": [
-        "docs/product-ux-polish.md"
+        "beta-deployment-sync.md"
       ]
     },
     {
@@ -156,11 +153,12 @@
     },
     {
       "id": "release_parity",
-      "status": "fail",
+      "status": "pass",
       "scope": "mixed",
-      "finding": "Live revision 430fe66 differs from local HEAD ad2f008 plus uncommitted 8.2–9.3 changes. Local product UX is not the deployed candidate.",
+      "finding": "deployed_version=df01ee67902f521ced9d0e703a45a0a760032f87: successful manual deployment and subsequent same-commit run verified. Live HTML/JS match committed source; sampled generated files match latest deployment artifact with normal and cache-busting requests.",
       "evidence": [
-        "git:HEAD=ad2f00824b7d1f60138430e8266c59780bdcfbff"
+        "https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/34673945933",
+        "beta-deployment-sync.md"
       ]
     },
     {

@@ -1,5 +1,15 @@
 # Phase 10.1 — Limited public beta readiness audit
 
+## Phase 10.1.1 deployment follow-up — 2026-09-12
+
+Current verdict: **conditional**. Release parity and mobile readiness now pass.
+See [deployment evidence](beta-deployment-sync.md). Only these two checks and the
+derived verdict were updated; the original assessment below is historical.
+Other findings retain their original scope/date, including the earlier onboarding
+finding; they are not a new audit of today's deployment. Local GnuPG remains skipped.
+The candidate was committed, pushed and deployed during this follow-up; the new
+readiness report remains uncommitted for review. No production enablement is granted.
+
 Assessed: 2026-09-11 13:43 UTC. **beta_status: blocked**.
 This is a read-only audit, not permission to enable production or invite users.
 
