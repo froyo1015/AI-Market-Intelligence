@@ -1,0 +1,110 @@
+[
+  {
+    "width": 1440,
+    "height": 1000,
+    "pageErrors": [],
+    "bad": [],
+    "summary": "市場環境：Risk-Off。美元指數上升、EURUSD下降。BTC／ETH 同步上升。",
+    "summarySentences": 3,
+    "stories": [
+      "市場環境偏向 Risk-Off",
+      "美元指數上升、EURUSD下降",
+      "BTC／ETH 同步上升"
+    ],
+    "watchCount": 3,
+    "limitsCount": 4,
+    "numberTokens": [
+      "3"
+    ],
+    "debugDominates": false,
+    "loadingText": false,
+    "summaryTop": 419,
+    "ordered": true,
+    "horizontalOverflow": false,
+    "technicalInitiallyClosed": true,
+    "audit": {
+      "evidence": true,
+      "timestamps": true,
+      "sources": true,
+      "warnings": true
+    },
+    "cls": 0.0011645250108506943,
+    "technicalOpened": true,
+    "linkTargetPresent": true,
+    "technicalClosedAgain": true,
+    "expandedOverflow": false,
+    "pass": true
+  },
+  {
+    "width": 390,
+    "height": 812,
+    "pageErrors": [],
+    "bad": [],
+    "summary": "市場環境：Risk-Off。美元指數上升、EURUSD下降。BTC／ETH 同步上升。",
+    "summarySentences": 3,
+    "stories": [
+      "市場環境偏向 Risk-Off",
+      "美元指數上升、EURUSD下降",
+      "BTC／ETH 同步上升"
+    ],
+    "watchCount": 3,
+    "limitsCount": 4,
+    "numberTokens": [
+      "3"
+    ],
+    "debugDominates": false,
+    "loadingText": false,
+    "summaryTop": 366,
+    "ordered": true,
+    "horizontalOverflow": false,
+    "technicalInitiallyClosed": true,
+    "audit": {
+      "evidence": true,
+      "timestamps": true,
+      "sources": true,
+      "warnings": true
+    },
+    "cls": 0.010934807930306486,
+    "technicalOpened": true,
+    "linkTargetPresent": true,
+    "technicalClosedAgain": true,
+    "expandedOverflow": false,
+    "pass": true
+  },
+  {
+    "width": 375,
+    "height": 812,
+    "pageErrors": [],
+    "bad": [],
+    "summary": "市場環境：Risk-Off。美元指數上升、EURUSD下降。BTC／ETH 同步上升。",
+    "summarySentences": 3,
+    "stories": [
+      "市場環境偏向 Risk-Off",
+      "美元指數上升、EURUSD下降",
+      "BTC／ETH 同步上升"
+    ],
+    "watchCount": 3,
+    "limitsCount": 4,
+    "numberTokens": [
+      "3"
+    ],
+    "debugDominates": false,
+    "loadingText": false,
+    "summaryTop": 366,
+    "ordered": true,
+    "horizontalOverflow": false,
+    "technicalInitiallyClosed": true,
+    "audit": {
+      "evidence": true,
+      "timestamps": true,
+      "sources": true,
+      "warnings": true
+    },
+    "cls": 0.010890327355674731,
+    "technicalOpened": true,
+    "linkTargetPresent": true,
+    "technicalClosedAgain": true,
+    "expandedOverflow": false,
+    "pass": true
+  }
+]

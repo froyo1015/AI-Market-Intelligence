@@ -41,7 +41,74 @@ def default_artifact_paths() -> Dict[str, Path]:
 
 
 def generate_intelligence_page() -> str:
-    return localize_shell(PAGE_TEMPLATE.substitute(script_path="assets/intelligence.js"))
+    page = localize_shell(PAGE_TEMPLATE.substitute(script_path="assets/intelligence.js"))
+    # Keep the complete existing report and its stable anchors accessible.
+    start = page.index('    <header class="hero">')
+    end = page.index('  </main>', start)
+    archive = page[start:end]
+    archive = archive.replace('<h1>市場情報</h1>', '<h2>完整報告與資料狀態</h2>')
+    page = page[:start] + READING_SHELL + '<details id="technical-report" class="section technical-report"><summary>查看證據、完整報告與技術資訊</summary><div class="technical-content">' + archive + '</div></details>\n' + page[end:]
+    return page.replace('  </style>', READING_STYLES + '\n</style>')
+
+
+READING_SHELL = '''
+    <header class="reading-header">
+      <p class="edition">DAILY RESEARCH · Beta</p>
+      <h1>今日市場，一眼看懂。</h1>
+      <p class="reading-intro">發生甚麼、為何重要、接下來留意甚麼。</p>
+      <nav class="reading-nav" aria-label="簡報導覽"><a href="#reading-stories">市場重點</a><a href="#reading-watch">接下來要留意</a><a href="#technical-report">查看證據</a></nav>
+    </header>
+    <section class="reading-summary" aria-labelledby="reading-summary-title">
+      <h2 id="reading-summary-title">今日市場一句話</h2>
+      <div id="reading-summary" aria-live="polite" aria-busy="true"><p>正在讀取今日市場重點。</p></div>
+    </section>
+    <section class="reading-section" id="reading-stories"><h2 id="reading-stories-title">今日最重要的事</h2><div id="reading-stories-content" aria-busy="true"><p>正在讀取已驗證重點。</p></div></section>
+    <section class="reading-section" id="reading-watch"><h2>接下來要留意</h2><ul id="reading-watch-content" aria-busy="true"><li>正在讀取觀察重點。</li></ul></section>
+    <section class="reading-section" id="reading-regime"><h2>市場環境</h2><div id="reading-regime-content" aria-busy="true"><p>暫時無法判定。</p></div></section>
+    <section class="reading-section reading-limitations" id="reading-limitations"><h2>已知限制</h2><ul id="reading-limitations-content" aria-busy="true"><li>正在確認資料涵蓋範圍。</li></ul><p class="reading-footnote">Beta 期間資料可能暫缺。內容供市場研究參考，不提供買賣建議。</p></section>
+'''
+
+READING_STYLES = '''
+    .shell { width: min(860px, calc(100% - 40px)); }
+    .reading-header { padding: 34px 0 20px; }
+    .edition { color: var(--cyan); font-size: .72rem; letter-spacing: .16em; }
+    .reading-header h1 { font-size: clamp(1.85rem, 5vw, 3rem); line-height: 1.3; letter-spacing: -.025em; }
+    .reading-intro, .reading-footnote { color: var(--muted); }
+    .reading-nav { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .85rem; margin-top: 18px; }
+    .reading-nav a { text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+    .reading-summary { border-left: 3px solid var(--cyan); padding: 4px 0 4px 24px; margin: 18px 0 42px; }
+    .reading-summary h2 { font-size: .85rem; color: var(--cyan); font-weight: 500; }
+    #reading-summary p { font-size: clamp(1.12rem, 3vw, 1.45rem); line-height: 1.8; margin: 12px 0; }
+    .reading-section { border-top: 1px solid var(--line); padding: 26px 0; }
+    .reading-section h2 { font-size: 1.15rem; margin: 0 0 22px; }
+    .reading-story { padding: 2px 0 24px; max-width: 720px; }
+    .reading-story h3 { font-size: 1.1rem; margin: 0 0 8px; color: var(--text); }
+    .reading-story p, #reading-watch-content li, #reading-regime-content p { line-height: 1.9; color: #d6e5ed; margin: 8px 0; }
+    .reading-story a { font-size: .78rem; text-decoration: none; color: var(--muted); }
+    #reading-summary[aria-busy="true"] { min-height: 48px; }
+    #reading-stories-content[aria-busy="true"] { min-height: 405px; }
+    #reading-watch-content[aria-busy="true"] { min-height: 150px; }
+    #reading-regime-content[aria-busy="true"] { min-height: 92px; }
+    #reading-limitations-content[aria-busy="true"] { min-height: 180px; }
+    #reading-watch-content, #reading-limitations-content { padding-left: 22px; }
+    #reading-limitations-content li { margin: 8px 0; color: var(--muted); }
+    .reading-footnote { font-size: .8rem; }
+    .technical-content { padding: 0 12px 20px; }
+    .technical-report .hero { padding: 20px; }
+    .technical-report h2 { line-height: 1.45; }
+    @media (max-width: 560px) {
+      .shell { width: calc(100% - 36px); }
+      .topbar { margin-bottom: 0; }
+      .brand { font-size: .66rem; letter-spacing: .05em; }
+      .reading-header { padding-top: 18px; }
+      .reading-summary { margin-top: 8px; padding-left: 16px; margin-bottom: 28px; }
+      #reading-summary[aria-busy="true"] { min-height: 100px; }
+      #reading-stories-content[aria-busy="true"] { min-height: 500px; }
+      #reading-watch-content[aria-busy="true"] { min-height: 220px; }
+      .reading-section { padding: 22px 0; }
+      .technical-content { padding-left: 4px; padding-right: 4px; }
+    }
+'''
 
 
 def package_artifacts(

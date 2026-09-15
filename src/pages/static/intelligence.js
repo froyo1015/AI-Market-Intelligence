@@ -195,8 +195,126 @@
       markets: markets,
       audit: buildAudit(daily, resources),
       deterministicBriefAvailable: typeof resources.deterministicBrief === "string",
-      minimumUseful: minimumUseful
+      minimumUseful: minimumUseful,
+      reading: buildReadingBrief(daily, topIntelligence, aiBrief, warnings, resources.derivatives)
     };
+  }
+
+  // Presentation vocabulary only: direction comes from referenced observations,
+  // never from a story-family name, score, or an inferred market cause.
+  function buildReadingBrief(daily, top, aiBrief, warnings, derivatives) {
+    const objects = daily ? [daily.market_regime].concat(
+      daily.cross_asset_signals || [], daily.observed_market_stress || [],
+      daily.upcoming_events || [], daily.data_quality_risks || []
+    ).filter(Boolean) : [];
+    function current(wrapper) {
+      return wrapper && wrapper.validation_status === "validated" &&
+        (scopedFreshness(daily, wrapper.object_id, Date.now()) || daily.freshness_status) === "current";
+    }
+    const regimeObject = daily && daily.market_regime;
+    const classification = current(regimeObject) && regimeObject.payload && regimeObject.payload.classification;
+    const regimeLabels = {risk_off: "Risk-Off", risk_on: "Risk-On", mixed: "Mixed（方向不一）"};
+    const regimeExplanations = {
+      risk_off: "已驗證的跨資產條件整體偏向防守。",
+      risk_on: "已驗證的跨資產條件整體偏向承擔風險。",
+      mixed: "已驗證的跨資產條件呈現不同方向。"
+    };
+    const regime = regimeLabels[classification]
+      ? "市場環境：" + regimeLabels[classification]
+      : "市場環境：暫時無法判定";
+    const regimeExplanation = regimeExplanations[classification] || "目前有效證據不足，系統保留判斷。";
+    const names = {"BTC-USD":"BTC", "ETH-USD":"ETH", DXY:"美元指數", US10Y:"美國十年期公債殖利率", GOLD:"黃金", VIX:"VIX", SPY:"SPY", QQQ:"QQQ", EURUSD:"EURUSD", USDJPY:"USDJPY", OIL:"WTI 原油"};
+    function facts(payload) {
+      const values = payload.observed_values || (payload.observed_facts && payload.observed_facts.observations) || [];
+      return values.filter(function (v) {
+        return names[v.asset] && ["daily_change_pct", "daily_change_bps"].includes(v.metric) && typeof v.value === "number" && Number.isFinite(v.value);
+      }).map(function (v) { return {asset:v.asset, name:names[v.asset], direction:v.value > 0 ? "上升" : v.value < 0 ? "下降" : "持平"}; });
+    }
+    const stories = (top.items || []).map(function (item) {
+      const wrapper = objects.find(function (o) {
+        const p = o.payload || {};
+        return [o.object_id, p.signal_id, p.risk_id, p.run_id].includes(item.sourceObjectId);
+      });
+      const result = {rank:item.rank, id:item.id, storyKey:item.storyKey, headline:"市場觀察待核對", explanation:"目前缺少可直接核對的中文摘要依據，請展開原始記錄。", watch:null, current:false};
+      if (item.freshnessStatus !== "current" || !current(wrapper)) {
+        result.headline = item.freshnessStatus === "stale" ? "歷史觀察，資料已過期" : "市場觀察暫無有效資料";
+        result.explanation = "此項不作為目前市場結論；原始敘述、時間及證據仍可查閱。";
+        return result;
+      }
+      const payload = wrapper.payload || {};
+      const observed = facts(payload);
+      const directRegime = payload.classification || (payload.observed_facts && payload.observed_facts.classification);
+      if (regimeLabels[directRegime]) {
+        result.headline = "市場環境偏向 " + regimeLabels[directRegime];
+        result.explanation = regimeExplanations[directRegime] + "這描述目前觀察，並不表示走勢會延續。";
+        result.watch = "留意下一份有效資料中的跨資產條件是否仍一致。";
+        result.current = true;
+      } else if (observed.length) {
+        const crypto = observed.length === 2 && observed.some(v=>v.asset === "BTC-USD") && observed.some(v=>v.asset === "ETH-USD");
+        result.headline = crypto && observed[0].direction === observed[1].direction
+          ? "BTC／ETH 同步" + observed[0].direction
+          : observed.slice(0, 2).map(v=>v.name + v.direction).join("、");
+        result.explanation = observed.map(v=>v.name + "日變動" + v.direction).join("；") + "。這些共同變化可用來追蹤跨市場方向是否一致。";
+        result.watch = "留意「" + result.headline + "」的共同變化是否延續；以後續有效觀察核對。";
+        result.current = true;
+      }
+      return result;
+    });
+    const summaryStories = stories.filter(s=>s.current && !String(s.storyKey || "").startsWith("market_state:"));
+    const summary = [regime + "。"].concat(summaryStories.slice(0, 2).map(s=>s.headline + "。"));
+    if (summary.length === 1) summary.push("目前沒有足夠的已驗證重點可供概括。");
+    const watch = stories.filter(s=>s.current && s.watch).map(s=>s.watch);
+    // Do not fabricate a calendar event or claim an empty calendar means no risk.
+    const events = (daily && daily.upcoming_events || []).filter(current);
+    events.forEach(function (e) {
+      const p = e.payload || {}, facts = p.observed_facts || {};
+      const time = facts.scheduled_at || (p.time_window && p.time_window.scheduled_at);
+      const date = Date.parse(time), now = Date.now();
+      if (typeof facts.event_name === "string" && date >= now && date <= now + 48 * 3600000) watch.push("留意已排定事件：" + facts.event_name + "（" + time + "）。");
+    });
+    const limits = [];
+    if (!daily || daily.status === "unavailable") limits.push("今日市場資料暫未完整取得。");
+    else if (daily.status === "partial") limits.push("部分來源資料缺漏，報告未涵蓋完整市場。");
+    if (daily && daily.freshness_status === "stale" || stories.some(s=>!s.current)) limits.push("部分觀察已過期或未能核對，不能視為目前狀況。");
+    if (aiBrief && aiBrief.mode === "deterministic_fallback") limits.push("AI 暫未提供文字改寫，目前採用規則式備援簡報。");
+    if (!derivatives) limits.push("衍生品資料暫無法取得，尚未用於正式分析。");
+    else limits.push("衍生品仍在測試觀察階段，尚未用於正式分析。");
+    if (!events.length) limits.push("目前沒有可列出的已驗證近期事件；不代表未來沒有事件風險。");
+    const seenWatch = new Set();
+    const orderedWatch = watch.filter(function (item) {
+      if (seenWatch.has(item)) return false;
+      seenWatch.add(item); return true;
+    });
+    return {summary:summary.join(""), stories, watch:orderedWatch, regime, regimeExplanation, limits};
+  }
+
+  function renderReadingBrief(doc, reading) {
+    if (!reading || !doc.getElementById("reading-summary")) return;
+    function fill(id, lines, tag) {
+      const target = doc.getElementById(id); clear(target);
+      lines.forEach(text=>target.appendChild(element(doc, tag || "p", "", text)));
+      target.setAttribute("aria-busy", "false");
+    }
+    fill("reading-summary", [reading.summary]);
+    fill("reading-regime-content", [reading.regime, reading.regimeExplanation]);
+    fill("reading-watch-content", reading.watch.length ? reading.watch : ["暫無足夠有效資料可列出觀察重點；待資料更新後再核對。"], "li");
+    fill("reading-limitations-content", reading.limits, "li");
+    const storiesTitle = doc.getElementById("reading-stories-title");
+    if (storiesTitle) storiesTitle.textContent = reading.stories.length === 3
+      ? "今日最重要 3 件事"
+      : reading.stories.length ? "今日最重要的 " + reading.stories.length + " 件事" : "今日最重要的事";
+    const target = doc.getElementById("reading-stories-content"); clear(target);
+    if (!reading.stories.length) target.appendChild(element(doc, "p", "", "目前沒有已驗證的市場重點；資料更新後再查看。"));
+    reading.stories.forEach(function (s) {
+      const article = element(doc, "article", "reading-story");
+      article.appendChild(element(doc, "h3", "", s.headline));
+      article.appendChild(element(doc, "p", "", s.explanation));
+      const link = element(doc, "a", "", "查看此項證據");
+      link.setAttribute("href", "#audit-top-" + encodeURIComponent(s.id));
+      link.addEventListener("click", function () { doc.getElementById("technical-report").open = true; });
+      article.appendChild(link); target.appendChild(article);
+    });
+    target.setAttribute("aria-busy", "false");
   }
 
   function normalizeMinimumUsefulStatus(input) {
@@ -467,6 +585,7 @@
         rank: item.rank,
         freshnessStatus: freshness,
         id: item.item_id,
+        sourceObjectId: item.source_object_id,
         type: item.type,
         storyKey: item.story_key,
         headline: item.headline,
@@ -725,6 +844,7 @@
     if (statusNode) statusNode.textContent = uiText(header.status);
     if (updatedNode) updatedNode.textContent = uiText(header.updated);
     renderMinimumUsefulStatus(documentRef, model.minimumUseful);
+    renderReadingBrief(documentRef, model.reading);
     renderDerivatives(documentRef, model.derivatives);
     setStatus(documentRef, "generated-at", formatTimestamp(model.generatedAt), "");
     setStatus(documentRef, "data-status", model.dataStatus, model.dataStatus);
@@ -832,6 +952,7 @@
     }
     topIntelligence.items.forEach(function (item) {
       const card = element(documentRef, "article", "card");
+      card.setAttribute("id", "audit-top-" + item.id);
       card.appendChild(element(documentRef, "p", "brand", "Priority " + item.rank));
       card.appendChild(element(documentRef, "h3", "", item.headline));
       card.appendChild(badge(documentRef, item.freshnessStatus || "unknown"));
@@ -1322,6 +1443,7 @@
   }
 
   return {
+    buildReadingBrief: buildReadingBrief,
     scopedFreshness: scopedFreshness,
     uiText: uiText,
     betaStatusLines: betaStatusLines,
