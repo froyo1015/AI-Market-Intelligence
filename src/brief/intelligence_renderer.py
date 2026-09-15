@@ -34,6 +34,49 @@ def render_daily_market_brief(
     artifact: Mapping[str, Any],
     top_intelligence: Mapping[str, Any] | None = None,
 ) -> DeterministicBrief:
+    """Reading layer first; retain the complete deterministic audit below it."""
+    detail = _render_detailed_brief(artifact, top_intelligence)
+    lines = ["# Daily Market Intelligence Brief", "",
+             f"日期：{_inline(artifact['report_date'])}", "", "## 今日市場重點", ""]
+    items = (top_intelligence or {}).get("items", [])
+    for item in items:
+        lines.extend([f"### {item['rank']}. {_inline(item['headline'])}", "",
+                      _inline(item['why']), "",
+                      f"後續觀察：{_inline(item['monitor'])}",
+                      f"資料狀態：`{_inline(item['freshness_status'])}` · `{_inline(item['validation_status'])}`",
+                      f"引用：`{_inline(item['item_id'])}`（完整來源見下方證據與引用）", ""])
+    if not items:
+        lines.append("目前沒有可用的已驗證市場重點；不補造市場結論。")
+    regime = artifact["market_regime"]
+    payload = regime["payload"]
+    lines.extend(["", "## 市場環境", ""])
+    if payload.get("classification") is None:
+        lines.append("市場環境暫無法分類：合資格證據不足；各維度與原因保留於下方 Regime Dimensions。")
+    else:
+        lines.append(f"市場環境：`{_inline(payload['classification'])}`")
+    lines.extend([f"引用：`{_inline(regime['object_id'])}`", "", "## 未來 24–48 小時風險", ""])
+    risks = artifact["upcoming_events"] + artifact["observed_market_stress"]
+    if not artifact["upcoming_events"]:
+        lines.append("輸入沒有已驗證的近期事件風險；不代表未來沒有風險，資料覆蓋限制見下方。")
+    for obj in risks:
+        risk = obj["payload"]
+        lines.extend([f"- {_inline(risk.get('title'))}：{_inline(risk.get('description'))}",
+                      f"  狀態：`{_inline(obj['data_status'])}`；引用：`{_inline(obj['object_id'])}`"])
+    lines.extend(["", "## 資料狀態", "",
+                  f"報告：`{_inline(artifact['status'])}`；新鮮度：`{_inline(artifact.get('freshness_status', 'unknown'))}`。",
+                  "過期資料不代表目前狀況；以下保留完整覆蓋限制、警告、時間與來源。",
+                  "", "## 證據與引用", "",
+                  "以下為完整結構化明細；原始英文敘述及機器識別碼保持不變。", "",
+                  detail.markdown.removeprefix("# Daily Market Intelligence Brief\n")])
+    return DeterministicBrief(source_run_id=detail.source_run_id,
+        report_date=detail.report_date, source_generated_at=detail.source_generated_at,
+        source_status=detail.source_status, markdown="\n".join(lines).rstrip() + "\n")
+
+
+def _render_detailed_brief(
+    artifact: Mapping[str, Any],
+    top_intelligence: Mapping[str, Any] | None = None,
+) -> DeterministicBrief:
     validate_renderer_input(artifact)
     lines: List[str] = [
         "# Daily Market Intelligence Brief",
@@ -122,6 +165,7 @@ def _render_top_intelligence(artifact: Mapping[str, Any] | None) -> List[str]:
                 "",
             )
         )
+        lines.append(f"- Top item: `{_inline(item['item_id'])}`")
         for key in REFERENCE_KEYS:
             lines.append(f"- {REFERENCE_LABELS[key]}: {_code_values(item['evidence_refs'][key])}")
         lines.extend(

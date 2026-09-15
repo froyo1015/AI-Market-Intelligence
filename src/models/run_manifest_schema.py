@@ -76,7 +76,8 @@ class RunManifest:
     artifact_versions: Dict[str, Dict[str, str]]
     failures: List[Dict[str, Any]]
     publication: Dict[str, List[str]]
-    schema_version: str = "1.0"
+    product_usefulness: Dict[str, Any]
+    schema_version: str = "1.1"
     artifact_type: str = "run_manifest"
     freshness_contract_version: str = FRESHNESS_CONTRACT_VERSION
 
@@ -100,4 +101,5 @@ class RunManifest:
             "artifact_versions": self.artifact_versions,
             "failures": self.failures,
             "publication": self.publication,
+            "product_usefulness": self.product_usefulness,
         }

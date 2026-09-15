@@ -1,0 +1,89 @@
+{
+  "schema_contract": "minimum_useful_gate_v1",
+  "policy_id": "evidence_backed_daily_intelligence_v1",
+  "evaluation_mode": "audit_only",
+  "production_enabled": false,
+  "snapshot_id": "github_actions_run_34847614658",
+  "evaluated_at": "2026-09-14T13:11:30.000414Z",
+  "system_health": {
+    "state": "healthy",
+    "reasons": []
+  },
+  "product_usefulness": {
+    "state": "useful",
+    "reasons": [
+      "equity_core_unavailable",
+      "missing_current_core_asset_classes:equity",
+      "regime_unavailable",
+      "report_partial",
+      "report_stale"
+    ]
+  },
+  "overall_state": "degraded",
+  "minimum_useful": true,
+  "criteria": {
+    "core_asset_coverage": {
+      "passed": true,
+      "actual": 5,
+      "required": 5,
+      "symbols": ["BTC-USD", "ETH-USD", "GOLD", "EURUSD", "USDJPY"]
+    },
+    "asset_class_coverage": {
+      "passed": true,
+      "actual": 3,
+      "required": 3,
+      "classes": ["commodity", "crypto", "forex"],
+      "missing_declared_classes": ["equity"]
+    },
+    "risk_asset_class_coverage": {
+      "passed": true,
+      "classes": ["crypto"]
+    },
+    "macro_coverage": {"passed": true, "actual": 4, "required": 1},
+    "top_intelligence": {"passed": true, "actual": 2, "required": 2},
+    "regime": {
+      "passed": true,
+      "state": "unavailable",
+      "reason": "Only 2 dimensions and weight 0.35 are eligible; equity/volatility anchor is unavailable because equity observations are stale."
+    },
+    "risk_monitor": {"passed": true, "state": "partial"},
+    "brief_usefulness": {"passed": true, "status": "deterministic_fallback"},
+    "provenance_integrity": {"passed": true},
+    "freshness_integrity": {"passed": true}
+  },
+  "verified_latest_session_assets_counted": 0,
+  "input_snapshot": {
+    "snapshot_id": "github_actions_run_34847614658",
+    "evaluated_at": "2026-09-14T13:11:30.000414Z",
+    "current_core_assets": [
+      {"symbol": "BTC-USD", "asset_class": "crypto", "freshness_status": "current"},
+      {"symbol": "ETH-USD", "asset_class": "crypto", "freshness_status": "current"},
+      {"symbol": "GOLD", "asset_class": "commodity", "freshness_status": "current"},
+      {"symbol": "EURUSD", "asset_class": "forex", "freshness_status": "current"},
+      {"symbol": "USDJPY", "asset_class": "forex", "freshness_status": "current"}
+    ],
+    "current_macro_count": 4,
+    "current_validated_top_count": 2,
+    "regime_state": "unavailable",
+    "regime_valid_or_justified_unavailable": true,
+    "regime_reason": "Only 2 dimensions and weight 0.35 are eligible; equity/volatility anchor is unavailable because equity observations are stale.",
+    "risk_monitor_state": "partial",
+    "risk_monitor_meaningful_or_explicit_none": true,
+    "brief_status": "deterministic_fallback",
+    "brief_substantive": true,
+    "provenance_integrity": true,
+    "freshness_integrity": true,
+    "report_status": "partial",
+    "report_freshness": "stale",
+    "product_limitation_reasons": ["equity_core_unavailable", "regime_unavailable", "report_partial", "report_stale"],
+    "system_checks": {
+      "pipeline_completed": true,
+      "required_artifacts_generated": true,
+      "required_artifacts_validated": true,
+      "publication_validated": true,
+      "provenance_integrity": true,
+      "freshness_integrity": true,
+      "operational_degradation_reasons": []
+    }
+  }
+}

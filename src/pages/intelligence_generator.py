@@ -27,6 +27,7 @@ ARTIFACT_FILENAMES = (
     "daily_market_brief.md",
     "market_snapshot.json",
     "macro_snapshot.json",
+    "minimum_useful_status.json",
     "run_manifest.json",
 )
 
@@ -308,6 +309,9 @@ PAGE_TEMPLATE = Template(
         <strong id="research-status">Daily research status unavailable</strong>
         <p id="research-updated" class="muted">Last update unavailable</p>
         <p class="meta">Research context only. Source freshness and report generation time are different checks.</p>
+        <div id="minimum-useful-status" class="meta" aria-label="產品可用性狀態">
+          <p>系統狀態：暫無資料</p><p>今日情報：暫無資料</p><p>已知限制：暫無資料</p>
+        </div>
       </div>
       <div class="status-grid" aria-label="Intelligence status">
         <div class="status-box"><span>Generated</span><strong id="generated-at" class="loading">Loading…</strong></div>

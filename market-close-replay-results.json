@@ -1,0 +1,97 @@
+{
+  "scope": "design replay; synthetic price attestations are NOT production evidence",
+  "production_baseline_run": 34847614658,
+  "evaluation_cutoff": "2026-09-14T13:11:30.000414Z",
+  "scenarios": [
+    {
+      "name": "friday_open",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "friday_exact_close_pending",
+      "result": "unverified_session_observation",
+      "expected": "unverified_session_observation"
+    },
+    {
+      "name": "friday_after_close",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "saturday",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "sunday",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "monday_preopen",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "monday_open_previous_close_only",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "holiday",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    },
+    {
+      "name": "stale_yahoo_open",
+      "result": "stale_source",
+      "expected": "stale_source"
+    },
+    {
+      "name": "timestamp_mismatch",
+      "result": "unverified_session_observation",
+      "expected": "unverified_session_observation"
+    },
+    {
+      "name": "yahoo_without_finality",
+      "result": "unverified_session_observation",
+      "expected": "unverified_session_observation"
+    },
+    {
+      "name": "adjusted_close",
+      "result": "unverified_session_observation",
+      "expected": "unverified_session_observation"
+    },
+    {
+      "name": "failed_source",
+      "result": "unavailable",
+      "expected": "unavailable"
+    },
+    {
+      "name": "early_close_EST",
+      "result": "verified_latest_session_close",
+      "expected": "verified_latest_session_close"
+    }
+  ],
+  "fixed_production_shadow_gate": {
+    "current_core": 5,
+    "verified_latest_session_core": 0,
+    "unverified_equity_candidates": [
+      "SPY",
+      "QQQ",
+      "NVDA",
+      "AAPL",
+      "TSLA"
+    ],
+    "usable_core_distinct_union": 5,
+    "macro_current": 4,
+    "top_current": 2,
+    "regime": "unavailable",
+    "risk_monitor": "partial",
+    "brief": "substantive deterministic fallback; report partial/stale",
+    "gate_A_pass": false,
+    "proposed_gate_B_pass": false,
+    "production_gate_changed": false
+  }
+}

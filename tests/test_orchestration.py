@@ -51,6 +51,24 @@ def _successful_runners(
         def runner(paths: RunPaths, current=spec) -> object:
             if order is not None:
                 order.append(current.name)
+            if current.name == "minimum_useful_gate":
+                payload = {
+                    "schema_version": "1.0", "artifact_type": "minimum_useful_status",
+                    "policy_id": "evidence_backed_daily_intelligence_v1",
+                    "evaluated_at": "2026-08-28T01:02:03Z", "status": "available",
+                    "system_health": {"state": "healthy", "reasons": []},
+                    "product_usefulness": {"state": "useful", "reasons": []},
+                    "overall_status": "healthy", "minimum_useful": True,
+                    "criteria": {"fixture": {"passed": True}},
+                    "asset_class_coverage": {"passed": True},
+                    "explicit_limitations": [], "provenance_integrity": True,
+                    "freshness_integrity": True,
+                    "source_artifact_references": [{"artifact": "fixture.json", "run_id": "fixture", "generated_at": "2026-08-28T01:02:03Z"}],
+                    "verified_latest_session_assets_counted": 0,
+                }
+                _write_json(paths.artifact("minimum_useful_status.json"), payload)
+                _write_json(paths.data_directory / "minimum_useful_status.json", payload)
+                return payload
             for filename in current.outputs:
                 target = paths.artifact(filename)
                 if filename.endswith(".md"):
@@ -102,6 +120,8 @@ def test_full_successful_run_generates_manifest_and_approved_artifacts(
     assert manifest["execution_order"] == list(EXECUTION_ORDER)
     assert all(module["status"] == "success" for module in manifest["modules"])
     assert not manifest["failures"]
+    assert manifest["schema_version"] == "1.1"
+    assert manifest["product_usefulness"]["minimum_useful"] is True
     assert (output / "run_manifest.json").is_file()
     assert (docs / "data" / "run_manifest.json").is_file()
     assert set(manifest["publication"]["published_files"]).issubset(

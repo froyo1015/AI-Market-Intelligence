@@ -1,0 +1,44 @@
+{
+  "contract_version": "verified_market_close_design_v1",
+  "scope": "design_and_test_only",
+  "production_enabled": false,
+  "result_states": ["verified_latest_session_close", "unverified_session_observation", "stale_source", "unavailable"],
+  "preserved_fields": ["symbol", "instrument_id", "venue", "source_timestamp", "retrieved_at", "generated_at", "age_seconds", "freshness_status", "source_refs", "receipt_hash"],
+  "session_evidence_required": ["calendar_id", "calendar_version", "timezone_db_version", "calendar_source", "known_at", "valid_from", "valid_until", "complete_schedule", "session_id", "session_open", "session_close", "latest_completed_session_id"],
+  "price_evidence_required": ["instrument_id", "venue", "currency", "price_basis", "interval_start", "interval_end", "timestamp_semantics", "session_id", "finality_reference", "finality_policy_version", "available_at", "retrieved_at", "source_refs", "receipt_hash"],
+  "price_policy": {
+    "accepted_basis": "unadjusted_regular_session_close",
+    "accepted_attestation": "validated_exchange_official_close_or_explicitly_approved_vendor_final_close",
+    "approved_yahoo_finality_policy": null,
+    "adjusted_price_alone_sufficient": false,
+    "calendar_alone_sufficient": false,
+    "post_close_retrieval_alone_sufficient": false,
+    "two_equal_fetches_alone_sufficient": false
+  },
+  "ordered_decision_rules": [
+    "missing price or failed source -> unavailable",
+    "missing or invalid calendar, identity, timezone, interval, provenance, or point-in-time evidence -> unverified_session_observation",
+    "source observation belongs to a strictly older completed session -> stale_source",
+    "future or mismatching session/interval timestamp -> unverified_session_observation",
+    "latest completed session matches but finality policy is absent or unapproved -> unverified_session_observation",
+    "all independent session and price checks pass -> verified_latest_session_close"
+  ],
+  "temporal_invariants": [
+    "calendar known_at <= generation cutoff within complete schedule validity",
+    "session_close <= price available_at <= retrieved_at <= generated_at",
+    "source_timestamp <= generated_at",
+    "source bar label interpreted using declared timezone and timestamp semantics, never relabeled as close time",
+    "regular-session interval must match expected calendar interval",
+    "max completed close <= generation cutoff determines latest session",
+    "original freshness status and source timestamps are immutable"
+  ],
+  "consumer_policy": {
+    "production_gate": "A_current_only_unchanged",
+    "future_recommendation": "B_daily_context_coverage_after_review_and_price_attestation",
+    "usable_count": "distinct union of current assets and independently verified latest-session assets",
+    "live_quote_claim": false,
+    "current_conversion": false,
+    "regime_eligibility_change": false,
+    "required_labels": ["data freshness", "latest completed session date", "session close time", "market open/closed", "source and price basis"]
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": "audit_only_v1",
+  "production_behavior_changed": false,
+  "baseline_run_id": 34847614658,
+  "baseline_commit": "804731ea3faf05ea94a0af7b8492d4a076e5df95",
+  "evaluated_as_of": "2026-09-14T13:11:30.000414Z",
+  "evaluation_basis": "saved live production run at original generation time; not a fresh fetch",
+  "gate_passed": false,
+  "criteria": [
+    {
+      "criterion": "core_assets_current",
+      "required": 6,
+      "actual": 5,
+      "assets": [
+        "BTC-USD",
+        "ETH-USD",
+        "EURUSD",
+        "GOLD",
+        "USDJPY"
+      ],
+      "passed": false
+    },
+    {
+      "criterion": "macro_current",
+      "required": 1,
+      "actual": 4,
+      "assets": [
+        "DXY",
+        "OIL",
+        "US10Y",
+        "VIX"
+      ],
+      "passed": true
+    },
+    {
+      "criterion": "current_validated_top",
+      "required": 2,
+      "actual": 2,
+      "passed": true
+    },
+    {
+      "criterion": "regime_valid_or_justified_unavailable",
+      "passed": true,
+      "state": null,
+      "reason": "2 eligible dimensions, weight 0.35, no equity/volatility anchor; stale equity and 68/73h cross-session gaps."
+    },
+    {
+      "criterion": "risk_meaningful_or_explicit_no_validated_upcoming",
+      "passed": true,
+      "risk_ids": [
+        "rsk_input_coverage_degraded_v1_30e7e416c275be30",
+        "rsk_input_coverage_degraded_v1_d8e840d99eca9d0e",
+        "rsk_market_regime_coverage_degraded_v1_29e2609d7639e016",
+        "rsk_market_signal_coverage_degraded_v1_39e00eadb5d390a2",
+        "rsk_observed_dollar_yield_pressure_v1_889009346623e0cd"
+      ],
+      "upcoming_count": 0,
+      "reason": "Observed stress and data-quality risks retained; no validated upcoming events does not imply no risk."
+    },
+    {
+      "criterion": "substantive_grounded_brief",
+      "passed": true,
+      "reason": "Two unchanged validated stories precede diagnostics; full detail and references retained."
+    }
+  ],
+  "derivatives_excluded": true,
+  "comparison": {
+    "before_chars": 47528,
+    "after_chars": 48769,
+    "before_file": "review/phase-11.2/before-brief.md",
+    "after_file": "review/phase-11.2/after-brief.md",
+    "regime_changed": false,
+    "input_artifacts_changed": false
+  },
+  "session_review": {
+    "phase": "11.3",
+    "core_current_count": 5,
+    "core_latest_session_verified_count": 0,
+    "core_latest_session_unknown_equities": 5,
+    "macro_current_count": 4,
+    "current_top_count": 2,
+    "regime_state": "unavailable",
+    "risk_monitor_state": "partial",
+    "brief_useful": true,
+    "gate_policy": "current_only_unchanged",
+    "before_gate_passed": false,
+    "after_gate_passed": false,
+    "reason": "No final-close interval / availability attestation in saved production input; no session substitution authorized."
+  }
+}

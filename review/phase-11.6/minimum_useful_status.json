@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "minimum_useful_status",
+  "policy_id": "evidence_backed_daily_intelligence_v1",
+  "evaluated_at": "2026-09-14T13:11:30.161504Z",
+  "status": "available",
+  "system_health": {
+    "state": "healthy",
+    "reasons": []
+  },
+  "product_usefulness": {
+    "state": "useful",
+    "reasons": [
+      "ai_generation_deterministic_fallback",
+      "equity_core_unavailable",
+      "missing_current_core_asset_classes:equity",
+      "regime_unavailable",
+      "report_partial",
+      "report_stale"
+    ]
+  },
+  "overall_status": "degraded",
+  "minimum_useful": true,
+  "criteria": {
+    "core_asset_coverage": {
+      "passed": true,
+      "actual": 5,
+      "required": 5,
+      "symbols": [
+        "BTC-USD",
+        "ETH-USD",
+        "GOLD",
+        "EURUSD",
+        "USDJPY"
+      ]
+    },
+    "asset_class_coverage": {
+      "passed": true,
+      "actual": 3,
+      "required": 3,
+      "classes": [
+        "commodity",
+        "crypto",
+        "forex"
+      ],
+      "missing_declared_classes": [
+        "equity"
+      ]
+    },
+    "risk_asset_class_coverage": {
+      "passed": true,
+      "classes": [
+        "crypto"
+      ]
+    },
+    "macro_coverage": {
+      "passed": true,
+      "actual": 4,
+      "required": 1
+    },
+    "top_intelligence": {
+      "passed": true,
+      "actual": 2,
+      "required": 2
+    },
+    "regime": {
+      "passed": true,
+      "state": "unavailable",
+      "reason": "One or more input artifacts or observations are stale.; 3 regime dimension(s) are unavailable.; Current evidence does not meet classification coverage rules."
+    },
+    "risk_monitor": {
+      "passed": true,
+      "state": "partial"
+    },
+    "brief_usefulness": {
+      "passed": true,
+      "status": "deterministic_fallback"
+    },
+    "provenance_integrity": {
+      "passed": true
+    },
+    "freshness_integrity": {
+      "passed": true
+    }
+  },
+  "asset_class_coverage": {
+    "passed": true,
+    "actual": 3,
+    "required": 3,
+    "classes": [
+      "commodity",
+      "crypto",
+      "forex"
+    ],
+    "missing_declared_classes": [
+      "equity"
+    ]
+  },
+  "explicit_limitations": [
+    "ai_generation_deterministic_fallback",
+    "equity_core_unavailable",
+    "missing_current_core_asset_classes:equity",
+    "regime_unavailable",
+    "report_partial",
+    "report_stale"
+  ],
+  "provenance_integrity": true,
+  "freshness_integrity": true,
+  "source_artifact_references": [
+    {
+      "artifact": "daily_intelligence.json",
+      "run_id": "run_20260914T131130Z_intelligence_f58d7b660b0de42c",
+      "generated_at": "2026-09-14T13:11:30.000414Z"
+    },
+    {
+      "artifact": "evidence_bundle.json",
+      "run_id": "run_20260914T131129Z_consolidated_968567af50093d84",
+      "generated_at": "2026-09-14T13:11:29.862702Z"
+    },
+    {
+      "artifact": "macro_snapshot.json",
+      "run_id": "macro_snapshot",
+      "generated_at": "2026-09-14T13:11:28.325291Z"
+    },
+    {
+      "artifact": "market_regime.json",
+      "run_id": "run_20260914T131129Z_regime_97e0c35f8fe1a268",
+      "generated_at": "2026-09-14T13:11:29.919500Z"
+    },
+    {
+      "artifact": "market_signals.json",
+      "run_id": "run_20260914T131129Z_relationships_18b455610e647bf1",
+      "generated_at": "2026-09-14T13:11:29.897857Z"
+    },
+    {
+      "artifact": "market_snapshot.json",
+      "run_id": "None",
+      "generated_at": "2026-09-14T13:11:26.216983Z"
+    },
+    {
+      "artifact": "risk_monitor.json",
+      "run_id": "run_20260914T131129Z_risk_3c2e09a2bb9dace8",
+      "generated_at": "2026-09-14T13:11:29.954691Z"
+    },
+    {
+      "artifact": "top_intelligence.json",
+      "run_id": "run_20260914T131130Z_top_8d0a295bbdc68613",
+      "generated_at": "2026-09-14T13:11:30.079055Z"
+    }
+  ],
+  "verified_latest_session_assets_counted": 0
+}

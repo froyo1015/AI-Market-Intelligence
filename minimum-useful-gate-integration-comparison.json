@@ -1,0 +1,30 @@
+{
+  "schema_version": "review_v1",
+  "production_changed": false,
+  "fixed_snapshot_run_id": 34847614658,
+  "before": {
+    "orchestration_gate_module": false,
+    "public_gate_artifact": false,
+    "manifest_schema_version": "1.0",
+    "manifest_product_usefulness": false,
+    "frontend_distinguishes_system_and_usefulness": false,
+    "existing_report_status": "partial",
+    "existing_report_freshness": "stale"
+  },
+  "review_candidate": {
+    "orchestration_gate_module": true,
+    "public_gate_artifact": "data/minimum_useful_status.json",
+    "manifest_schema_version": "1.1",
+    "manifest_product_usefulness": true,
+    "frontend_distinguishes_system_and_usefulness": true,
+    "system_health": "healthy",
+    "product_usefulness": "useful",
+    "overall_status": "degraded",
+    "minimum_useful": true,
+    "existing_report_status": "partial",
+    "existing_report_freshness": "stale",
+    "verified_latest_session_assets_counted": 0,
+    "freshness_thresholds_changed": false,
+    "ranking_or_regime_changed": false
+  }
+}

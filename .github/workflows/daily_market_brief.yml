@@ -142,12 +142,14 @@ jobs:
           test -s src/output/run_manifest.json
           test -s src/output/daily_intelligence.json
           test -s src/output/top_intelligence.json
+          test -s src/output/minimum_useful_status.json
           test -s src/output/daily_market_brief.md
           test -s src/output/ai_market_brief.md
           test -s src/output/ai_brief_evaluation.json
           test -s docs/index.html
           test -s docs/intelligence.html
           test -s docs/assets/intelligence.js
+          test -s docs/data/minimum_useful_status.json
           test -s docs/data/run_manifest.json
 
       - name: Monitor grounded AI production trial
@@ -186,6 +188,7 @@ jobs:
             src/output/risk_monitor.json
             src/output/daily_intelligence.json
             src/output/top_intelligence.json
+            src/output/minimum_useful_status.json
             src/output/daily_market_brief.md
             src/output/ai_market_brief.md
             src/output/ai_brief_evaluation.json

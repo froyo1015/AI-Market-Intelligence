@@ -92,6 +92,15 @@ function groundedManifest(mode, freshness) {
   };
 }
 
+function minimumUseful(overrides) {
+  return Object.assign({
+    schema_version: "1.0", artifact_type: "minimum_useful_status",
+    system_health: {state: "healthy"}, product_usefulness: {state: "useful"},
+    overall_status: "degraded", minimum_useful: true,
+    explicit_limitations: ["equity_core_unavailable", "regime_unavailable"]
+  }, overrides || {});
+}
+
 const missing = view.buildViewModel({}, ["dailyIntelligence unavailable: HTTP 404"]);
 assert.equal(missing.dataStatus, "unavailable");
 assert.equal(missing.regime.classification, "unavailable");
@@ -101,6 +110,7 @@ assert.equal(missing.topIntelligence.items.length, 0);
 assert.equal(missing.topIntelligence.message, "No current validated Top 3 intelligence is available.");
 assert.equal(missing.aiBrief.available, false);
 assert.equal(missing.aiBrief.mode, "unavailable");
+assert.equal(missing.minimumUseful.available, false);
 
 const unavailableInput = daily("unavailable", null);
 unavailableInput.coverage.forEach(function (item) {
@@ -207,6 +217,7 @@ const valid = view.buildViewModel({
   },
   aiBrief: "# Daily Market Intelligence Brief\n\nGrounded narrative.\n\n[refs: obs_spy]",
   runManifest: groundedManifest(),
+  minimumUseful: minimumUseful(),
   deterministicBrief: "# Brief"
 }, []);
 assert.equal(valid.dataStatus, "available");
@@ -231,6 +242,11 @@ assert.equal(valid.aiBrief.metadataSource, "explicit");
 assert.equal(valid.topIntelligence.items.length, 1);
 assert.equal(valid.topIntelligence.items[0].score, 81);
 assert.equal(valid.topIntelligence.items[0].storyKey, "market_state:risk_on");
+assert.equal(valid.minimumUseful.system, "healthy");
+assert.equal(valid.minimumUseful.product, "useful");
+assert.equal(valid.minimumUseful.overall, "degraded");
+assert.equal(valid.minimumUseful.minimumUseful, true);
+assert.deepEqual(valid.minimumUseful.limitations, ["equity_core_unavailable", "regime_unavailable"]);
 assert.deepEqual(valid.audit.observationIds, ["obs_spy"]);
 
 const fallbackText = "# Daily Market Intelligence Brief\n\nValidated fallback.\n\n[refs: risk_quality]";
@@ -339,5 +355,14 @@ const legacyFallback = view.normalizeAIBrief("Same", "Same", {
 });
 assert.equal(legacyFallback.mode, "deterministic_fallback");
 assert.equal(legacyFallback.metadataSource, "legacy_file_comparison");
+
+const notUseful = view.normalizeMinimumUsefulStatus(minimumUseful({
+  product_usefulness: {state: "degraded"}, minimum_useful: false
+}));
+assert.equal(notUseful.available, true);
+assert.equal(notUseful.overall, "degraded");
+assert.equal(notUseful.minimumUseful, false);
+const invalidGate = view.normalizeMinimumUsefulStatus({overall_status: "degraded", minimum_useful: true});
+assert.equal(invalidGate.available, false);
 
 console.log("intelligence-view tests passed");

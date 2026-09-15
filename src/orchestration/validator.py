@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any, Mapping, Sequence
 
 from src.data.freshness import FreshnessValidationError, validate_freshness_summary
@@ -45,13 +46,14 @@ def validate_run_manifest(
         "artifact_versions",
         "failures",
         "publication",
+        "product_usefulness",
     }
     missing = sorted(required - set(manifest))
     if missing:
         raise RunManifestValidationError(f"manifest missing fields: {missing}")
     if manifest["artifact_type"] != "run_manifest":
         raise RunManifestValidationError("artifact_type must be run_manifest")
-    if manifest["schema_version"] != "1.0":
+    if manifest["schema_version"] != "1.1":
         raise RunManifestValidationError("unsupported run manifest schema")
     if manifest["execution_timestamp"] != manifest["execution_started_at"]:
         raise RunManifestValidationError("execution timestamp must identify run start")
@@ -111,6 +113,36 @@ def validate_run_manifest(
         raise RunManifestValidationError("publication allowlist is incomplete")
     if not set(publication.get("published_files", [])).issubset(approved):
         raise RunManifestValidationError("publication contains an unapproved file")
+    gate = manifest.get("product_usefulness")
+    required_gate = {"policy_id", "artifact", "system_health", "product_usefulness",
+                     "overall_status", "minimum_useful", "evaluated_at", "explicit_limitations"}
+    if not isinstance(gate, dict) or set(gate) != required_gate:
+        raise RunManifestValidationError("product usefulness summary is invalid")
+    if gate.get("artifact") != "minimum_useful_status.json":
+        raise RunManifestValidationError("product usefulness artifact reference is invalid")
+    if gate.get("system_health") not in {"healthy", "degraded", "unusable"}:
+        raise RunManifestValidationError("system health is invalid")
+    if gate.get("product_usefulness") not in {"useful", "degraded", "unusable"}:
+        raise RunManifestValidationError("product usefulness is invalid")
+    if gate.get("overall_status") not in {"healthy", "degraded", "unusable"}:
+        raise RunManifestValidationError("overall usefulness status is invalid")
+    if not isinstance(gate.get("minimum_useful"), bool) or not isinstance(gate.get("explicit_limitations"), list):
+        raise RunManifestValidationError("product usefulness values are invalid")
+    if any(not isinstance(item, str) or not item for item in gate["explicit_limitations"]):
+        raise RunManifestValidationError("product usefulness limitation is invalid")
+    try:
+        evaluated = datetime.fromisoformat(
+            str(gate.get("evaluated_at", "")).replace("Z", "+00:00")
+        )
+    except ValueError as exc:
+        raise RunManifestValidationError("product usefulness evaluated_at is invalid") from exc
+    if evaluated.tzinfo is None:
+        raise RunManifestValidationError("product usefulness evaluated_at needs timezone")
+    expected_minimum = gate["product_usefulness"] == "useful" and gate["system_health"] != "unusable"
+    if gate["minimum_useful"] != expected_minimum:
+        raise RunManifestValidationError("minimum useful summary is inconsistent")
+    if ("unusable" in {gate["system_health"], gate["product_usefulness"]}) != (gate["overall_status"] == "unusable"):
+        raise RunManifestValidationError("overall usefulness summary is inconsistent")
     failure_modules = {item.get("module") for item in manifest["failures"]}
     for module in modules:
         if module.get("status") in {"unavailable", "blocked", "failed"}:

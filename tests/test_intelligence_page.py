@@ -32,6 +32,7 @@ def test_static_shell_has_dynamic_artifact_contract_and_safe_csp() -> None:
     assert 'id="risks-content"' in page
     assert 'id="markets-content"' in page
     assert 'id="audit-content"' in page
+    assert 'id="minimum-useful-status"' in page
     assert 'src="assets/intelligence.js"' in page
     assert "script-src 'self'" in page
     assert "connect-src 'self'" in page
@@ -59,6 +60,7 @@ def test_frontend_has_no_llm_execution_or_html_injection_path() -> None:
     assert "api.openai.com" not in script
     assert 'aiBrief: ["data/ai_market_brief.md", "text"]' in script
     assert 'runManifest: ["data/run_manifest.json", "json"]' in script
+    assert 'minimumUseful: ["data/minimum_useful_status.json", "json"]' in script
 
 
 def test_ai_brief_web_integration_contract_is_documented() -> None:

@@ -101,6 +101,7 @@
     riskMonitor: ["data/risk_monitor.json", "json"],
     marketSnapshot: ["data/market_snapshot.json", "json"],
     macroSnapshot: ["data/macro_snapshot.json", "json"],
+    minimumUseful: ["data/minimum_useful_status.json", "json"],
     aiBrief: ["data/ai_market_brief.md", "text"],
     runManifest: ["data/run_manifest.json", "json"],
     deterministicBrief: ["data/daily_market_brief.md", "text"]
@@ -153,6 +154,7 @@
     const risks = normalizeRisks(daily, resources.riskMonitor);
     const markets = normalizeMarkets(resources.marketSnapshot, resources.macroSnapshot);
     const topIntelligence = normalizeTopIntelligence(resources.topIntelligence);
+    const minimumUseful = normalizeMinimumUsefulStatus(resources.minimumUseful);
     const aiBrief = normalizeAIBrief(
       resources.aiBrief,
       resources.deterministicBrief,
@@ -192,8 +194,28 @@
       risks: risks,
       markets: markets,
       audit: buildAudit(daily, resources),
-      deterministicBriefAvailable: typeof resources.deterministicBrief === "string"
+      deterministicBriefAvailable: typeof resources.deterministicBrief === "string",
+      minimumUseful: minimumUseful
     };
+  }
+
+  function normalizeMinimumUsefulStatus(input) {
+    const item = asObject(input);
+    const system = item && asObject(item.system_health);
+    const product = item && asObject(item.product_usefulness);
+    const limitations = item && Array.isArray(item.explicit_limitations)
+      ? item.explicit_limitations.filter(function (value) { return typeof value === "string"; }) : [];
+    if (!item || item.artifact_type !== "minimum_useful_status" || item.schema_version !== "1.0" ||
+        !system || !product || !["healthy", "degraded", "unusable"].includes(system.state) ||
+        !["useful", "degraded", "unusable"].includes(product.state) ||
+        !["healthy", "degraded", "unusable"].includes(item.overall_status) ||
+        typeof item.minimum_useful !== "boolean") {
+      return {available: false, system: "unavailable", product: "unavailable",
+        overall: "unavailable", minimumUseful: false, limitations: ["gate_artifact_unavailable"]};
+    }
+    return {available: true, system: system.state, product: product.state,
+      overall: item.overall_status, minimumUseful: item.minimum_useful,
+      limitations: uniqueStrings(limitations)};
   }
 
   function normalizeAIBrief(aiBriefInput, deterministicInput, manifestInput) {
@@ -702,6 +724,7 @@
     const updatedNode = documentRef.getElementById("research-updated");
     if (statusNode) statusNode.textContent = uiText(header.status);
     if (updatedNode) updatedNode.textContent = uiText(header.updated);
+    renderMinimumUsefulStatus(documentRef, model.minimumUseful);
     renderDerivatives(documentRef, model.derivatives);
     setStatus(documentRef, "generated-at", formatTimestamp(model.generatedAt), "");
     setStatus(documentRef, "data-status", model.dataStatus, model.dataStatus);
@@ -720,6 +743,29 @@
       model.aiBrief.available,
       model.deterministicBriefAvailable
     );
+  }
+
+  function renderMinimumUsefulStatus(documentRef, gate) {
+    const target = documentRef.getElementById("minimum-useful-status");
+    if (!target) return;
+    clear(target);
+    const system = gate && gate.available ? ({healthy:"正常", degraded:"降級", unusable:"不可用"}[gate.system]) : "暫無資料";
+    let report = "暫無資料";
+    if (gate && gate.available) {
+      report = gate.minimumUseful ? "可用" : gate.product === "degraded" ? "有限度可用，未達最低標準" : "不可用";
+      if (gate.overall === "degraded" && gate.minimumUseful) report += "，但資料不完整";
+    }
+    const labels = {
+      equity_core_unavailable:"美股目前沒有 current 資料", regime_unavailable:"Market Regime 暫不可判定",
+      report_partial:"報告只有部分資料", report_stale:"報告包含過期資料",
+      ai_generation_deterministic_fallback:"AI 使用規則式備援模式",
+      provenance_validation_failed:"來源追溯驗證失敗", freshness_validation_failed:"資料新鮮度驗證失敗"
+    };
+    const limits = gate && gate.available && gate.limitations.length
+      ? gate.limitations.map(function (value) { return labels[value] || value; }).join("；") : "沒有已發布的限制資料";
+    target.appendChild(element(documentRef, "p", "meta", "系統狀態：" + system));
+    target.appendChild(element(documentRef, "p", "meta", "今日情報：" + report));
+    target.appendChild(element(documentRef, "p", "meta", "已知限制：" + limits));
   }
 
   function renderAIBrief(documentRef, brief) {
@@ -1286,6 +1332,8 @@
     renderReferences: renderReferences,
     derivativesLines: derivativesLines,
     renderDerivatives: renderDerivatives,
+    normalizeMinimumUsefulStatus: normalizeMinimumUsefulStatus,
+    renderMinimumUsefulStatus: renderMinimumUsefulStatus,
     MARKET_ORDER: MARKET_ORDER,
     buildViewModel: buildViewModel,
     initialize: initialize,

@@ -18,6 +18,7 @@ from src.consolidation.pipeline import run_consolidation_pipeline
 from src.data.freshness import aggregate_freshness_fields, aggregate_freshness_status
 from src.evidence.pipeline import run_evidence_pipeline
 from src.evaluation.pipeline import run_ai_brief_evaluation_pipeline
+from src.evaluation.minimum_useful_status import run_minimum_useful_status_pipeline
 from src.events.pipeline import run_events_pipeline
 from src.grounded_brief.pipeline import run_grounded_brief_pipeline
 from src.intelligence.pipeline import run_daily_intelligence_pipeline
@@ -54,6 +55,7 @@ APPROVED_DYNAMIC_FILES = (
     "daily_market_brief.md",
     "market_snapshot.json",
     "macro_snapshot.json",
+    "minimum_useful_status.json",
     MANIFEST_FILENAME,
 )
 APPROVED_STATIC_FILES = (
@@ -158,6 +160,16 @@ MODULE_SPECS = (
             "risk_monitor",
         ),
     ),
+    ModuleSpec(
+        "minimum_useful_gate",
+        ("minimum_useful_status.json",),
+        (
+            "market_data", "macro", "evidence_consolidation",
+            "cross_asset_signals", "market_regime", "risk_monitor",
+            "daily_intelligence", "top_intelligence", "brief_renderer",
+            "grounded_ai_brief", "intelligence_web_view",
+        ),
+    ),
 )
 EXECUTION_ORDER = tuple(spec.name for spec in MODULE_SPECS)
 Runner = Callable[[RunPaths], Any]
@@ -232,6 +244,7 @@ def _default_runners() -> Dict[str, Runner]:
             p.artifact("ai_brief_evaluation.json"),
         ),
         "intelligence_web_view": _run_web_view,
+        "minimum_useful_gate": _run_minimum_useful_gate,
     }
 
 
@@ -416,6 +429,7 @@ def run_daily_orchestration(
                     name for name in omitted if name != f"data/{MANIFEST_FILENAME}"
                 ],
             },
+            product_usefulness=_manifest_gate_summary(paths),
         ).to_dict()
         validate_run_manifest(manifest, EXECUTION_ORDER, APPROVED_PUBLIC_FILES)
         manifest_path = output_directory / MANIFEST_FILENAME
@@ -437,6 +451,55 @@ def _run_web_view(paths: RunPaths) -> Dict[str, str]:
         script_target=paths.docs_directory / "assets" / "intelligence.js",
         artifact_paths=artifact_paths,
     )
+
+
+def _run_minimum_useful_gate(paths: RunPaths) -> Dict[str, Any]:
+    inputs = {
+        name: paths.artifact(name + (".md" if name == "daily_market_brief" else ".json"))
+        for name in (
+            "market_snapshot", "macro_snapshot", "evidence_bundle", "market_signals",
+            "market_regime", "risk_monitor", "daily_intelligence", "top_intelligence",
+            "daily_market_brief", "generation_metadata",
+        )
+    }
+    public_ready = all(
+        (paths.docs_directory / relative).is_file()
+        for relative in (
+            "intelligence.html", "assets/intelligence.js",
+            "data/market_snapshot.json", "data/macro_snapshot.json",
+            "data/daily_intelligence.json", "data/top_intelligence.json",
+            "data/market_regime.json", "data/risk_monitor.json",
+            "data/daily_market_brief.md", "data/ai_market_brief.md",
+        )
+    )
+    return run_minimum_useful_status_pipeline(
+        inputs,
+        paths.artifact("minimum_useful_status.json"),
+        paths.data_directory / "minimum_useful_status.json",
+        publication_validated=public_ready,
+    )
+
+
+def _manifest_gate_summary(paths: RunPaths) -> Dict[str, Any]:
+    payload = _read_json(paths.artifact("minimum_useful_status.json"))
+    if payload is None:
+        return {
+            "policy_id": "evidence_backed_daily_intelligence_v1",
+            "artifact": "minimum_useful_status.json",
+            "system_health": "unusable", "product_usefulness": "unusable",
+            "overall_status": "unusable", "minimum_useful": False,
+            "evaluated_at": _iso(datetime.now(timezone.utc)),
+            "explicit_limitations": ["gate_artifact_unavailable"],
+        }
+    return {
+        "policy_id": payload["policy_id"], "artifact": "minimum_useful_status.json",
+        "system_health": payload["system_health"]["state"],
+        "product_usefulness": payload["product_usefulness"]["state"],
+        "overall_status": payload["overall_status"],
+        "minimum_useful": payload["minimum_useful"],
+        "evaluated_at": payload["evaluated_at"],
+        "explicit_limitations": payload["explicit_limitations"],
+    }
 
 
 def _inspect_outputs(spec: ModuleSpec, paths: RunPaths) -> list[ArtifactRunRecord]:

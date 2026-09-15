@@ -1,0 +1,65 @@
+{
+  "schema_contract": "minimum_useful_gate_v1",
+  "policy_id": "evidence_backed_daily_intelligence_v1",
+  "scope": "production_reporting",
+  "production_enabled": true,
+  "states": {
+    "system_health": ["healthy", "degraded", "unusable"],
+    "product_usefulness": ["useful", "degraded", "unusable"],
+    "overall": ["healthy", "degraded", "unusable"]
+  },
+  "system_health": {
+    "healthy_requires": [
+      "pipeline_completed",
+      "required_artifacts_generated",
+      "required_artifacts_validated",
+      "publication_validated",
+      "provenance_integrity",
+      "freshness_integrity"
+    ],
+    "degraded_when": "all integrity requirements pass but one or more non-integrity operational checks are degraded",
+    "unusable_when": "pipeline/publication/required artifact validation, provenance integrity, or freshness integrity fails"
+  },
+  "product_usefulness": {
+    "recommended_formula": "hybrid_breadth_and_depth_D",
+    "useful_requires": {
+      "current_core_asset_count_min": 5,
+      "current_core_asset_class_count_min": 3,
+      "current_risk_asset_class_count_min": 1,
+      "risk_asset_classes": ["equity", "crypto"],
+      "current_macro_count_min": 1,
+      "current_validated_top_count_min": 2,
+      "regime": "valid_or_evidence_justified_unavailable",
+      "risk_monitor": "meaningful_or_explicit_no_validated_upcoming_risks",
+      "brief": "substantive_grounded_content",
+      "provenance_integrity": true,
+      "freshness_integrity": true
+    },
+    "degraded_requires": {
+      "current_core_asset_count_min": 3,
+      "current_core_asset_class_count_min": 2,
+      "current_macro_count_min": 1,
+      "current_validated_top_count_min": 1,
+      "brief": "substantive_grounded_content",
+      "provenance_integrity": true,
+      "freshness_integrity": true
+    },
+    "unusable_when": "integrity fails or degraded minimum content is not met",
+    "missing_declared_asset_class_behavior": "preserve explicit limitation and cap overall state at degraded",
+    "counting_rules": [
+      "count distinct canonical symbols only",
+      "count only canonical freshness_status=current",
+      "do not count stale, unavailable, unknown, or unverified closes",
+      "macro indicators do not count as core assets",
+      "verified_latest_session_close does not count until a separately reviewed policy is enabled",
+      "derivatives shadow does not count"
+    ]
+  },
+  "overall_aggregation": {
+    "healthy": "system healthy, product useful, report current/available, and all declared core asset classes represented",
+    "degraded": "system and product are each non-unusable but at least one is degraded, report is partial/stale, regime is justified unavailable, or a declared core class is missing",
+    "unusable": "system health or product usefulness is unusable"
+  },
+  "declared_core_asset_classes": ["equity", "crypto", "forex", "commodity"],
+  "integration_status": "review_candidate"
+}
