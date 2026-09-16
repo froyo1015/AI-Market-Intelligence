@@ -33,12 +33,19 @@ def test_static_shell_has_dynamic_artifact_contract_and_safe_csp() -> None:
     assert 'id="markets-content"' in page
     assert 'id="audit-content"' in page
     assert 'id="minimum-useful-status"' in page
+    assert 'id="market-direction"' in page
+    assert 'id="market-direction-content"' in page
+    assert 'id="crypto-sentiment"' in page
+    assert "資料尚未接入" in page
+    assert "目前不顯示任何即時或模擬數值" in page
     assert 'src="assets/intelligence.js"' in page
     assert "script-src 'self'" in page
     assert "connect-src 'self'" in page
     assert "unpkg" not in page
     assert "react" not in page.lower()
     assert page.index('id="ai-brief"') < page.index('id="top-intelligence"')
+    assert page.index('id="reading-summary"') < page.index('id="market-direction"')
+    assert page.index('id="market-direction"') < page.index('id="reading-stories"')
     assert page.index('id="top-intelligence"') < page.index('id="regime"')
     assert page.index('id="regime"') < page.index('id="signals"')
     assert page.index('id="signals"') < page.index('id="markets"')
@@ -142,3 +149,21 @@ def test_javascript_view_model_missing_partial_unavailable_and_valid_states() ->
 
     assert result.returncode == 0, result.stdout + result.stderr
     assert "intelligence-view tests passed" in result.stdout
+
+
+def test_javascript_market_direction_is_grounded_and_non_directional_advice() -> None:
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is not available for static JavaScript checks")
+    script = PROJECT_ROOT / "tests" / "js" / "market_direction.test.js"
+
+    result = subprocess.run(
+        [node, str(script)],
+        cwd=PROJECT_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "market-direction presentation tests passed" in result.stdout

@@ -113,7 +113,17 @@
     "pipeline_failure", "missing_generation_metadata"
   ];
   const MARKET_ORDER = [
-    "BTC-USD", "ETH-USD", "SPY", "QQQ", "GOLD", "DXY", "US10Y", "VIX"
+    "BTC-USD", "ETH-USD", "SPY", "QQQ", "GOLD", "EURUSD", "USDJPY", "DXY", "US10Y", "VIX"
+  ];
+  const MARKET_DIRECTION_GROUPS = [
+    { category: "宏觀", items: [{ symbol: "DXY", label: "美元", icon: "💵", strength: true }] },
+    { category: "外匯", items: [{ symbol: "EURUSD", label: "EUR/USD", icon: "💱" }] },
+    { category: "美股", items: [{ symbol: "SPY", label: "SPY", icon: "📈" }] },
+    { category: "Crypto", items: [
+      { symbol: "BTC-USD", label: "BTC", icon: "₿" },
+      { symbol: "ETH-USD", label: "ETH", icon: "Ξ" }
+    ] },
+    { category: "商品", items: [{ symbol: "GOLD", label: "黃金", icon: "🟡" }] }
   ];
   const RISK_CATEGORIES = [
     ["upcoming_event", "Upcoming Events"],
@@ -193,6 +203,7 @@
       signals: signals,
       risks: risks,
       markets: markets,
+      marketDirection: buildMarketDirection(markets),
       audit: buildAudit(daily, resources),
       deterministicBriefAvailable: typeof resources.deterministicBrief === "string",
       minimumUseful: minimumUseful,
@@ -809,7 +820,7 @@
             dailyChange: numberOrNull(item.daily_change),
             changeUnit: "percent",
             status: item.status || "unavailable",
-            freshnessStatus: scopedFreshness(snapshot, item.symbol, Date.now()),
+            freshnessStatus: scopedFreshness(snapshot, item.symbol, Date.now()) || snapshot.freshness_status || "unknown",
             timestamp: item.timestamp || "unavailable",
             source: item.source || "unavailable"
           });
@@ -827,7 +838,7 @@
             dailyChange: numberOrNull(item.daily_change),
             changeUnit: item.change_unit || "change",
             status: item.status || "unavailable",
-            freshnessStatus: scopedFreshness(macro, item.symbol, Date.now()),
+            freshnessStatus: scopedFreshness(macro, item.symbol, Date.now()) || macro.freshness_status || "unknown",
             timestamp: item.timestamp || "unavailable",
             source: item.source || "unavailable"
           });
@@ -836,6 +847,47 @@
     }
     const index = new Map(records.map(function (item) { return [item.symbol, item]; }));
     return MARKET_ORDER.map(function (symbol) { return index.get(symbol); }).filter(Boolean);
+  }
+
+  function buildMarketDirection(markets) {
+    const index = new Map((Array.isArray(markets) ? markets : []).map(function (item) {
+      return [item.symbol, item];
+    }));
+    return MARKET_DIRECTION_GROUPS.map(function (group) {
+      return {
+        category: group.category,
+        items: group.items.map(function (definition) {
+          const market = index.get(definition.symbol);
+          const base = {
+            symbol: definition.symbol,
+            label: definition.label,
+            icon: definition.icon,
+            arrow: "—",
+            state: "暫無資料",
+            tone: "attention"
+          };
+          if (!market || market.status !== "success" || market.dailyChange === null) return base;
+          if (market.freshnessStatus !== "current") {
+            base.state = market.freshnessStatus === "stale" ? "需要留意" : "時間待確認";
+            return base;
+          }
+          if (market.dailyChange > 0) {
+            base.arrow = "↑";
+            base.state = definition.strength ? "偏強" : "走高";
+            base.tone = "up";
+          } else if (market.dailyChange < 0) {
+            base.arrow = "↓";
+            base.state = definition.strength ? "偏弱" : "回落";
+            base.tone = "down";
+          } else {
+            base.arrow = "→";
+            base.state = "持平";
+            base.tone = "flat";
+          }
+          return base;
+        })
+      };
+    });
   }
 
   function buildAudit(daily, resources) {
@@ -932,6 +984,7 @@
     if (updatedNode) updatedNode.textContent = uiText(header.updated);
     renderMinimumUsefulStatus(documentRef, model.minimumUseful);
     renderReadingBrief(documentRef, model.reading);
+    renderMarketDirection(documentRef, model.marketDirection);
     renderDerivatives(documentRef, model.derivatives);
     setStatus(documentRef, "generated-at", formatTimestamp(model.generatedAt), "");
     setStatus(documentRef, "data-status", model.dataStatus, model.dataStatus);
@@ -973,6 +1026,25 @@
     target.appendChild(element(documentRef, "p", "meta", "系統狀態：" + system));
     target.appendChild(element(documentRef, "p", "meta", "今日情報：" + report));
     target.appendChild(element(documentRef, "p", "meta", "已知限制：" + limits));
+  }
+
+  function renderMarketDirection(documentRef, groups) {
+    const rootNode = documentRef.getElementById("market-direction-content");
+    if (!rootNode) return;
+    clear(rootNode);
+    (Array.isArray(groups) ? groups : []).forEach(function (group) {
+      const card = element(documentRef, "article", "direction-group");
+      card.appendChild(element(documentRef, "h3", "", group.category));
+      group.items.forEach(function (item) {
+        const row = element(documentRef, "div", "direction-item direction-" + item.tone);
+        row.appendChild(element(documentRef, "span", "direction-icon", item.icon));
+        row.appendChild(element(documentRef, "span", "direction-asset", item.label));
+        row.appendChild(element(documentRef, "span", "direction-state", item.arrow + " " + item.state));
+        card.appendChild(row);
+      });
+      rootNode.appendChild(card);
+    });
+    rootNode.setAttribute("aria-busy", "false");
   }
 
   function renderAIBrief(documentRef, brief) {
@@ -1531,6 +1603,7 @@
 
   return {
     buildReadingBrief: buildReadingBrief,
+    buildMarketDirection: buildMarketDirection,
     scopedFreshness: scopedFreshness,
     uiText: uiText,
     betaStatusLines: betaStatusLines,
