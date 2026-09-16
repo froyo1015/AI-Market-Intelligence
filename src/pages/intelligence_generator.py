@@ -59,7 +59,7 @@ READING_SHELL = '''
       <nav class="reading-nav" aria-label="簡報導覽"><a href="#reading-stories">市場重點</a><a href="#reading-watch">接下來要留意</a><a href="#technical-report">查看證據</a></nav>
     </header>
     <section class="reading-summary" aria-labelledby="reading-summary-title">
-      <h2 id="reading-summary-title">今日市場一句話</h2>
+      <h2 id="reading-summary-title">今日市場</h2>
       <div id="reading-summary" aria-live="polite" aria-busy="true"><p>正在讀取今日市場重點。</p></div>
     </section>
     <section class="reading-section" id="reading-stories"><h2 id="reading-stories-title">今日最重要的事</h2><div id="reading-stories-content" aria-busy="true"><p>正在讀取已驗證重點。</p></div></section>

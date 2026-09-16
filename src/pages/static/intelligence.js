@@ -213,56 +213,141 @@
     }
     const regimeObject = daily && daily.market_regime;
     const classification = current(regimeObject) && regimeObject.payload && regimeObject.payload.classification;
-    const regimeLabels = {risk_off: "Risk-Off", risk_on: "Risk-On", mixed: "Mixed（方向不一）"};
-    const regimeExplanations = {
-      risk_off: "已驗證的跨資產條件整體偏向防守。",
-      risk_on: "已驗證的跨資產條件整體偏向承擔風險。",
-      mixed: "已驗證的跨資產條件呈現不同方向。"
+    const regimeHeadlines = {
+      risk_off: "目前市場偏向避險（Risk-Off）",
+      risk_on: "目前市場偏向風險資產（Risk-On）",
+      mixed: "目前市場方向分歧（Mixed）"
     };
-    const regime = regimeLabels[classification]
-      ? "市場環境：" + regimeLabels[classification]
-      : "市場環境：暫時無法判定";
-    const regimeExplanation = regimeExplanations[classification] || "目前有效證據不足，系統保留判斷。";
+    const regimeExplanations = {
+      risk_off: "目前多個市場的走勢較偏防守，反映風險承受意願較低；這是現況描述，不是走勢預測。",
+      risk_on: "目前多個市場的走勢較偏積極，反映風險承受意願較高；這是現況描述，不是走勢預測。",
+      mixed: "主要市場走勢互有分歧，暫時未形成清晰主線。"
+    };
+    const regime = regimeHeadlines[classification]
+      ? regimeHeadlines[classification]
+      : "目前市場環境暫時無法判定";
+    const regimeExplanation = regimeExplanations[classification] || "現有資料不足，暫時不宜為市場定調；待下一輪更新再作判斷。";
     const names = {"BTC-USD":"BTC", "ETH-USD":"ETH", DXY:"美元指數", US10Y:"美國十年期公債殖利率", GOLD:"黃金", VIX:"VIX", SPY:"SPY", QQQ:"QQQ", EURUSD:"EURUSD", USDJPY:"USDJPY", OIL:"WTI 原油"};
+    function eventDisplayName(value) {
+      if (typeof value !== "string") return "官方經濟數據";
+      if (/consumer price|\bCPI\b/i.test(value)) return "消費物價指數（CPI；" + value + "）";
+      if (/employment situation|nonfarm|non-farm/i.test(value)) return "美國就業報告（" + value + "）";
+      if (/international trade in goods and services/i.test(value)) return "美國商品與服務貿易數據（" + value + "）";
+      if (/FOMC|federal open market committee/i.test(value)) return "聯儲局議息會議（FOMC；" + value + "）";
+      return "官方經濟數據（" + value + "）";
+    }
     function facts(payload) {
       const values = payload.observed_values || (payload.observed_facts && payload.observed_facts.observations) || [];
       return values.filter(function (v) {
         return names[v.asset] && ["daily_change_pct", "daily_change_bps"].includes(v.metric) && typeof v.value === "number" && Number.isFinite(v.value);
-      }).map(function (v) { return {asset:v.asset, name:names[v.asset], direction:v.value > 0 ? "上升" : v.value < 0 ? "下降" : "持平"}; });
+      }).map(function (v) { return {asset:v.asset, name:names[v.asset], direction:v.value > 0 ? "走高" : v.value < 0 ? "回落" : "持平"}; });
     }
     const stories = (top.items || []).map(function (item) {
       const wrapper = objects.find(function (o) {
         const p = o.payload || {};
         return [o.object_id, p.signal_id, p.risk_id, p.run_id].includes(item.sourceObjectId);
       });
-      const result = {rank:item.rank, id:item.id, storyKey:item.storyKey, headline:"市場觀察待核對", explanation:"目前缺少可直接核對的中文摘要依據，請展開原始記錄。", watch:null, current:false};
+      const result = {
+        rank:item.rank, id:item.id, storyKey:item.storyKey,
+        headline:"這項市場觀察仍待核對",
+        what:"目前缺少足夠資料說明發生了什麼事。",
+        why:"資料未完成核對前，不應將這項觀察視為目前市場結論。",
+        watch:"等待下一批有效資料，再核對相關市場是否出現一致變化。",
+        current:false
+      };
       if (item.freshnessStatus !== "current" || !current(wrapper)) {
         result.headline = item.freshnessStatus === "stale" ? "歷史觀察，資料已過期" : "市場觀察暫無有效資料";
-        result.explanation = "此項不作為目前市場結論；原始敘述、時間及證據仍可查閱。";
+        result.what = "目前沒有可用的新資料支持這項觀察。";
+        result.why = "過期或未完成核對的資料，不能代表現時市場狀況。";
+        result.watch = "等待下一批有效資料；原始敘述、時間及證據仍可查閱。";
         return result;
       }
       const payload = wrapper.payload || {};
       const observed = facts(payload);
       const directRegime = payload.classification || (payload.observed_facts && payload.observed_facts.classification);
-      if (regimeLabels[directRegime]) {
-        result.headline = "市場環境偏向 " + regimeLabels[directRegime];
-        result.explanation = regimeExplanations[directRegime] + "這描述目前觀察，並不表示走勢會延續。";
-        result.watch = "留意下一份有效資料中的跨資產條件是否仍一致。";
+      const eventFacts = payload.observed_facts || {};
+      if (item.type === "upcoming_event" || payload.category === "upcoming_event") {
+        const scheduledAt = eventFacts.scheduled_at || (payload.time_window && payload.time_window.scheduled_at);
+        const scheduledTime = Date.parse(scheduledAt);
+        const eventName = typeof eventFacts.event_name === "string"
+          ? eventFacts.event_name : typeof eventFacts.name === "string" ? eventFacts.name : "官方經濟數據";
+        if (Number.isFinite(scheduledTime) && scheduledTime >= Date.now() && scheduledTime <= Date.now() + 48 * 3600000) {
+          result.headline = eventDisplayName(eventName) + "即將公布";
+          result.what = "官方日曆顯示，公布時間為 " + scheduledAt + "。";
+          result.why = "這項數據可能改變市場對經濟現況的理解，但現有資料未指向特定升跌方向。";
+          result.watch = "重點留意官方公布內容，以及其後經驗證的市場變化。";
+          result.current = true;
+        } else {
+          result.headline = "這項經濟事件已不在未來 48 小時觀察期";
+          result.what = "原定公布項目是「" + eventDisplayName(eventName) + "」，時間為 " + (scheduledAt || "未知") + "。";
+          result.why = "已過觀察期的事件不能當作目前的未來風險。";
+          result.watch = "等待最新官方日曆資料，再確認下一項需要留意的事件。";
+        }
+      } else if (item.type === "data_quality" || payload.category === "data_quality") {
+        result.headline = "部分市場資料暫不完整";
+        result.what = "一個或多個市場資料來源目前未能提供完整或最新內容。";
+        result.why = "現有重點仍可閱讀，但缺漏部分不能代表完整市場狀況。";
+        result.watch = "下一次更新要留意資料是否恢復，以及缺漏範圍有否收窄。";
+        result.current = true;
+      } else if (regimeHeadlines[directRegime]) {
+        result.headline = regimeHeadlines[directRegime];
+        result.what = directRegime === "risk_off"
+          ? "目前主要市場走勢整體較偏防守。"
+          : directRegime === "risk_on"
+            ? "目前主要市場走勢整體較偏積極。"
+            : "主要市場的變化方向並不一致。";
+        result.why = directRegime === "mixed"
+          ? "市場未形成單一主線，個別資產的變化不宜代表整體環境。"
+          : "這是理解其他市場變化的重要背景，但不代表下一步走向。";
+        result.watch = "下一輪更新要看跨市場方向是否仍然一致。";
         result.current = true;
       } else if (observed.length) {
         const crypto = observed.length === 2 && observed.some(v=>v.asset === "BTC-USD") && observed.some(v=>v.asset === "ETH-USD");
+        const dxy = observed.find(v=>v.asset === "DXY");
+        const eurusd = observed.find(v=>v.asset === "EURUSD");
+        const gold = observed.find(v=>v.asset === "GOLD");
+        const spy = observed.find(v=>v.asset === "SPY");
+        const qqq = observed.find(v=>v.asset === "QQQ");
+        const dollarStory = dxy && eurusd && dxy.direction !== eurusd.direction;
+        const goldDollarStory = dxy && gold && dxy.direction !== gold.direction;
+        const equityStory = spy && qqq && spy.direction === qqq.direction;
         result.headline = crypto && observed[0].direction === observed[1].direction
-          ? "BTC／ETH 同步" + observed[0].direction
-          : observed.slice(0, 2).map(v=>v.name + v.direction).join("、");
-        result.explanation = observed.map(v=>v.name + "日變動" + v.direction).join("；") + "。這些共同變化可用來追蹤跨市場方向是否一致。";
-        result.watch = "留意「" + result.headline + "」的共同變化是否延續；以後續有效觀察核對。";
+          ? "BTC 與 ETH 同步" + observed[0].direction
+          : equityStory
+            ? "SPY 與 QQQ 同步" + spy.direction
+          : goldDollarStory
+            ? "黃金" + gold.direction + "、美元" + dxy.direction
+          : dollarStory
+            ? (dxy.direction === "走高" ? "美元走強，歐元兌美元回落" : "美元走弱，歐元兌美元走高")
+            : observed.slice(0, 2).map(v=>v.name + v.direction).join("、");
+        result.what = observed.map(v=>v.name + v.direction).join("；") + "。";
+        result.why = crypto
+          ? "兩項主要加密資產同向，顯示波動並非只集中於單一幣種。"
+          : equityStory
+            ? "兩項主要美股指數 ETF 同向，顯示變化並非只集中於單一指數。"
+          : goldDollarStory
+            ? "黃金與美元方向相反，值得放在同一框架觀察，但現有資料不能證明因果。"
+          : dollarStory
+            ? "美元指數與主要匯率方向一致，顯示今次美元變化並非單一匯率現象。"
+            : "相關市場同時變化，顯示這並非單一資產的個別波動。";
+        result.watch = crypto
+          ? "下一輪更新要看 BTC 與 ETH 是否繼續同向。"
+          : equityStory
+            ? "下一輪更新要看 SPY 與 QQQ 是否仍然同向。"
+          : goldDollarStory
+            ? "下一輪更新要看黃金與美元是否繼續維持相反方向。"
+          : dollarStory
+            ? "下一輪更新要看美元指數與主要匯率是否仍然一致。"
+            : "下一輪更新要看相關市場是否維持同一方向。";
         result.current = true;
       }
       return result;
     });
     const summaryStories = stories.filter(s=>s.current && !String(s.storyKey || "").startsWith("market_state:"));
     const summary = [regime + "。"].concat(summaryStories.slice(0, 2).map(s=>s.headline + "。"));
-    if (summary.length === 1) summary.push("目前沒有足夠的已驗證重點可供概括。");
+    if (summary.length === 1) summary.push(classification
+      ? "除市場環境外，現有資料暫未支持更多可靠主線。"
+      : "現有資料不足，今日暫未能整理出可靠的市場主線。");
     const watch = stories.filter(s=>s.current && s.watch).map(s=>s.watch);
     // Do not fabricate a calendar event or claim an empty calendar means no risk.
     const events = (daily && daily.upcoming_events || []).filter(current);
@@ -276,10 +361,10 @@
     if (!daily || daily.status === "unavailable") limits.push("今日市場資料暫未完整取得。");
     else if (daily.status === "partial") limits.push("部分來源資料缺漏，報告未涵蓋完整市場。");
     if (daily && daily.freshness_status === "stale" || stories.some(s=>!s.current)) limits.push("部分觀察已過期或未能核對，不能視為目前狀況。");
-    if (aiBrief && aiBrief.mode === "deterministic_fallback") limits.push("AI 暫未提供文字改寫，目前採用規則式備援簡報。");
+    if (aiBrief && aiBrief.mode === "deterministic_fallback") limits.push("AI 文字整理暫時未能使用；目前顯示經驗證的基本市場簡報。");
     if (!derivatives) limits.push("衍生品資料暫無法取得，尚未用於正式分析。");
     else limits.push("衍生品仍在測試觀察階段，尚未用於正式分析。");
-    if (!events.length) limits.push("目前沒有可列出的已驗證近期事件；不代表未來沒有事件風險。");
+    if (!events.length) limits.push("目前未有足夠資料列出未來 48 小時的重要事件；這不代表期間沒有事件風險。");
     const seenWatch = new Set();
     const orderedWatch = watch.filter(function (item) {
       if (seenWatch.has(item)) return false;
@@ -308,7 +393,9 @@
     reading.stories.forEach(function (s) {
       const article = element(doc, "article", "reading-story");
       article.appendChild(element(doc, "h3", "", s.headline));
-      article.appendChild(element(doc, "p", "", s.explanation));
+      article.appendChild(element(doc, "p", "", "發生什麼事：" + s.what));
+      article.appendChild(element(doc, "p", "", "為什麼重要：" + s.why));
+      article.appendChild(element(doc, "p", "", "接下來留意：" + s.watch));
       const link = element(doc, "a", "", "查看此項證據");
       link.setAttribute("href", "#audit-top-" + encodeURIComponent(s.id));
       link.addEventListener("click", function () { doc.getElementById("technical-report").open = true; });
