@@ -2,8 +2,8 @@ name: Daily Market Brief
 
 on:
   schedule:
-    - cron: "30 8 * * *"
-      timezone: "Asia/Taipei"
+    # 00:30 UTC = 08:30 Asia/Taipei year-round.
+    - cron: "30 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,6 +19,9 @@ jobs:
     name: Test and generate daily outputs
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write # create-only date file on the dedicated morning-reports branch
+      actions: read
 
     steps:
       - name: Check out repository
@@ -38,6 +41,56 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q
+
+      - name: Resolve Morning Report slot
+        id: morning_slot
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+          from src.morning_report.baseline import instant, iso
+          from src.morning_report.checkpoint_cli import scheduled_slot
+          slot=scheduled_slot(os.getenv('MORNING_SCHEDULED_AT') or None)
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as out:
+              out.write('slot='+slot+'\n')
+              out.write('cutoff_utc='+iso(instant(slot))+'\n')
+              out.write('report_date='+instant(slot).astimezone(ZoneInfo('Asia/Taipei')).date().isoformat()+'\n')
+          PY
+
+      - name: Find latest source completed before Morning Report cutoff
+        id: morning_source
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          MORNING_CUTOFF: ${{ steps.morning_slot.outputs.cutoff_utc }}
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const cutoff = Date.parse(process.env.MORNING_CUTOFF);
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns,
+              {owner, repo, workflow_id:'daily_market_brief.yml', branch:context.payload.repository.default_branch,
+               status:'success', per_page:100});
+            for (const r of runs.sort((a,b)=>b.id-a.id)) {
+              if (r.id >= context.runId || Date.parse(r.updated_at) > cutoff ||
+                  r.head_repository?.full_name !== `${owner}/${repo}`) continue;
+              const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts,
+                {owner,repo,run_id:r.id,per_page:100});
+              const a = artifacts.find(a=>!a.expired && a.name.startsWith('daily-market-brief-'));
+              if (a) { core.setOutput('id',String(a.id)); core.setOutput('run_id',String(r.id)); return; }
+            }
+            core.setOutput('id','');
+
+      - name: Download pre-cutoff Morning Report source
+        if: steps.morning_source.outputs.id != ''
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ steps.morning_source.outputs.id }}
+          run-id: ${{ steps.morning_source.outputs.run_id }}
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: work/morning-source
 
       - name: Find previous available report
         id: previous
@@ -93,6 +146,27 @@ jobs:
           OPENAI_GROUNDED_BRIEF_MAX_INPUT_CHARS: "200000"
           OPENAI_GROUNDED_BRIEF_TRANSIENT_RETRIES: "0"
         run: python -m src.orchestration.pipeline
+
+      - name: Discover or create fixed Morning Report checkpoint
+        id: morning_checkpoint
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python -m src.morning_report.checkpoint_cli
+          --scheduled-at '${{ steps.morning_slot.outputs.slot }}'
+          --source-root work/morning-source
+          --public-out docs/data/morning_report_public.json
+
+      - name: Upload public Morning Report backup artifact
+        if: steps.morning_checkpoint.outcome == 'success' && steps.morning_checkpoint.outputs.created == 'true'
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: morning-report-checkpoint-${{ steps.morning_slot.outputs.report_date }}
+          path: docs/data/morning_report_public.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Discover latest shadow public projection
         id: shadow

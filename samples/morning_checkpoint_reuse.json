@@ -1,0 +1,18 @@
+{
+  "simulation_only": true,
+  "report_date": "2026-09-04",
+  "baseline_timestamp": "2026-09-04T00:30:00Z",
+  "report_id": "morning_2026-09-04_a10c57bc8de023658855",
+  "public_projection_sha256": "da786c2a2c9b2280a537a524e25004906987982284d64cad22deb96f7fb05920",
+  "first_run": {
+    "creator_run_id": 801,
+    "created": true
+  },
+  "later_run": {
+    "requesting_run_id": 900,
+    "creator_run_id": 801,
+    "created": false,
+    "local_source_inputs_present": false,
+    "report_unchanged": true
+  }
+}
