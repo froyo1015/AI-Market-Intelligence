@@ -14,11 +14,33 @@ If the branch or an existing date file is unavailable/corrupt, the Morning Repor
 
 ## Live validation evidence
 
-Pending first and second production runs. Record actual run IDs, commit identity, report ID, public projection SHA-256, baseline timestamp, artifact ID, Pages result, and security scan after execution. Do not infer success from local tests.
+Production activation commit: `0d73f8dbce2712e13f8264b7d32dc50ba86190d0` on `main`. The archive branch was created from the prior `main` HEAD and remains separate from generated files on `main`.
+
+| Check | Live Run A — first creation | Live Run B — same-day retry |
+|---|---|---|
+| Actions run | [35832666621](https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/35832666621) | [35832903568](https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/35832903568) |
+| Generate / Pages jobs | success / success | success / success |
+| Checkpoint CLI | `created:true`, `creator_run_id:35832666621` | `created:false`, `creator_run_id:35832666621` |
+| Report ID | `morning_2026-09-23_5ad868ac444dc324bf83` | unchanged |
+| Baseline date / time | `2026-09-23`, `2026-09-23T00:30:00Z` (08:30 Taiwan) | unchanged |
+| Actual generation time | `2026-09-23T07:38:21.698999Z` | unchanged in reused file |
+| Report / source state | `partial`, source freshness `current`; source run `run_20260922T051308Z_orchestration_199bdf533cb3` | unchanged |
+| Dated branch file | `2026/2026-09-23/morning_report_public.json` | same file, no second path commit |
+| Public JSON SHA-256 | `b226ac3918c9ac5528da5b8812a4583c452b0235b692bbfeea822270dfb0ad95` | identical |
+| Branch path history | one commit, `de4094f91613da69541ef35864ca5944745a574c` | still one commit |
+| Git blob SHA / size | `016395236e995fb3fb365d7f95630b964776b32d` / 11,127 bytes | unchanged |
+| Secondary artifact | ID `10737454561`, 30-day expiry `2026-10-23T07:38:25Z` | creation-only upload skipped; no second date artifact |
+| Pages deployment | `6608848069` success | `6608888341` success |
+
+The date-file commit message records Run A, the source branch/workflow/repository, deployment commit and the exact file hash. Run B's log explicitly states `created:false`. The public [Morning Report JSON](https://froyo1015.github.io/AI-Market-Intelligence/data/morning_report_public.json) after Run B has the same report ID, baseline timestamp and byte SHA-256 as the protected archive file. It exposes `report_type:"morning"` and `baseline_for_date:"2026-09-23"`; no Market Pulse was introduced. The live public JSON passed the approved projection validator and a scan for credentials, raw responses, internal filesystem paths and private-key markers with zero findings. Artifact upload logs confirm exactly one file; the backup artifact is not the canonical lock.
+
+Both runs were **manual on September 23 Taiwan afternoon**. They validate real cross-run immutability and Pages publication, not punctuality of the next automatic 08:30 scheduled fire. `generated_at` is therefore later than the 08:30 baseline cutoff by design; the source run was selected from before that cutoff. The first scheduled morning execution remains an operational follow-up, not a condition claimed to have passed here.
 
 ## Concurrency and next-day validation
 
 Offline tests cover two candidate creators racing: only the first create succeeds; a conflict loads the validated existing file. The production workflow also uses a single `daily-market-brief` concurrency group with `cancel-in-progress: false`. Next-day path and timezone rollover are covered by deterministic tests; no future-dated live file is created merely to test rollover.
+
+Local validation before activation: 652 tests collected, 651 passed and 1 skipped; relevant Morning Report tests passed; production YAML parsed; staged diff check passed; no staged secret/private-path markers. The live archive branch protection was confirmed as admin-enforced, linear-history-only, force-push disabled and deletion disabled. No deliberately corrupt production artifact, permission denial, or failed live run was injected; those failure cases are covered by offline tests and fail-closed code paths.
 
 ## Rollback and recovery
 
