@@ -1,0 +1,41 @@
+name: Daily Reference Pre-Cutoff Capture
+
+on:
+  schedule:
+    # 00:10 UTC = 08:10 Asia/Taipei. Late runs after 08:30 fail closed.
+    - cron: "10 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-reference-capture
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    name: Capture official daily references before Morning cutoff
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install verified HTTPS client
+        run: python -m pip install 'requests>=2.31,<3'
+      - name: Create or restore daily reference capture
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python -m src.daily_reference.checkpoint_cli capture
+      - name: Upload public-safe capture backup
+        uses: actions/upload-artifact@v7
+        with:
+          name: daily-reference-capture-${{ github.run_id }}
+          path: work/daily-reference-capture/daily_reference_capture_public.json
+          if-no-files-found: error
+          retention-days: 30
