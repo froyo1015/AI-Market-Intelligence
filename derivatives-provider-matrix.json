@@ -1,0 +1,126 @@
+{
+  "schema_version": "derivatives_provider_review_v1",
+  "review_date": "2026-09-24",
+  "production_enabled": false,
+  "providers": [
+    {
+      "provider_id": "okx",
+      "client": "native_public_rest",
+      "venue_id": "venue:okx",
+      "instruments": ["BTC-USDT-SWAP", "ETH-USDT-SWAP"],
+      "instrument_type": "linear_usdt_settled_perpetual",
+      "funding": {
+        "endpoint": "https://openapi.okx.com/api/v5/public/funding-rate-history",
+        "value_field": "realizedRate",
+        "unit": "fraction_per_interval",
+        "timestamp_field": "fundingTime",
+        "timestamp_unit": "milliseconds",
+        "timestamp_semantics": "settlement_time",
+        "interval": "difference_between_latest_two_completed_settlements",
+        "predicted_rate_substitution": false
+      },
+      "open_interest": {
+        "endpoint": "https://openapi.okx.com/api/v5/public/open-interest",
+        "value_field": "oi",
+        "unit": "contracts",
+        "timestamp_field": "ts",
+        "timestamp_unit": "milliseconds",
+        "timestamp_semantics": "provider_data_return_time",
+        "private_unit_metadata": ["oiCcy", "oiUsd", "ctVal", "ctMult", "ctValCcy", "ctType", "settleCcy"],
+        "cross_venue_conversion": false
+      },
+      "authentication_required": false,
+      "collection_mode": "explicit_manual_shadow_trial",
+      "rights": {
+        "api_access": "documented_public_endpoint",
+        "internal_use": "limited_personal_noncommercial_use_only_product_use_not_approved",
+        "public_raw_display": "blocked",
+        "derived_display": "blocked",
+        "redistribution": "blocked",
+        "attribution": "not_a_substitute_for_permission",
+        "commercial_use": "written_authorization_required",
+        "classification": "blocked",
+        "reference": "https://www.okx.com/help/okx-api-agreement"
+      }
+    },
+    {
+      "provider_id": "binance_usdm",
+      "client": "native_public_rest",
+      "venue_id": "venue:binance-usdm",
+      "instruments": ["BTCUSDT", "ETHUSDT"],
+      "funding_unit": "fraction_per_interval",
+      "open_interest_unit": "base_asset",
+      "authentication_required": false,
+      "github_actions_verified_status": "access_denied",
+      "last_verified_run": 35970120756,
+      "collection_mode": "existing_scheduled_default",
+      "rights": {
+        "api_access": "documented_public_endpoint_runner_denied",
+        "internal_use": "unclear",
+        "public_raw_display": "unclear",
+        "derived_display": "unclear",
+        "redistribution": "unclear",
+        "attribution": "preserve_source_no_licence_grant_established",
+        "commercial_use": "unclear",
+        "classification": "unclear",
+        "public_gate": "blocked",
+        "reference": "https://www.binance.com/en/terms"
+      }
+    },
+    {
+      "provider_id": "ccxt_okx",
+      "client": "ccxt",
+      "venue_id": "venue:okx",
+      "implemented": false,
+      "independent_redundancy": false,
+      "documented_methods": ["fetchFundingRate", "fetchFundingRateHistory", "fetchOpenInterest"],
+      "timestamp_normalization": "integer_milliseconds",
+      "unit_normalization": "insufficient_without_native_contract_metadata",
+      "funding_history_field_verified": "realizedRate",
+      "open_interest_amount_field_verified": "oi_contracts",
+      "rights": "inherits_okx_blocked",
+      "reference": "https://docs.ccxt.com/docs/exchanges/okx"
+    },
+    {
+      "provider_id": "ccxt_binanceusdm",
+      "client": "ccxt",
+      "venue_id": "venue:binance-usdm",
+      "implemented": false,
+      "independent_redundancy": false,
+      "documented_metrics": ["funding_rate", "open_interest"],
+      "rights": "inherits_binance_unclear",
+      "access_denial_bypass": false,
+      "reference": "https://docs.ccxt.com/docs/exchanges/binance"
+    },
+    {
+      "provider_id": "ccxt_bybit",
+      "client": "ccxt",
+      "venue_id": "venue:bybit",
+      "implemented": false,
+      "github_actions_status": "not_tested",
+      "potential_independent_redundancy": true,
+      "documented_methods": ["fetchFundingRateHistory", "fetchOpenInterest", "fetchOpenInterestHistory"],
+      "unit_normalization": "must_distinguish_linear_coin_quantity_from_inverse_usd_quantity",
+      "rights": {
+        "api_access": "documented",
+        "internal_use": "subject_to_applicable_API_terms",
+        "public_raw_display": "unclear",
+        "derived_display": "unclear",
+        "redistribution": "blocked_pending_permission",
+        "attribution": "not_a_substitute_for_permission",
+        "commercial_use": "restricted",
+        "classification": "blocked",
+        "reference": "https://www.bybit.com/en/help-center/article/API-Terms"
+      }
+    }
+  ],
+  "fallback": {
+    "enabled": false,
+    "selection": "explicit_single_venue_per_run",
+    "proposed_order_after_review": ["okx", "binance_usdm"],
+    "partial_primary": "keep_partial_primary",
+    "all_unavailable": "unavailable",
+    "cross_venue_average": false,
+    "ccxt_third_venue_approved": false
+  }
+}

@@ -1,6 +1,8 @@
 # Phase 14.1.1 — Derivatives provider recovery
 
-Implementation candidate: native OKX funding/OI, explicit venue selection, existing observation/evidence/archive contracts. Live GitHub Actions results will be recorded below after the two controlled runs. No public product enablement.
+Implementation candidate: native OKX funding/OI, explicit venue selection, existing observation/evidence/archive contracts. Live GitHub Actions results will be recorded below. No public product enablement.
+
+Initial diagnostic run `36015024779` on `c79f1abb6b73c33b1ae244e24fb91afe0d2a2852` successfully restored the latest two-entry checkpoint, but `www.okx.com` was classified access_denied. Subsequent inspection of the official v5 **Production Trading Services** documentation established that the designated REST host is now `https://openapi.okx.com`. The adapter was corrected to this one documented host before recovery trials. No regional endpoint, proxy or host-rotation fallback is used. The initial failure is retained and is not counted as a successful collection trial.
 
 ## Minimum architecture changes
 
@@ -23,6 +25,8 @@ Official definitions: [funding history](https://www.okx.com/docs-v5/en/#public-d
 Evaluate only OKX, Binance USD-M and Bybit. All expose funding/history and OI through documented CCXT methods; actual availability must be checked per exchange/version. CCXT-OKX is the same source, not redundancy. Bybit could provide venue redundancy but is not approved or live-tested; rights/access must pass independently.
 
 CCXT supplies unified millisecond timestamps and symbol IDs, but applications still need native instrument ID, venue, settlement currency, linear/inverse type, `contractSize`, interval, settled-versus-projected funding, OI amount-versus-notional definitions and original source field. Floating-point normalization and raw `info` require care. Do not install it merely to wrap two existing GET adapters, and do not assume its unified funding field means realized settlement. Use exchange-specific raw fields with private receipts if a client adapter is later added.
+
+Direct review of [CCXT's OKX implementation](https://github.com/ccxt/ccxt/blob/master/python/ccxt/okx.py) on 2026-09-24 confirms `fetch_funding_rate_history` selects `realizedRate` and integer fundingTime without second rounding. Its optional automatic pagination uses an `8h` interval, so leave pagination off and validate actual settlement intervals. `parse_open_interest` maps `oi` to openInterestAmount, `oiUsd` to openInterestValue and retains `oiCcy` separately; the unified amount is not automatically coin quantity. Preserve native decimal strings instead of relying on a float roundtrip.
 
 ## HKUDS/Vibe-Trading reference audit
 

@@ -27,7 +27,9 @@ def endpoints(metric):
 
 
 class FundingTransport(shared.PublicTransport):
-    host = "https://www.okx.com"
+    # Current official v5 Production Trading Services REST host. Never rotate
+    # to regional/proxy hosts after an access denial.
+    host = "https://openapi.okx.com"
     endpoints = endpoints("funding_rate")
 
     def query(self, name, cutoff):
@@ -38,6 +40,12 @@ class FundingTransport(shared.PublicTransport):
         if self.endpoints[name].endswith("open-interest"):
             return {"instType": "SWAP", "instId": name}
         return {"instId": name, "limit": "10"}
+
+    def get(self, name, cutoff, timeout):
+        status, body = super().get(name, cutoff, timeout)
+        # Fixed endpoint identifier and HTTP integer only; never headers/body.
+        print("OKX public endpoint " + name + " HTTP " + str(status))
+        return status, body
 
 
 class OITransport(FundingTransport):

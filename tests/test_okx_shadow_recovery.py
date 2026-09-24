@@ -180,3 +180,10 @@ def test_checkpoint_order_uses_creation_time_not_numeric_id():
     assert "orderCheckpoints(artifacts, branch)" in workflow
     assert "run.conclusion === 'success'" in workflow
     assert "--provider" in workflow and "derivatives-recovery-proof.json" in workflow
+
+
+def test_documented_okx_host_and_bounded_symbol_queries():
+    funding, oi = okx.FundingTransport(), okx.OITransport()
+    assert funding.host == oi.host == "https://openapi.okx.com"
+    assert funding.query("BTC-USDT-SWAP", SETTLED) == {"instId": "BTC-USDT-SWAP", "limit": "10"}
+    assert oi.query("ETH-USDT-SWAP", SETTLED) == {"instType": "SWAP", "instId": "ETH-USDT-SWAP"}
