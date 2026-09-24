@@ -1,6 +1,7 @@
 """Daily shadow collection only; no production writers or consumers."""
 
 import argparse
+import json
 from pathlib import Path
 
 from src.intelligence.evidence_boundary import read, write_context, check_output_path
@@ -40,6 +41,13 @@ def run(root, output, daily, upstream, run_id, clock=utc_now, adapters=None):
         adapter.collect(ProviderRequest(PROVIDER, tuple(REFS.values()), (metric,)), EnvironmentSecretAccess(set()))
         wrappers.append(adapter.artifact)
     require(len(wrappers) == 2, "missing adapters")
+    # Adapter validators admit only closed failure codes. Report those codes,
+    # never provider bodies, headers, receipts or credentials, for live recovery.
+    print("Shadow provider health: " + json.dumps([
+        {"metric": metric, "status": artifact["status"],
+         "symbols": artifact["symbol_status"], "failure_codes": artifact["failures"]}
+        for metric, artifact in zip(("funding_rate", "open_interest"), wrappers)
+    ], sort_keys=True))
     cutoff = clock()
     path = append(root, {"funding": [wrappers[0]], "oi": [wrappers[1]], "daily": daily,
                         "upstream": list(upstream), "cutoff": cutoff, "archived_at": clock()})
