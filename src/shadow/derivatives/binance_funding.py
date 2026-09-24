@@ -62,6 +62,7 @@ class PublicTransport:
     """Fixed-host HTTPS GET only; no env proxies, cookies, keys or redirects."""
 
     endpoints = ENDPOINTS
+    host = "https://fapi.binance.com"
 
     def query(self, name, cutoff):
         return {"symbol": name, "startTime": max(0, cutoff - 72 * 3600000),
@@ -72,7 +73,7 @@ class PublicTransport:
             raise SecurityBoundaryError("endpoint_not_allowlisted")
         params = self.query(name, cutoff)
         query = "?" + urlencode(params) if params else ""
-        request = Request("https://fapi.binance.com" + self.endpoints[name] + query,
+        request = Request(self.host + self.endpoints[name] + query,
                           headers={"Accept": "application/json", "Accept-Encoding": "identity"})
         try:
             started = time.monotonic()
@@ -110,6 +111,11 @@ class BinanceFundingAdapter:
     endpoints = ENDPOINTS
     metric = "funding_rate"
     transport_type = PublicTransport
+    provider_id = PROVIDER
+    instrument_refs = REFS
+
+    def response_failure(self, parsed):
+        return FailureCode.INVALID_RESPONSE if isinstance(parsed, dict) and "code" in parsed else None
 
     def build(self, *args):
         return assemble(*args)
@@ -125,8 +131,8 @@ class BinanceFundingAdapter:
 
     def collect(self, request, secrets):
         # Deliberately never call secrets.get(): these endpoints are public.
-        require(request.provider_id == PROVIDER and request.metrics == (self.metric,) and
-                set(request.instrument_refs) == set(REFS.values()), "unsupported request scope")
+        require(request.provider_id == self.provider_id and request.metrics == (self.metric,) and
+                set(request.instrument_refs) == set(self.instrument_refs.values()), "unsupported request scope")
         cutoff = self.clock()
         cutoff_ms = milliseconds(cutoff)
         start, last, attempts = self.monotonic(), None, 0
@@ -153,9 +159,8 @@ class BinanceFundingAdapter:
                         failure = FailureCode.BUDGET_EXHAUSTED
                     elif status == 200:
                         parsed = decode(body)
-                        if isinstance(parsed, dict) and "code" in parsed:
-                            failure = FailureCode.INVALID_RESPONSE
-                        else:
+                        failure = self.response_failure(parsed)
+                        if failure is None:
                             captures[name] = {"endpoint": self.endpoints[name], "captured_at": self.clock(),
                                               "sha256": "sha256:" + hashlib.sha256(body).hexdigest(),
                                               "body_base64": base64.b64encode(body).decode("ascii")}
@@ -224,13 +229,19 @@ def normalize(symbol, documents, cutoff):
     return definition, {"metric": "funding_rate", "symbol": symbol, "value": values[t], "time": t}
 
 
-def assemble(run_id, requested, evaluated, captures, failures, *, spec=None):
+def assemble(run_id, requested, evaluated, captures, failures, *, spec=None,
+             provider_spec=None, collection_started_at=None):
     """Deterministic normalization receipt bridge into the existing validator."""
     endpoints, normalizer, dependencies, selected_metric, schema, rule, policy = spec or (
         ENDPOINTS, normalize, ("exchange", "intervals"), "funding_rate", "binance_funding_shadow_v1",
         "binance-funding-normalization-v2", "fundingInfo-override-else-default8-history-tolerance1000ms")
     require(re.fullmatch(r"[A-Za-z0-9_-]+", run_id), "unsafe run")
     cutoff, evaluation = milliseconds(requested), milliseconds(evaluated)
+    provider, source_id, publisher, venue, symbols, instrument_prefix, observation_prefix = provider_spec or (
+        PROVIDER, "source:binance", "Binance", "venue:binance-usdm", SYMBOLS,
+        "instrument:binance-usdm-", "derivatives:observation:binance-")
+    capture_start = milliseconds(collection_started_at) if collection_started_at else cutoff
+    require(capture_start <= cutoff, "collection cutoff order")
     require(evaluation >= cutoff, "clock moved backwards")
     require(set(captures) <= set(endpoints) and set(failures) <= set(endpoints), "unknown capture")
     require(not set(captures) & set(failures), "capture/failure conflict")
@@ -239,24 +250,26 @@ def assemble(run_id, requested, evaluated, captures, failures, *, spec=None):
     for name, capture in captures.items():
         require(set(capture) == {"endpoint", "captured_at", "sha256", "body_base64"} and
                 capture["endpoint"] == endpoints[name], "invalid capture")
-        require(cutoff <= milliseconds(capture["captured_at"]) <= evaluation, "capture time out of run")
+        require(capture_start <= milliseconds(capture["captured_at"]) <= evaluation, "capture time out of run")
         body = base64.b64decode(capture["body_base64"], validate=True)
         require(capture["sha256"] == "sha256:" + hashlib.sha256(body).hexdigest(), "capture hash mismatch")
         docs[name] = decode(body)
     output = {"schema_contract": "derivatives_shadow_output_v1", "synthetic": False, "run_id": run_id,
               "requested_cutoff": requested, "evaluation_cutoff": evaluated, "replay_mode": "archived_point_in_time",
-              "sources": [{"source_id": "source:binance", "publisher": "Binance", "venue_id": "venue:binance-usdm",
+              "sources": [{"source_id": source_id, "publisher": publisher, "venue_id": venue,
                            "data_reliability": 1}], "receipts": [], "instruments": [], "observations": [], "coverage": []}
     raw, bridges, symbol_status = {}, [], {}
     final_failures = dict(failures)
-    for symbol in SYMBOLS:
-        deps = dependencies + (symbol,)
+    for symbol in symbols:
+        deps = (dependencies(symbol) if callable(dependencies) else dependencies) + (symbol,)
         if not all(n in docs for n in deps):
             final_failures[symbol] = failures.get(symbol) or failures.get("exchange") or failures.get("intervals") or "invalid_response"
             symbol_status[symbol] = "unavailable"
             continue
         try:
             definition, measurement = normalizer(symbol, docs, cutoff)
+            require(measurement["time"] <= min(milliseconds(captures[n]["captured_at"]) for n in deps
+                    if n == symbol), "observation newer than measurement capture")
         except Exception:
             final_failures[symbol] = "invalid_response"
             symbol_status[symbol] = "unavailable"
@@ -268,14 +281,14 @@ def assemble(run_id, requested, evaluated, captures, failures, *, spec=None):
             name = symbol + "-" + kind
             path = base + name + ".json"
             raw[path] = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
-            output["receipts"].append({"receipt_id": "receipt:" + name, "source_id": "source:binance",
+            output["receipts"].append({"receipt_id": "receipt:" + name, "source_id": source_id,
                                        "captured_at": known, "path": path,
                                        "sha256": "sha256:" + hashlib.sha256(raw[path]).hexdigest()})
             bridges.append({"normalized_receipt_ref": "receipt:" + name, "rule": rule,
                             "capture_refs": list(deps), "capture_hashes": [captures[n]["sha256"] for n in deps],
                             "symbol": symbol, "interval_policy": policy})
         # Revision identity is scoped by exact definition/capture hash, avoiding overwriting history.
-        iid = "instrument:binance-usdm-" + symbol.lower()
+        iid = instrument_prefix + symbol.lower()
         revision = int(digest({"definition": definition, "known": known})[7:19], 16) + 1
         instrument = {"instrument_id": iid, "version": revision, "metadata_receipt_ref": "receipt:" + symbol + "-metadata",
                       "definition_pointer": "", "definition": definition}
@@ -284,7 +297,7 @@ def assemble(run_id, requested, evaluated, captures, failures, *, spec=None):
         age = Decimal(evaluation - measurement["time"]) / 1000
         current = age <= (definition["funding_interval_seconds"] + 1800 if selected_metric == "funding_rate" else 7200)
         o = {"schema_contract": "derivatives_production_observation_v1", "synthetic": False,
-             "observation_id": "derivatives:observation:binance-" + ("oi-" if selected_metric == "open_interest" else "") + symbol + "-" + str(measurement["time"]),
+             "observation_id": observation_prefix + ("oi-" if selected_metric == "open_interest" else "") + symbol + "-" + str(measurement["time"]),
              "version": int(digest({"measurement": measurement, "known": known, "generated": evaluated})[7:19], 16) + 1,
              "instrument_ref": iid + "@" + str(revision), "receipt_ref": "receipt:" + symbol + "-measurement",
              "pointers": {"metric": "/metric", "symbol": "/symbol", "value": "/value", "timestamp": "/time"},
@@ -304,12 +317,14 @@ def assemble(run_id, requested, evaluated, captures, failures, *, spec=None):
                                        "reason": None if metric == selected_metric else "not_collected"})
         symbol_status[symbol] = "available"
     count = len(output["observations"])
-    artifact = {"schema_contract": schema, "provider_id": PROVIDER,
+    artifact = {"schema_contract": schema, "provider_id": provider,
                 "run_id": run_id, "requested_cutoff": requested, "evaluation_cutoff": evaluated,
                 "captures": captures, "fetch_failures": failures, "failures": final_failures,
                 "symbol_status": symbol_status, "status": "available" if count == 2 else "partial" if count else "unavailable",
                 "normalization_receipts": bridges, "observation_output": output,
                 "normalized_bytes": {p: base64.b64encode(b).decode("ascii") for p, b in raw.items()}}
+    if collection_started_at is not None:
+        artifact["collection_started_at"] = collection_started_at
     return artifact
 
 

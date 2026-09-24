@@ -241,12 +241,19 @@ def test_no_production_imports_or_publication():
     assert "shadow.derivatives" not in (root / "pyproject.toml").read_text()
     for p in (root / ".github/workflows").glob("*.yml"):
         if p.name == "derivatives_shadow.yml":
-            # Phase 8.1 permits isolated scheduling, never raw/public publication.
+            # Only ciphertext, rights-closed projection and closed operational proof.
             text = p.read_text()
             assert "upload-pages-artifact" not in text
-            assert text.count("uses: actions/upload-artifact") == 2
+            assert text.count("uses: actions/upload-artifact") == 3
             upload = text.split("- name: Persist ciphertext only")[1]
             assert "path: outputs/shadow/derivatives/scheduled/checkpoint.gpg" in upload
             assert "path: outputs/shadow/derivatives/scheduled/run/derivatives-shadow.json" in upload
+            assert "path: outputs/shadow/derivatives/scheduled/run/derivatives-recovery-proof.json" in upload
+            paths = [line.strip().split("path: ", 1)[1] for line in upload.splitlines() if line.strip().startswith("path: ")]
+            assert set(paths) == {
+                "outputs/shadow/derivatives/scheduled/checkpoint.gpg",
+                "outputs/shadow/derivatives/scheduled/run/derivatives-shadow.json",
+                "outputs/shadow/derivatives/scheduled/run/derivatives-recovery-proof.json",
+            }
             continue
         assert "shadow/derivatives" not in p.read_text()

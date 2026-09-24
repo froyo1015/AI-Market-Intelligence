@@ -8,9 +8,9 @@ from dataclasses import dataclass, asdict
 from decimal import Decimal
 
 from . import binance_funding as funding
-from . import binance_open_interest as oi
 from .production_validator import milliseconds
 from .validator import require, digest
+from .providers import validate_source, scope
 
 
 @dataclass(frozen=True)
@@ -33,12 +33,13 @@ def compose(funding_artifacts, oi_artifacts, evaluation_cutoff):
     cutoff = milliseconds(evaluation_cutoff)
     require(isinstance(funding_artifacts, list) and isinstance(oi_artifacts, list), "invalid input lists")
     artifacts, facts = {}, {}
-    for inputs, validator, contract in (
-        (funding_artifacts, funding.validate_adapter_artifact, "binance_funding_shadow_v1"),
-        (oi_artifacts, oi.validate_adapter_artifact, "binance_oi_shadow_v1"),
+    instruments_scope = scope(funding_artifacts + oi_artifacts)
+    for inputs, metric in (
+        (funding_artifacts, "funding_rate"), (oi_artifacts, "open_interest"),
     ):
         for a in inputs:
-            require(a.get("schema_contract") == contract and validator(a).valid, "invalid source artifact")
+            validate_source(a, metric)
+            contract = a["schema_contract"]
             require(milliseconds(a["evaluation_cutoff"]) <= cutoff, "input unavailable at cutoff")
             artifact_id = digest(a)
             if artifact_id in artifacts:
@@ -110,9 +111,9 @@ def compose(funding_artifacts, oi_artifacts, evaluation_cutoff):
         group["timestamp_skew_ms"] = milliseconds(times[-1]) - milliseconds(times[0])
         group["simultaneous"] = len(times) == 1
     coverage = []
-    for symbol in funding.SYMBOLS:
+    for symbol, instrument_id in instruments_scope.items():
         for metric in ("funding_rate", "open_interest"):
-            selected = [f for f in evidence if f["instrument_id"] == "instrument:binance-usdm-" + symbol.lower() and f["metric"] == metric]
+            selected = [f for f in evidence if f["instrument_id"] == instrument_id and f["metric"] == metric]
             coverage.append({"symbol": symbol, "metric": metric, "status": "available" if selected else "unavailable",
                              "fact_count": len(selected), "current_count": sum(f["freshness"]["freshness_status"] == "current" for f in selected)})
     n = sum(c["status"] == "available" for c in coverage)

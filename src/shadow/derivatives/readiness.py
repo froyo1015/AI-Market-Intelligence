@@ -6,9 +6,10 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from src.intelligence.evidence_boundary import write_context
-from .context_evaluation import evaluate, SLOTS
+from .context_evaluation import evaluate
 from .production_validator import milliseconds, unique_pairs, reject_constant
 from .validator import digest, require
+from .providers import slots as provider_slots
 
 POLICY = "derivatives-shadow-readiness-v1"
 CURRENT_KEYS = set("id type related_assets instrument_id venue_id source_records observations events evidence_records timestamps verification_level validation_status data_quality freshness current_eligible provenance".split())
@@ -66,7 +67,7 @@ def assess(history, as_of):
                 "availability": bool(m and m["data_availability"]["value"] == 1),
                 "freshness": bool(m and m["freshness_success_rate"]["value"] == 1),
                 "provenance": bool(m and m["provenance_completeness"]["value"] == 1),
-                "coverage": valid and covered == SLOTS,
+                "coverage": valid and covered == provider_slots(b["input_artifacts"] if b else []),
                 "safety": section["scope"] == "read_only_facts" and _safe(b) and _safe(section)
                           and all(set(f) == CURRENT_KEYS and not f["events"]
                                   and f["type"] == "derivatives_observation" for f in current),

@@ -9,6 +9,13 @@ on:
         description: "Initialize only when no checkpoint has ever been published"
         type: boolean
         default: false
+      provider:
+        description: "Explicit shadow venue; OKX is a controlled recovery trial"
+        type: choice
+        options:
+          - binance_usdm
+          - okx
+        default: binance_usdm
 
 permissions:
   contents: read
@@ -48,12 +55,13 @@ jobs:
             const artifacts = await github.paginate(github.rest.actions.listArtifactsForRepo,
               {owner, repo, name: 'derivatives-shadow-checkpoint', per_page: 100});
             const branch = context.payload.repository.default_branch;
-            const candidates = artifacts.filter(a => a.workflow_run?.head_branch === branch)
-              .sort((a, b) => b.id - a.id);
+            const {orderCheckpoints} = require('./src/shadow/derivatives/checkpoint_order.cjs');
+            const candidates = orderCheckpoints(artifacts, branch);
             let selected;
             for (const a of candidates) {
               const {data: run} = await github.rest.actions.getWorkflowRun({owner, repo, run_id: a.workflow_run.id});
               if (run.path === '.github/workflows/derivatives_shadow.yml' &&
+                  run.conclusion === 'success' && run.head_branch === branch &&
                   run.repository.full_name === `${owner}/${repo}` &&
                   run.head_repository.full_name === `${owner}/${repo}`) { selected = a; break; }
             }
@@ -83,11 +91,14 @@ jobs:
           --archive outputs/shadow/derivatives/scheduled/history
           --file outputs/shadow/derivatives/scheduled/restore/checkpoint.gpg
       - name: Collect, append and evaluate
+        env:
+          SHADOW_PROVIDER: ${{ inputs.provider || 'binance_usdm' }}
         run: >-
           python -m src.shadow.derivatives.scheduler
           --archive outputs/shadow/derivatives/scheduled/history
           --output outputs/shadow/derivatives/scheduled/run
           --run-id shadow-${{ github.run_id }}-${{ github.run_attempt }}
+          --provider "$SHADOW_PROVIDER"
       - name: Encrypt checkpoint
         env:
           DERIVATIVES_ARCHIVE_PASSPHRASE: ${{ secrets.DERIVATIVES_ARCHIVE_PASSPHRASE }}
@@ -108,5 +119,12 @@ jobs:
         with:
           name: derivatives-shadow-public
           path: outputs/shadow/derivatives/scheduled/run/derivatives-shadow.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish validated operational proof only
+        uses: actions/upload-artifact@v7
+        with:
+          name: derivatives-recovery-proof
+          path: outputs/shadow/derivatives/scheduled/run/derivatives-recovery-proof.json
           if-no-files-found: error
           retention-days: 30

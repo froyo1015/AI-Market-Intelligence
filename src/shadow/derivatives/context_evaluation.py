@@ -8,6 +8,7 @@ from src.intelligence.evidence_boundary import read, write_context
 from .production_validator import milliseconds, content_hash
 from .validator import digest, require, fraction
 from .binance_funding import canonical
+from .providers import slots as provider_slots
 
 SLOTS = {(f"instrument:binance-usdm-{symbol}", metric)
          for symbol in ("btcusdt", "ethusdt") for metric in ("funding_rate", "open_interest")}
@@ -81,6 +82,7 @@ def _metrics(bundle, context):
         require(section["bundle_ref"] == {"artifact_hash": digest(bundle), "evaluation_cutoff": bundle["evaluation_cutoff"]}, "bundle reference")
         facts = bundle["evidence"]
     ids = [f["evidence_id"] for f in facts]
+    expected_slots = provider_slots(bundle["input_artifacts"] if bundle else [])
     require(len(ids) == len(set(ids)), "duplicate evidence")
     current = section["current_facts"]
     actual = {r["id"]: r for r in current}
@@ -93,7 +95,7 @@ def _metrics(bundle, context):
             "unit", "source_timestamp", "metric_definition")}
         require(fact["evidence_id"] == "evidence:" + digest(identity)[7:], "evidence identity")
         slot = (fact["instrument_id"], fact["metric"])
-        require(slot in SLOTS, "unsupported slot")
+        require(slot in expected_slots, "unsupported slot")
         slots.add(slot)
         source_scores = _provenance(fact, bundle, cutoff)
         age = Decimal(cutoff - milliseconds(fact["source_timestamp"])) / 1000
