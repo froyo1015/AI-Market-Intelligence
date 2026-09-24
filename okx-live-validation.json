@@ -1,0 +1,110 @@
+{
+  "schema_version": "okx_live_validation_review_v1",
+  "review_date": "2026-09-24",
+  "production_enabled": false,
+  "minimum_success_requirement_met": false,
+  "provider_collection_status": "blocked",
+  "runs": [
+    {
+      "role": "initial_host_trial",
+      "run_id": 36015024779,
+      "url": "https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/36015024779",
+      "commit": "c79f1abb6b73c33b1ae244e24fb91afe0d2a2852",
+      "host": "https://www.okx.com",
+      "conclusion": "success",
+      "provider_failure_code": "access_denied",
+      "http_status": null,
+      "http_status_reason": "initial_candidate_logged_only_classified_failure",
+      "generated_at": "2026-09-24T14:45:46.100Z",
+      "restored_from_run": 35970120756,
+      "restored_checkpoint_artifact": 10795204597,
+      "entry_count_before": 2,
+      "entry_count_after": 3,
+      "valid_observation_count": 0,
+      "checkpoint": {
+        "artifact_id": 10813798563,
+        "encrypted_file_bytes": 106708,
+        "encrypted_file_sha256": "1d6ebb79888165fc20d293a84088f861c4290e58d1f56d328122ee29073209cf"
+      },
+      "proof": {
+        "artifact_id": 10814247543,
+        "file_sha256": "3701a91b41d48a7f75898d346267e44f994015cf3d2eaf5d8659a70f3d096780",
+        "validation": "passed"
+      },
+      "public_projection": {
+        "artifact_id": 10813629347,
+        "file_sha256": "2887ee7f33886b33d1d05b91ea7e39b0ec9a3ffefe1d8dc3fa169d9db66afde8",
+        "all_values_null": true,
+        "validation": "passed"
+      }
+    },
+    {
+      "role": "documented_host_trial_and_continuity_validation",
+      "run_id": 36015604555,
+      "url": "https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/36015604555",
+      "commit": "e590491126a63c6e32db14294b123318664b2be5",
+      "host": "https://openapi.okx.com",
+      "conclusion": "success",
+      "provider_failure_code": "access_denied",
+      "http_status": 403,
+      "failure_stage": "instrument_metadata",
+      "metric_requests_attempted": false,
+      "metadata_requests": 2,
+      "requests_explanation": "one metadata request in funding adapter and one in OI adapter; each then opens its denial circuit",
+      "generated_at": "2026-09-24T14:50:16.016Z",
+      "restored_from_run": 36015024779,
+      "restored_checkpoint_artifact": 10813798563,
+      "entry_count_before": 3,
+      "entry_count_after": 4,
+      "valid_observation_count": 0,
+      "checkpoint": {
+        "artifact_id": 10814930096,
+        "encrypted_file_bytes": 142126,
+        "encrypted_file_sha256": "f4d79a725cf0526e0cbfe6924efaf75e5b5f63f0024d6de1ac38b1501ced1118"
+      },
+      "proof": {
+        "artifact_id": 10814392538,
+        "file_sha256": "d66926cdb4e1c575d5fb97e0e5a07142e212875ba606d57ffa3e1fabdd2e4e14",
+        "validation": "passed"
+      },
+      "public_projection": {
+        "artifact_id": 10814307812,
+        "file_sha256": "34c1747488a10917e1c9b73a27f69921d3bc3b2479bd9acff85e5aecb99a8249",
+        "all_values_null": true,
+        "validation": "passed"
+      }
+    }
+  ],
+  "metrics": [
+    {"provider": "okx", "instrument_id": "BTC-USDT-SWAP", "metric": "funding_rate", "status": "unavailable", "failure_code": "access_denied", "source_timestamp": null, "retrieved_at": null, "freshness": "unavailable"},
+    {"provider": "okx", "instrument_id": "ETH-USDT-SWAP", "metric": "funding_rate", "status": "unavailable", "failure_code": "access_denied", "source_timestamp": null, "retrieved_at": null, "freshness": "unavailable"},
+    {"provider": "okx", "instrument_id": "BTC-USDT-SWAP", "metric": "open_interest", "status": "unavailable", "failure_code": "access_denied", "source_timestamp": null, "retrieved_at": null, "freshness": "unavailable"},
+    {"provider": "okx", "instrument_id": "ETH-USDT-SWAP", "metric": "open_interest", "status": "unavailable", "failure_code": "access_denied", "source_timestamp": null, "retrieved_at": null, "freshness": "unavailable"}
+  ],
+  "continuity": {
+    "status": "ready",
+    "first_after_equals_second_before": true,
+    "all_prior_entries_preserved": true,
+    "first_run_after_hashes": [
+      "sha256:007bbf841f436647fd05b99221abf9ae0eae94e657e38b476b58a01b8eb566c5",
+      "sha256:7907ea4152b21a51460c690e786a759b7d5d1769e9b5b49d05ca9dd846f4e752",
+      "sha256:9a5e87e6ddbee6dea12d22f2b324254bdcef8c23980b1237d9b717c0f2ec55e4"
+    ],
+    "second_run_new_hash": "sha256:108458ce5ff1dcae8b0704dde414995ddc671541976b338295dd6bf04e58770b",
+    "final_operational_records": 4,
+    "distinct_market_facts": 0,
+    "collected_utc_days": 1,
+    "duplicate_market_facts": 0,
+    "successful_measurement_replay_live_validated": false,
+    "scope": "failure_record_restore_replay_append_and_reseal",
+    "plaintext_checkpoint_downloaded": false
+  },
+  "public_security": {
+    "closed_schema_validation": "passed",
+    "raw_response_publication": false,
+    "receipt_publication": false,
+    "secret_publication": false,
+    "market_value_publication": false,
+    "pages_or_frontend_enabled": false
+  }
+}

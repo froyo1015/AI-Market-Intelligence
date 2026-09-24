@@ -1,6 +1,6 @@
 # Phase 14.1.1 — Derivatives provider recovery
 
-Implementation candidate: native OKX funding/OI, explicit venue selection, existing observation/evidence/archive contracts. Live GitHub Actions results will be recorded below. No public product enablement.
+Implemented native OKX funding/OI, explicit venue selection and reuse of existing observation/evidence/archive contracts. Two live GitHub Actions results are recorded below. No public product enablement.
 
 Initial diagnostic run `36015024779` on `c79f1abb6b73c33b1ae244e24fb91afe0d2a2852` successfully restored the latest two-entry checkpoint, but `www.okx.com` was classified access_denied. Subsequent inspection of the official v5 **Production Trading Services** documentation established that the designated REST host is now `https://openapi.okx.com`. The adapter was corrected to this one documented host before recovery trials. No regional endpoint, proxy or host-rotation fallback is used. The initial failure is retained and is not counted as a successful collection trial.
 
@@ -47,3 +47,26 @@ Each successful run contributes at most four observations: BTC/ETH latest settle
 The existing daily cadence would yield at most four selected observations/day (about 120 run-observations over 30 days), not every funding settlement or all hourly OI. Byte growth depends on private captured payload sizes. Missing days remain gaps, unsuccessful runs remain archived, and no interpolation or retroactive PIT reconstruction is allowed. Current seven-day operational readiness is not a statistical calibration requirement. No percentile threshold is defined.
 
 Scheduled provider remains Binance while OKX is selected only for controlled recovery runs. See [fallback design](derivatives-source-fallback-design.md) and [rights gate](derivatives-rights-gate-v2.md).
+
+## Live result — 2026-09-24
+
+**Provider collection blocked; archive continuity ready; public product blocked.** The requested minimum of four valid non-Binance observations was not met. Both controlled runs completed the workflow safely, but neither acquired market measurements. The second run used the current documented REST host and got HTTP 403 at instrument metadata. Do not interpret workflow success as source success.
+
+| Run | Commit | REST host | Collection | Archive entries |
+| --- | --- | --- | --- | --- |
+| [36015024779](https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/36015024779) | `c79f1abb6b73c33b1ae244e24fb91afe0d2a2852` | www.okx.com | access_denied; exact HTTP not logged by initial candidate | 2 → 3 |
+| [36015604555](https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/36015604555) | `e590491126a63c6e32db14294b123318664b2be5` | openapi.okx.com | HTTP 403, access_denied | 3 → 4 |
+
+The second run restored checkpoint artifact `10813798563` from the first. Its full `before_entry_hashes` list exactly equals the first run's `after_entry_hashes`. All prior hashes remain in the second after-list; each run added one distinct entry. The final archive has four same-day operational records (including Phase 14.1), **zero market facts**, and one observed UTC date. This proves failure-record continuity, not successful market-history accumulation. There is no fabricated observation or duplicated market fact; live deduplication of successful measurements remains unproven (fixtures pass).
+
+Both funding and OI adapters encountered 403 on `metadata-BTC-USDT-SWAP`; each circuit breaker skipped later metric/ETH requests. Therefore all four metric statuses are unavailable, source/retrieval observation timestamps absent, and freshness unavailable. Do not report the funding-history or OI endpoints themselves as having returned 403: they were not reached. Funding/OI normalization, source timestamp semantics and receipt preservation are fixture-validated but cannot yet be confirmed with successful Actions measurements.
+
+Encrypted checkpoint bytes grew from 106,708 to 142,126 (+35,418), primarily storing run/evidence context and failure records. These are not successful-data storage estimates. Both are PGP-encrypted; plaintext was not downloaded. Both operational proof and public projection pass their closed validators. All four public values are null, `production_enabled=false`, and no UI/Pages publication was added. Artifact hashes and exact proof are in [okx-live-validation.json](okx-live-validation.json).
+
+## Validation and remaining boundary
+
+Final full local Python suite: **691 passed, 1 skipped**, with the existing urllib3/LibreSSL environment warning. The skip is local GnuPG availability. Both live Actions runs passed their full tracked test suite and real GnuPG restore/seal steps. Workflow YAML, diff checks, downloaded file hashes, report consistency and closed public-artifact safety checks pass. Real cryptography ran in Actions despite the local skip.
+
+No region/proxy rotation or access-control bypass was attempted. CCXT wrapping OKX or Binance would retain the same venue restrictions. Bybit remains documentation-only and has unresolved product rights; no approved third venue was added. Stop here for review rather than claim source recovery. A next authorized source or execution route must resolve both access and the intended-use rights independently. Historical calibration and public product readiness remain blocked.
+
+GitHub emitted non-fatal notices about Node 20 actions being run on Node 24 and a future ubuntu-latest image migration. Updating action versions is outside this recovery result; the tested runs succeeded.

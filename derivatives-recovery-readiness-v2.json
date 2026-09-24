@@ -1,0 +1,43 @@
+{
+  "schema_version": "derivatives_recovery_readiness_review_v2",
+  "evaluated_at": "2026-09-24T14:50:16.016Z",
+  "provider_collection_status": "blocked",
+  "archive_status": "ready",
+  "rights_status": "blocked",
+  "historical_data_status": "blocked",
+  "public_product_status": "blocked",
+  "production_enabled": false,
+  "public_metrics_enabled": false,
+  "valid_non_binance_observations": 0,
+  "required_non_binance_observations": 4,
+  "operational_archive_records": 4,
+  "distinct_market_facts": 0,
+  "observed_utc_days": 1,
+  "freshness_success_rate": 0.0,
+  "provenance_completeness": 0.0,
+  "archive_validation_failures": 0,
+  "reasons": {
+    "provider_collection_status": ["OKX documented REST host returned HTTP 403 at instrument metadata from GitHub Actions", "Binance previously returned access_denied", "No approved independent CCXT venue is live-validated"],
+    "archive_status": ["Second run restored exactly the first run's entry hash set", "All existing entries preserved and one distinct failure record appended per run", "GnuPG restore and reseal completed on Actions"],
+    "rights_status": ["OKX public redistribution/display requires written consent and product analytics use is restricted", "Binance intended-use rights remain unclear", "CCXT supplies no independent market-data licence"],
+    "historical_data_status": ["Zero validated funding/OI market facts", "One same-day operational history date is not calibration history"],
+    "public_product_status": ["Source collection and rights gates do not pass", "All public market values withheld", "No production enablement"]
+  },
+  "automatic_fallback_enabled": false,
+  "scheduled_provider": "binance_usdm",
+  "okx_mode": "explicit_manual_shadow_trial",
+  "thresholds_created": false,
+  "validation": {
+    "python_passed": 691,
+    "python_skipped": 1,
+    "skip_reason": "GnuPG unavailable locally; real encryption and restore passed in Actions",
+    "workflow_yaml": "passed",
+    "diff_check": "passed",
+    "downloaded_public_artifact_validation": "passed",
+    "public_sensitive_data_scan": "passed",
+    "review_to_downloaded_artifact_consistency": "passed"
+  },
+  "commits": ["c79f1abb6b73c33b1ae244e24fb91afe0d2a2852", "e590491126a63c6e32db14294b123318664b2be5"],
+  "run_ids": [36015024779, 36015604555],
+  "review_required": "Choose an authorized source/execution route with applicable use permission before further recovery or product expansion"
+}

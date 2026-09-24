@@ -16,6 +16,8 @@ For controlled validation select OKX explicitly. Scheduled default remains Binan
 
 Each route attempt must preserve failures and `served_provider`; a provider switch is a new venue series. Normalization/validation failures must never be presented as successful fallback. Per adapter: at most 20 requests including one transient retry, 1 request/second, 10-second request timeout, 120-second deadline, bounded response size.
 
+Live review result: OKX's currently documented `openapi.okx.com` returned HTTP 403 on Actions run `36015604555`, while Binance previously returned access_denied. Consequently no automatic priority chain is approved on reliability evidence. `[OKX, Binance]` above is a proposal only; the enabled behavior remains explicit selection and an honest unavailable result. A CCXT wrapper of a denied venue is not a recovery route. No further same-host retries were run after the corrected-host denial.
+
 ## OKX mapping
 
 Use public instruments, funding-rate-history, funding-rate and open-interest endpoints. Funding uses **realizedRate**, the most recent completed settlement, and its millisecond fundingTime; predicted fundingRate is never substituted. Adjacent settlements establish the observed historical interval. Current fundingTime/nextFundingTime is retained separately as future schedule metadata, never retroactively assigned to a settled observation.
