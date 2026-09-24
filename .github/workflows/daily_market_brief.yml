@@ -4,6 +4,8 @@ on:
   schedule:
     # 00:30 UTC = 08:30 Asia/Taipei year-round.
     - cron: "30 0 * * *"
+    # One bounded Morning delivery retry at 09:06 Taipei.
+    - cron: "6 1 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,8 +17,30 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  morning_retry_preflight:
+    name: Check whether Morning retry is needed
+    if: github.event.schedule == '6 1 * * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      needed: ${{ steps.check.outputs.needed }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - id: check
+        name: Verify canonical Morning and Pages projection
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python -m src.morning_report.retry_preflight
+
   generate:
     name: Test and generate daily outputs
+    needs: morning_retry_preflight
+    if: always() && (github.event.schedule != '6 1 * * *' || needs.morning_retry_preflight.outputs.needed == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -145,18 +169,40 @@ jobs:
           OPENAI_GROUNDED_BRIEF_MAX_OUTPUT_TOKENS: "2400"
           OPENAI_GROUNDED_BRIEF_MAX_INPUT_CHARS: "200000"
           OPENAI_GROUNDED_BRIEF_TRANSIENT_RETRIES: "0"
-        run: python -m src.orchestration.pipeline
+        run: |
+          # Morning retry reuses the same validated intelligence contract without
+          # paying for another LLM request.
+          if [[ "${{ github.event.schedule }}" == "6 1 * * *" ]]; then
+            unset OPENAI_API_KEY
+          fi
+          python -m src.orchestration.pipeline
 
       - name: Discover or create fixed Morning Report checkpoint
         id: morning_checkpoint
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
         run: >-
           python -m src.morning_report.checkpoint_cli
           --scheduled-at '${{ steps.morning_slot.outputs.slot }}'
           --source-root work/morning-source
           --public-out docs/data/morning_report_public.json
+          --status-out docs/data/morning_delivery_status.json
+
+      - name: Validate and report Morning delivery state
+        run: |
+          state=$(python -m src.morning_report.delivery \
+            --status docs/data/morning_delivery_status.json \
+            --report docs/data/morning_report_public.json)
+          echo "Morning Report delivery: ${state}" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$state" != "created" && "$state" != "reused" ]]; then
+            echo "::warning::Morning Report not delivered: ${state}; see public delivery status artifact"
+          fi
+          if [[ "$state" == "failed" ]]; then
+            echo "Checkpoint verification failed; retaining the previous Pages deployment" >&2
+            exit 1
+          fi
 
       - name: Upload public Morning Report backup artifact
         if: steps.morning_checkpoint.outcome == 'success' && steps.morning_checkpoint.outputs.created == 'true'
@@ -239,6 +285,7 @@ jobs:
           test -s docs/assets/intelligence.js
           test -s docs/data/minimum_useful_status.json
           test -s docs/data/run_manifest.json
+          test -s docs/data/morning_delivery_status.json
 
       - name: Monitor grounded AI production trial
         run: >-

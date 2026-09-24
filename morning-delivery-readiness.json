@@ -1,0 +1,23 @@
+{
+  "phase": "15.1",
+  "readiness": "conditional",
+  "production_delivery_verified": false,
+  "criteria": {
+    "dated_create_only_checkpoint": true,
+    "source_cutoff_and_pit_validation": true,
+    "morning_minimum_useful_gate": true,
+    "bounded_retry_candidate": true,
+    "public_delivery_status_contract": true,
+    "same_day_immutable_reuse_tests": true,
+    "next_day_rollover_tests": true,
+    "live_create_verified": false,
+    "live_public_pages_verified": false,
+    "live_same_day_reuse_verified": false,
+    "live_post_source_change_reuse_verified": false
+  },
+  "blocking_reasons": [
+    "No live production run of the Phase 15.1 candidate has yet created and published a Morning Report.",
+    "Public checkpoint/body/hash continuity across subsequent live runs is not yet verified."
+  ],
+  "next_phase_15_2_ready": false
+}

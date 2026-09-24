@@ -6,6 +6,7 @@ import json
 from datetime import datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+from src.data.freshness import validate_freshness_contract
 from src.brief.renderer_validator import validate_renderer_input
 from src.top_intelligence.validator import validate_top_intelligence_artifact
 
@@ -94,9 +95,34 @@ def _story(item):
                 timestamps=item['timestamps'])
 
 
-def _eligible(item, cutoff):
+def _eligible(item, cutoff, top=None):
     if item.get('validation_status')!='validated' or item.get('freshness_status')!='current':
         return False
+    # The top artifact may include unrelated stale evidence. Reassess each
+    # selected item's existing freshness contract at the fixed morning cutoff.
+    extension=(top or {}).get('freshness_items')
+    scoped=extension.get('items',{}).get(item.get('item_id')) if isinstance(extension,dict) else None
+    if extension is not None and scoped is None:
+        return False
+    if scoped is not None:
+        try:
+            validate_freshness_contract(scoped)
+            source=scoped.get('source_timestamp') or scoped.get('retrieved_at')
+            if scoped['freshness_status']!='current' or not source or not 0 <= (
+                    cutoff-instant(source)).total_seconds() <= scoped['stale_after_seconds']:
+                return False
+            if not scoped.get('retrieved_at') or instant(scoped['retrieved_at'])>cutoff:
+                return False
+        except (ValueError, TypeError, KeyError):
+            return False
+    else:
+        # Legacy artifacts have no item extension. Keep their own declared
+        # threshold and require every observation to fit the morning window.
+        observed=item.get('timestamps',{}).get('observed_at',[])
+        limit=(top or {}).get('stale_after_seconds',86400)
+        if observed and (not isinstance(limit,int) or limit<=0 or any(
+                not 0 <= (cutoff-instant(t)).total_seconds() <= limit for t in observed)):
+            return False
     if item['type']=='upcoming_event':
         scheduled=item.get('timestamps',{}).get('scheduled_at',[])
         return bool(scheduled) and all(instant(t)>=cutoff for t in scheduled)
@@ -130,11 +156,22 @@ def build(daily, top, manifest, daily_bytes, top_bytes, scheduled_at, generated_
     refs=[_manifest_ref(manifest,'daily_intelligence.json',daily,daily_bytes),
           _manifest_ref(manifest,'top_intelligence.json',top,top_bytes)]
     source_current=_source_current(refs,(daily,top),cutoff)
-    available=source_current and daily['status']!='unavailable' and top['status']!='unavailable'
-    selected=[_story(i) for i in top['items'] if _eligible(i,cutoff)][:3] if available else []
+    candidates=[i for i in top['items'] if _eligible(i,cutoff,top)]
+    market_items=[i for i in candidates if i['type']!='data_quality']
+    has_cross_asset=any(i['type']=='cross_asset_signal' or
+        i['type']=='market_regime' and i.get('evidence_refs',{}).get('signal_ids')
+        for i in market_items)
+    assets={a for i in market_items for a in i.get('related_assets',[])}
+    available=(daily['status']!='unavailable' and top['status']!='unavailable' and
+        len(market_items)>=2 and len(assets)>=2 and has_cross_asset)
+    selected=[_story(i) for i in candidates][:3] if available else []
     regime=daily['market_regime']
     classification=regime.get('payload',{}).get('classification')
-    regime_current=available and regime.get('validation_status')=='validated' and regime.get('data_status')!='unavailable'
+    regime_current=(available and regime.get('validation_status')=='validated' and
+        regime.get('data_status')!='unavailable' and
+        _eligible({'item_id':regime.get('object_id'),'validation_status':regime.get('validation_status'),
+                   'freshness_status':'current','type':'market_regime','timestamps':regime.get('timestamps',{})},
+                  cutoff,daily))
     regime_name=STATUS.get(classification,'暫無法判定') if regime_current else '暫無法判定'
     headline=(f'基準時點的已驗證資料顯示，市場環境{regime_name}；以下保留當時重點與資料限制。'
               if regime_current and classification in STATUS else
@@ -146,7 +183,7 @@ def build(daily, top, manifest, daily_bytes, top_bytes, scheduled_at, generated_
     if daily['status']!='available' or top['status']!='complete':
         limitations.append('來源報告有部分資料缺漏；請留意各項證據與來源時間。')
     if not source_current:
-        limitations.append('來源資料在晨報基準時點已過期或時間不明，不能代表目前市場。')
+        limitations.append('部分來源在晨報基準時點已過期或時間不明；只採用逐項核對仍有效的市場重點。')
     if not selected:
         limitations.append('晨報基準時點沒有足夠的現行已驗證重點；不補造市場結論。')
     limitations.append('晨報固定於此基準時點；其後市場變化不會改寫本報告。')
@@ -169,7 +206,7 @@ def build(daily, top, manifest, daily_bytes, top_bytes, scheduled_at, generated_
         source_run_id=manifest['run_id'],source_artifact_refs=refs,
         source_report_date=daily['report_date'],source_generated_at=top['generated_at'],
         source_freshness_status='current' if source_current else 'stale',
-        data_status='partial' if available and (daily['status']!='available' or top['status']!='complete')
+        data_status='partial' if available and (not source_current or daily['status']!='available' or top['status']!='complete')
           else 'available' if available else 'unavailable',
         immutable_for_day=True,sample_only=bool(sample_only),content=content)
     result['report_id']='morning_'+report_date.isoformat()+'_'+hashlib.sha256(

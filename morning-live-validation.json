@@ -1,0 +1,27 @@
+{
+  "phase": "15.1",
+  "validation_status": "pending_live_run",
+  "report_timezone": "Asia/Taipei",
+  "target_time_local": "08:30",
+  "last_verified_failure": {
+    "report_date": "2026-09-24",
+    "workflow_run_id": 35958991007,
+    "source_run_id": 35832903568,
+    "failure_code": "source_unavailable_no_checkpoint",
+    "public_report_http_status": 404,
+    "canonical_checkpoint_created": false
+  },
+  "offline_replay": {
+    "report_date": "2026-09-24",
+    "data_status": "partial",
+    "valid_top_items": 2,
+    "aggregate_source_freshness": "stale",
+    "public_projection_sha256": "212921a8098f4841dc3a533f1540adb24164e7c3cd8c874ec49eb0b1fd872cc2",
+    "published": false
+  },
+  "live_run_a": null,
+  "live_run_b": null,
+  "live_run_c": null,
+  "public_url": "https://froyo1015.github.io/AI-Market-Intelligence/data/morning_report_public.json",
+  "production_delivery_verified": false
+}

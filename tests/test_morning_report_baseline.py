@@ -131,14 +131,22 @@ def test_partial_and_stale_source_distinct():
     assert _source_current(refs,({'stale_after_seconds':172800},)*2,cutoff)
 
 
-def test_stale_source_does_not_publish_current_stories(monkeypatch):
+def test_stale_artifact_aggregate_keeps_current_items_with_warning(monkeypatch):
     monkeypatch.setattr('src.morning_report.baseline._source_current',lambda *_: False)
     report=candidate()
     assert report['source_freshness_status']=='stale'
+    assert report['data_status']=='partial'
+    assert len(report['content']['top_items'])>=2
+    assert any('過期' in text for text in report['content']['known_limitations'])
+
+
+def test_morning_gate_rejects_insufficient_current_market_items(monkeypatch):
+    d,t,m,db,tb=inputs()
+    monkeypatch.setattr('src.morning_report.baseline._eligible',
+                        lambda item, cutoff, top=None: item.get('rank')==1)
+    report=build(d,t,m,db,tb,SLOT,GENERATED,sample_only=True)
     assert report['data_status']=='unavailable'
     assert report['content']['top_items']==[]
-    assert report['content']['market_regime']['classification'] is None
-    assert any('過期' in text for text in report['content']['known_limitations'])
 
 
 def test_optional_calendar_absent_and_old_future_event_excluded():
