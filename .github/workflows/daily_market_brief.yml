@@ -346,6 +346,9 @@ jobs:
   deploy:
     name: Deploy GitHub Pages
     needs: generate
+    # The non-retry preflight job is intentionally skipped. A successful
+    # generate job must still deploy its validated Pages artifact.
+    if: ${{ !cancelled() && needs.generate.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

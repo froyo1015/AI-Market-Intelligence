@@ -66,6 +66,13 @@ def test_retry_schedule_is_bounded_and_uses_taipei_fixed_slot():
     assert 'unset OPENAI_API_KEY' in text
 
 
+def test_pages_deploy_does_not_inherit_skipped_preflight():
+    text=Path('.github/workflows/daily_market_brief.yml').read_text()
+    deploy=text.split('\n  deploy:\n',1)[1]
+    assert 'needs: generate' in deploy
+    assert "if: ${{ !cancelled() && needs.generate.result == 'success' }}" in deploy
+
+
 def test_next_day_status_has_distinct_date_and_report():
     payload=report()
     first=make_status(SLOT,status='created',attempted_at='2026-09-04T00:33:00Z',
