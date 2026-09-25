@@ -1,6 +1,6 @@
 # Phase 15.1 — Morning Report delivery reliability review
 
-Review state: implementation candidate validated locally; live production delivery **not yet validated**. Do not call the Morning Report reliably delivered until the live checks below pass.
+Review state: a real 2026-09-25 Morning Report was created, reused and published, but **reliable delivery around 08:30 is not validated**. The scheduled jobs were hours late and the first run's Pages deployment was skipped. Phase 15.2 remains blocked pending review of delivery punctuality and first-run deployment.
 
 ## Failure trace for 2026-09-24
 
@@ -31,12 +31,18 @@ The candidate change reevaluates selected items at the original 08:30 cutoff usi
 - Fixed 9/24 replay: partial report, two valid Top items, original stale warning retained. Public projection SHA-256: `212921a8098f4841dc3a533f1540adb24164e7c3cd8c874ec49eb0b1fd872cc2` (offline replay only).
 - Workflow YAML parse, diff check, public-safe status validation and scoped security checks must pass before commit/push.
 
-## Live acceptance still required
+## 2026-09-25 live validation
 
-1. Observe a fresh production run in the correct Taipei morning window; record the creation run, source run, canonical checkpoint path, report ID, and public SHA-256.
-2. Confirm the public report and delivery status are served by Pages, dated correctly, and byte-identical to the canonical checkpoint.
-3. Run the workflow again the same day and confirm `reused`, identical report ID/body/hash, and no second dated archive entry.
-4. After upstream data changes, run again and confirm the same canonical report remains. The updated intraday report may change, but the Morning Report may not.
-5. Confirm next-day rollover with deterministic tests; a true next-day live claim needs a later actual run.
+| Check | Observed result |
+| --- | --- |
+| First scheduled run | [36097782655](https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/36097782655), commit `7be0453675600ac876b1bd82f0f386ba50a514cb`, started 05:15:16 UTC / **13:15 Taipei**, not 08:30. |
+| Pre-cutoff source | Artifact `10793573984` from run `35965530791`, completed 2026-09-24 06:40:08 UTC, before the 2026-09-25 00:30 UTC baseline cutoff. No post-cutoff source was substituted. |
+| Creation | First run logged `created=true`; report `morning_2026-09-25_18dffa5250aa665807fb`, date 2026-09-25, 2 validated Top items, partial data. |
+| First publication | `generate` succeeded and uploaded a Pages artifact, but its `Deploy GitHub Pages` job was **skipped**. Thus first-run workflow success was not public delivery. The skipped prerequisite `morning_retry_preflight` appears to propagate through the dependent job graph; this needs a scoped workflow review before claiming first-attempt reliability. |
+| Bounded retry | [36100897280](https://github.com/froyo1015/AI-Market-Intelligence/actions/runs/36100897280) started 05:59:50 UTC / **13:59 Taipei**, saw public publication missing, then logged `created=false`, `reused`, creator run `36097782655`. Its Pages deploy job succeeded. |
+| Public URL | [Morning Report JSON](https://froyo1015.github.io/AI-Market-Intelligence/data/morning_report_public.json) returned 200. [Delivery status JSON](https://froyo1015.github.io/AI-Market-Intelligence/data/morning_delivery_status.json) reports `reused`, 2026-09-25, retry ordinal 1. |
+| Byte integrity | Run A artifact, Run B artifact, `morning-reports` dated checkpoint, public Pages report and status hash all agree on SHA-256 `b0e0ae17c34d0430ac22549f7e6fd4d47d28bfa2e4d0ebbc9b703e956bbb42d8`. Exactly one archive commit touches today's dated path. |
+| Intraday changes | Market snapshot hash changed from `e42922674c732e3d7ce4b102f6b50eb9ffc35e0ab31cbc0c034b9b69dd1d54ec` (A) to `43091cfc22629044e1a67cd53d6a4f94015fddc313f874b999f866df3fdc74fa` (B); BTC, ETH and Gold prices also changed. Morning report bytes did not. B therefore demonstrates both same-day reuse and immunity to new intraday inputs. No separate third run was performed. |
+| Security | Public report passed `validate_public`; public JSON scan found no API-key pattern, local path, Authorization header, raw provider response or internal path. |
 
-GitHub cron timing and source availability remain external limits. A successful workflow or Pages deployment alone is insufficient proof of Morning delivery. If the next morning source is unavailable, the correct outcome is explicit non-delivery, not a fabricated report.
+This is real creation, immutability and eventual publication—not a punctual 08:30 delivery guarantee. The 08:30 and 09:06 cron invocations were approximately 4 hours 45 minutes late. The first run's skipped deployment is an additional workflow-level defect. Do not call Phase 15.1 fully ready or enter Phase 15.2 without reviewing these limits. Next-day rollover is covered by deterministic tests only; no live next-day claim is made.

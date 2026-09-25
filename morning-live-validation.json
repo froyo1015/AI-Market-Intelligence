@@ -1,6 +1,6 @@
 {
   "phase": "15.1",
-  "validation_status": "pending_live_run",
+  "validation_status": "live_delivery_verified_with_punctuality_and_first_deploy_failure",
   "report_timezone": "Asia/Taipei",
   "target_time_local": "08:30",
   "last_verified_failure": {
@@ -19,9 +19,56 @@
     "public_projection_sha256": "212921a8098f4841dc3a533f1540adb24164e7c3cd8c874ec49eb0b1fd872cc2",
     "published": false
   },
-  "live_run_a": null,
-  "live_run_b": null,
+  "live_run_a": {
+    "actions_run_id": 36097782655,
+    "head_sha": "7be0453675600ac876b1bd82f0f386ba50a514cb",
+    "started_at": "2026-09-25T05:15:16Z",
+    "delivery_status": "created",
+    "report_date": "2026-09-25",
+    "report_id": "morning_2026-09-25_18dffa5250aa665807fb",
+    "public_artifact_sha256": "b0e0ae17c34d0430ac22549f7e6fd4d47d28bfa2e4d0ebbc9b703e956bbb42d8",
+    "pages_deploy_job": "skipped",
+    "market_snapshot_sha256": "e42922674c732e3d7ce4b102f6b50eb9ffc35e0ab31cbc0c034b9b69dd1d54ec"
+  },
+  "live_run_b": {
+    "actions_run_id": 36100897280,
+    "head_sha": "7be0453675600ac876b1bd82f0f386ba50a514cb",
+    "started_at": "2026-09-25T05:59:50Z",
+    "delivery_status": "reused",
+    "creator_run_id": 36097782655,
+    "report_id": "morning_2026-09-25_18dffa5250aa665807fb",
+    "public_artifact_sha256": "b0e0ae17c34d0430ac22549f7e6fd4d47d28bfa2e4d0ebbc9b703e956bbb42d8",
+    "pages_deploy_job": "success",
+    "market_snapshot_sha256": "43091cfc22629044e1a67cd53d6a4f94015fddc313f874b999f866df3fdc74fa"
+  },
   "live_run_c": null,
+  "source_artifact": {
+    "actions_run_id": 35965530791,
+    "artifact_id": 10793573984,
+    "completed_at": "2026-09-24T06:40:08Z",
+    "morning_cutoff_utc": "2026-09-25T00:30:00Z",
+    "pre_cutoff": true
+  },
+  "canonical_checkpoint": {
+    "archive_commit": "65929e6fc784c957af42a76debae1590dadb252f",
+    "path": "2026/2026-09-25/morning_report_public.json",
+    "matching_path_commit_count": 1,
+    "sha256": "b0e0ae17c34d0430ac22549f7e6fd4d47d28bfa2e4d0ebbc9b703e956bbb42d8"
+  },
+  "public_projection": {
+    "http_status": 200,
+    "report_date": "2026-09-25",
+    "delivery_status": "reused",
+    "schema_valid": true,
+    "security_scan_passed": true,
+    "sha256_matches_checkpoint": true
+  },
   "public_url": "https://froyo1015.github.io/AI-Market-Intelligence/data/morning_report_public.json",
-  "production_delivery_verified": false
+  "production_delivery_verified": true,
+  "daily_around_0830_reliability_verified": false,
+  "limitations": [
+    "The 08:30 schedule did not start until 13:15 Taipei; the 09:06 retry did not start until 13:59 Taipei.",
+    "The first run created the checkpoint but its Pages deploy job was skipped; the retry deployed it.",
+    "A separate third same-day run was not performed; the second run did regenerate changed live market data and reuse the identical Morning report."
+  ]
 }

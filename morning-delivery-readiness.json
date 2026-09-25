@@ -1,7 +1,8 @@
 {
   "phase": "15.1",
   "readiness": "conditional",
-  "production_delivery_verified": false,
+  "production_delivery_verified": true,
+  "daily_around_0830_reliability_verified": false,
   "criteria": {
     "dated_create_only_checkpoint": true,
     "source_cutoff_and_pit_validation": true,
@@ -10,14 +11,16 @@
     "public_delivery_status_contract": true,
     "same_day_immutable_reuse_tests": true,
     "next_day_rollover_tests": true,
-    "live_create_verified": false,
-    "live_public_pages_verified": false,
-    "live_same_day_reuse_verified": false,
-    "live_post_source_change_reuse_verified": false
+    "live_create_verified": true,
+    "live_public_pages_verified": true,
+    "live_same_day_reuse_verified": true,
+    "live_post_source_change_reuse_verified": true,
+    "first_run_pages_deployment_verified": false,
+    "around_0830_delivery_verified": false
   },
   "blocking_reasons": [
-    "No live production run of the Phase 15.1 candidate has yet created and published a Morning Report.",
-    "Public checkpoint/body/hash continuity across subsequent live runs is not yet verified."
+    "GitHub's 08:30 scheduled attempt started at 13:15 Taipei, so punctual Morning delivery is not demonstrated.",
+    "The first run created the checkpoint but its Pages deployment job was skipped; publication depended on the delayed retry."
   ],
   "next_phase_15_2_ready": false
 }
