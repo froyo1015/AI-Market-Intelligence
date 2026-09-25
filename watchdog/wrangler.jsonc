@@ -1,7 +1,9 @@
 {
   "name": "ai-market-morning-watchdog",
   "main": "morning_worker.mjs",
-  "compatibility_date": "2026-09-24",
+  "compatibility_date": "2026-09-25",
+  "preview_urls": false,
+  "observability": {"enabled": true, "logs": {"enabled": true}},
   "triggers": {"crons": ["55 0 * * *"]},
   "durable_objects": {
     "bindings": [{"name": "RECOVERY_LEDGER", "class_name": "RecoveryLedger"}]
