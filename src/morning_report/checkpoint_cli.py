@@ -44,7 +44,8 @@ def main():
                               source/'daily_intelligence.json',source/'top_intelligence.json',
                               source/'run_manifest.json',args.public_out,
                               creator_run_id=int(os.environ['GITHUB_RUN_ID']),
-                              head_sha=os.environ['GITHUB_SHA'])
+                              head_sha=os.environ['GITHUB_SHA'],
+                              require_existing=os.environ.get('MORNING_RECOVERY_REASON')=='validate_existing')
         status=make_status(slot,status='created' if result.created else 'reused',
                            attempted_at=datetime.now(timezone.utc).isoformat(),retry_count=retry_count,
                            report=result.public_report)

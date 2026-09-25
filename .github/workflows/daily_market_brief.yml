@@ -7,6 +7,15 @@ on:
     # One bounded Morning delivery retry at 09:06 Taipei.
     - cron: "6 1 * * *"
   workflow_dispatch:
+    inputs:
+      morning_recovery_date:
+        description: "Asia/Taipei report date for guarded Morning recovery or reuse validation"
+        required: false
+        type: string
+      morning_recovery_reason:
+        description: "missing_checkpoint or validate_existing"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -68,18 +77,33 @@ jobs:
 
       - name: Resolve Morning Report slot
         id: morning_slot
+        env:
+          MORNING_RECOVERY_DATE: ${{ inputs.morning_recovery_date }}
+          MORNING_RECOVERY_REASON: ${{ inputs.morning_recovery_reason }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           python - <<'PY'
           import os
           from pathlib import Path
           from zoneinfo import ZoneInfo
-          from src.morning_report.baseline import instant, iso
+          from src.morning_report.baseline import instant, iso, target_date
           from src.morning_report.checkpoint_cli import scheduled_slot
+          from src.morning_report.recovery_guard import validate_recovery
           slot=scheduled_slot(os.getenv('MORNING_SCHEDULED_AT') or None)
+          date=target_date(slot).isoformat()
+          recovery_date=os.getenv('MORNING_RECOVERY_DATE','')
+          recovery_reason=os.getenv('MORNING_RECOVERY_REASON','')
+          store=None
+          if recovery_reason=='validate_existing':
+              from src.morning_report.checkpoint import store_from_environment
+              store=store_from_environment()
+          validate_recovery(slot,recovery_date,recovery_reason,store=store)
           with Path(os.environ['GITHUB_OUTPUT']).open('a') as out:
               out.write('slot='+slot+'\n')
               out.write('cutoff_utc='+iso(instant(slot))+'\n')
-              out.write('report_date='+instant(slot).astimezone(ZoneInfo('Asia/Taipei')).date().isoformat()+'\n')
+              out.write('report_date='+date+'\n')
+              if recovery_reason:
+                  out.write('recovery_reason='+recovery_reason+'\n')
           PY
 
       - name: Find latest source completed before Morning Report cutoff
@@ -183,6 +207,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+          MORNING_RECOVERY_REASON: ${{ steps.morning_slot.outputs.recovery_reason }}
         run: >-
           python -m src.morning_report.checkpoint_cli
           --scheduled-at '${{ steps.morning_slot.outputs.slot }}'
@@ -196,6 +221,9 @@ jobs:
             --status docs/data/morning_delivery_status.json \
             --report docs/data/morning_report_public.json)
           echo "Morning Report delivery: ${state}" >> "$GITHUB_STEP_SUMMARY"
+          if [[ -n "${{ steps.morning_slot.outputs.recovery_reason }}" ]]; then
+            echo "Morning recovery reason: ${{ steps.morning_slot.outputs.recovery_reason }}" >> "$GITHUB_STEP_SUMMARY"
+          fi
           if [[ "$state" != "created" && "$state" != "reused" ]]; then
             echo "::warning::Morning Report not delivered: ${state}; see public delivery status artifact"
           fi

@@ -1,0 +1,12 @@
+{
+  "name": "ai-market-morning-watchdog",
+  "main": "morning_worker.mjs",
+  "compatibility_date": "2026-09-24",
+  "triggers": {"crons": ["55 0 * * *"]},
+  "durable_objects": {
+    "bindings": [{"name": "RECOVERY_LEDGER", "class_name": "RecoveryLedger"}]
+  },
+  "exports": {
+    "RecoveryLedger": {"type": "durable-object", "storage": "sqlite"}
+  }
+}

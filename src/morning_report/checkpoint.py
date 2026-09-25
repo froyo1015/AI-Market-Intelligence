@@ -203,10 +203,12 @@ class GitHubCheckpointStore:
 
 def run_checkpoint(store, scheduled_at, archive, daily_path, top_path,
                    manifest_path, public_path, *, creator_run_id, head_sha,
-                   generated_at=None):
+                   generated_at=None, require_existing=False):
     """Discover first; only build if the dated remote authority is absent."""
     report_date = target_date(scheduled_at).isoformat()
     existing = store.discover(report_date)
+    if require_existing and existing is None:
+        raise CheckpointError('checkpoint_required_for_reuse')
     if existing is not None:
         result = existing
     else:

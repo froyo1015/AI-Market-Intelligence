@@ -119,6 +119,16 @@ def test_cross_run_restore_skips_source_and_intraday_regeneration(tmp_path):
     assert fake.puts==1
 
 
+def test_guarded_manual_reuse_cannot_create_after_checkpoint_disappears(tmp_path):
+    fake=FakeGitHub()
+    with pytest.raises(CheckpointError,match='checkpoint_required_for_reuse'):
+        run_checkpoint(store(fake),SLOT,MorningArchive(tmp_path/'archive'),
+                       tmp_path/'missing-daily',tmp_path/'missing-top',tmp_path/'missing-manifest',
+                       tmp_path/'public.json',creator_run_id=900,head_sha=SHA,
+                       require_existing=True)
+    assert fake.puts==0 and not (tmp_path/'public.json').exists()
+
+
 def test_corrupt_and_modified_checkpoint_fail_closed():
     fake=FakeGitHub();create(fake)
     fake.file=b'{broken'
