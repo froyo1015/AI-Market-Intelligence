@@ -1,0 +1,238 @@
+{
+  "baseline_for_date": "2026-09-29",
+  "baseline_timestamp": "2026-09-29T00:30:00Z",
+  "content": {
+    "evidence_refs": [
+      "ebd_1a65033250a25fbb367d",
+      "ebd_3c21a2e594ad31285726",
+      "ebd_914996e6ae5e210a2527",
+      "ebd_a1c9d65360aea2d30045",
+      "evd_btc_usd_market_move_2026_09_28t00_00_00z",
+      "evd_dxy_market_move_2026_09_28t04_00_00z",
+      "evd_eth_usd_market_move_2026_09_28t00_00_00z",
+      "evd_gold_market_move_2026_09_28t04_00_00z",
+      "obs_btc_usd_daily_change_pct_2026_09_28t00_00_00z",
+      "obs_dxy_daily_change_pct_2026_09_28t04_00_00z",
+      "obs_eth_usd_daily_change_pct_2026_09_28t00_00_00z",
+      "obs_gold_daily_change_pct_2026_09_28t04_00_00z",
+      "run_20260928T063438Z_consolidated_5b5e540544b29761",
+      "run_20260928T063438Z_relationships_a22cecec26471b0e",
+      "sig_crypto_co_movement_v1_c5122ecf6ccb",
+      "sig_gold_dollar_inverse_move_v1_7684144f6bfe",
+      "src_yahoo_finance",
+      "src_yahoo_finance_dxy"
+    ],
+    "known_limitations": [
+      "來源報告有部分資料缺漏；請留意各項證據與來源時間。",
+      "部分來源在晨報基準時點已過期或時間不明；只採用逐項核對仍有效的市場重點。",
+      "晨報固定於此基準時點；其後市場變化不會改寫本報告。"
+    ],
+    "market_regime": {
+      "classification": null,
+      "evidence_refs": {
+        "artifact_run_ids": [
+          "run_20260928T063438Z_consolidated_5b5e540544b29761",
+          "run_20260928T063438Z_regime_dfb89da6fa99ad35",
+          "run_20260928T063438Z_relationships_a22cecec26471b0e"
+        ],
+        "coverage_inputs": [],
+        "event_ids": [],
+        "evidence_bundle_ids": [
+          "ebd_0350230d28cc545e1a39",
+          "ebd_3c21a2e594ad31285726",
+          "ebd_6127e533349157da51b1",
+          "ebd_914996e6ae5e210a2527",
+          "ebd_a1c9d65360aea2d30045",
+          "ebd_dfa2d9ca21618b5aceb9",
+          "ebd_f2a88f4285cf519c2bf2"
+        ],
+        "evidence_ids": [
+          "evd_btc_usd_market_move_2026_09_28t00_00_00z",
+          "evd_dxy_market_move_2026_09_28t04_00_00z",
+          "evd_eth_usd_market_move_2026_09_28t00_00_00z",
+          "evd_qqq_market_move_2026_09_25t04_00_00z",
+          "evd_spy_market_move_2026_09_25t04_00_00z",
+          "evd_us10y_market_move_2026_09_25t05_00_00z",
+          "evd_vix_market_move_2026_09_25t05_00_00z"
+        ],
+        "observation_ids": [
+          "obs_btc_usd_daily_change_pct_2026_09_28t00_00_00z",
+          "obs_dxy_daily_change_pct_2026_09_28t04_00_00z",
+          "obs_eth_usd_daily_change_pct_2026_09_28t00_00_00z",
+          "obs_qqq_daily_change_pct_2026_09_25t04_00_00z",
+          "obs_spy_daily_change_pct_2026_09_25t04_00_00z",
+          "obs_us10y_daily_change_bps_2026_09_25t05_00_00z",
+          "obs_vix_daily_change_pct_2026_09_25t05_00_00z"
+        ],
+        "regime_dimension_ids": [
+          "cross_asset_alignment",
+          "crypto",
+          "dollar_yield",
+          "equity",
+          "volatility"
+        ],
+        "risk_ids": [],
+        "signal_ids": [
+          "sig_crypto_co_movement_v1_c5122ecf6ccb",
+          "sig_dollar_yield_co_movement_v1_f254d0bc7184",
+          "sig_equity_crypto_co_movement_v1_7733c3c83bc7",
+          "sig_equity_index_co_movement_v1_90dee3d02b89",
+          "sig_equity_volatility_inverse_move_v1_c03b96c22ba8"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy",
+          "src_yahoo_finance_us10y",
+          "src_yahoo_finance_vix"
+        ]
+      },
+      "object_id": "int_regime_4091ca8208804ec5",
+      "summary_zh": "市場環境暫無法判定，合資格證據不足。"
+    },
+    "overnight_highlights": [],
+    "overnight_note_zh": "暫無足夠的已驗證隔夜觀察，不能推斷隔夜市場全貌。",
+    "source_names": [
+      "Yahoo Finance"
+    ],
+    "today_market_one_sentence": "目前證據不足以確認整體市場環境；以下只列出可追溯的已驗證觀察。",
+    "top_items": [
+      {
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260928T063438Z_consolidated_5b5e540544b29761",
+            "run_20260928T063438Z_relationships_a22cecec26471b0e"
+          ],
+          "coverage_inputs": [],
+          "event_ids": [],
+          "evidence_bundle_ids": [
+            "ebd_1a65033250a25fbb367d",
+            "ebd_914996e6ae5e210a2527"
+          ],
+          "evidence_ids": [
+            "evd_dxy_market_move_2026_09_28t04_00_00z",
+            "evd_gold_market_move_2026_09_28t04_00_00z"
+          ],
+          "observation_ids": [
+            "obs_dxy_daily_change_pct_2026_09_28t04_00_00z",
+            "obs_gold_daily_change_pct_2026_09_28t04_00_00z"
+          ],
+          "regime_dimension_ids": [],
+          "risk_ids": [],
+          "signal_ids": [
+            "sig_gold_dollar_inverse_move_v1_7684144f6bfe"
+          ],
+          "source_ids": [
+            "src_yahoo_finance",
+            "src_yahoo_finance_dxy"
+          ]
+        },
+        "freshness_status": "current",
+        "headline_zh": "DXY、GOLD出現共同變化",
+        "item_id": "top_fc60a3064246012f",
+        "rank": 1,
+        "related_assets": [
+          "DXY",
+          "GOLD"
+        ],
+        "source_ids": [
+          "src_yahoo_finance",
+          "src_yahoo_finance_dxy"
+        ],
+        "source_type": "cross_asset_signal",
+        "timestamps": {
+          "detected_at": [],
+          "observed_at": [
+            "2026-09-28T04:00:00Z"
+          ],
+          "scheduled_at": []
+        },
+        "validation_status": "validated",
+        "watch_today_zh": "留意下一輪資料中，相關市場是否仍出現同向變化。",
+        "what_happened_zh": "DXY、GOLD出現共同變化。",
+        "why_it_matters_zh": "這項觀察涉及多個市場，值得對照各自的來源與觀察時間。"
+      },
+      {
+        "evidence_refs": {
+          "artifact_run_ids": [
+            "run_20260928T063438Z_consolidated_5b5e540544b29761",
+            "run_20260928T063438Z_relationships_a22cecec26471b0e"
+          ],
+          "coverage_inputs": [],
+          "event_ids": [],
+          "evidence_bundle_ids": [
+            "ebd_3c21a2e594ad31285726",
+            "ebd_a1c9d65360aea2d30045"
+          ],
+          "evidence_ids": [
+            "evd_btc_usd_market_move_2026_09_28t00_00_00z",
+            "evd_eth_usd_market_move_2026_09_28t00_00_00z"
+          ],
+          "observation_ids": [
+            "obs_btc_usd_daily_change_pct_2026_09_28t00_00_00z",
+            "obs_eth_usd_daily_change_pct_2026_09_28t00_00_00z"
+          ],
+          "regime_dimension_ids": [],
+          "risk_ids": [],
+          "signal_ids": [
+            "sig_crypto_co_movement_v1_c5122ecf6ccb"
+          ],
+          "source_ids": [
+            "src_yahoo_finance"
+          ]
+        },
+        "freshness_status": "current",
+        "headline_zh": "BTC-USD、ETH-USD出現共同變化",
+        "item_id": "top_32e477d1eb57e7bd",
+        "rank": 2,
+        "related_assets": [
+          "BTC-USD",
+          "ETH-USD"
+        ],
+        "source_ids": [
+          "src_yahoo_finance"
+        ],
+        "source_type": "cross_asset_signal",
+        "timestamps": {
+          "detected_at": [],
+          "observed_at": [
+            "2026-09-28T00:00:00Z"
+          ],
+          "scheduled_at": []
+        },
+        "validation_status": "validated",
+        "watch_today_zh": "留意下一輪資料中，相關市場是否仍出現同向變化。",
+        "what_happened_zh": "BTC-USD、ETH-USD出現共同變化。",
+        "why_it_matters_zh": "這項觀察涉及多個市場，值得對照各自的來源與觀察時間。"
+      }
+    ]
+  },
+  "data_status": "partial",
+  "freshness_status": "stale",
+  "generated_at": "2026-09-29T06:03:15.654963Z",
+  "immutable_for_day": true,
+  "report_id": "morning_2026-09-29_6abfa536b641ca38ebbc",
+  "report_type": "morning",
+  "sample_only": false,
+  "source_artifact_refs": [
+    {
+      "artifact": "daily_intelligence.json",
+      "freshness_status": "stale",
+      "generated_at": "2026-09-28T06:34:38.663748Z",
+      "run_id": "run_20260928T063438Z_intelligence_a36c057b9c996415",
+      "sha256": "78a71069a8e15ab1c8631a67f2ebb6eabf26c57c1a2a4deae71eb5ceee1b3d3e",
+      "source_timestamp": "2026-09-25T04:00:00Z"
+    },
+    {
+      "artifact": "top_intelligence.json",
+      "freshness_status": "stale",
+      "generated_at": "2026-09-28T06:34:38.776524Z",
+      "run_id": "run_20260928T063438Z_top_9887d1a816d37e32",
+      "sha256": "9e9b7dc8debd86a9c3a2025b8ce95e52e1298d6577cde355b212419764fa6938",
+      "source_timestamp": "2026-09-25T04:00:00Z"
+    }
+  ],
+  "source_report_date": "2026-09-28",
+  "source_run_id": "run_20260928T063436Z_orchestration_199bdf533cb3",
+  "timezone": "Asia/Taipei",
+  "version": "morning_report_v1"
+}
