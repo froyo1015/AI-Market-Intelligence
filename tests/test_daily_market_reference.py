@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import copy
+import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -249,10 +250,200 @@ def test_checkpoint_wrong_origin_and_corruption_fail_closed(tmp_path):
 def test_workflow_publication_and_isolation():
     capture = Path(".github/workflows/daily_reference_capture.yml").read_text()
     workflow = Path(".github/workflows/daily_market_brief.yml").read_text()
-    assert 'cron: "10 0 * * *"' in capture
+    assert 'cron: "3,13,23 0 * * *"' in capture
+    assert "group: daily-reference-capture" in capture
+    assert "cancel-in-progress: false" in capture
     assert "src.daily_reference.checkpoint_cli capture" in capture
     assert workflow.index("Regenerate intelligence pipeline") < workflow.index("Bind pre-cutoff daily reference")
     assert workflow.index("Generate official daily market reference") < workflow.index("Validate daily reference public sidecars")
     assert "src.daily_reference.checkpoint_cli morning" in workflow
     assert "docs/data/" in workflow
     assert "daily_reference" not in Path("src/intelligence/pipeline.py").read_text()
+
+
+@pytest.mark.parametrize("first_success_minute", [3, 13, 23])
+def test_staggered_schedules_create_once_then_reuse(tmp_path, first_success_minute):
+    fake = FakeGitHub()
+    fake.run_workflow = ".github/workflows/daily_reference_capture.yml"
+    store = ReferenceCheckpointStore(fake, REPO)
+    source_calls = []
+    baseline_bytes = None
+    creator = None
+    for index, minute in enumerate((3, 13, 23)):
+        now = datetime(2026, 9, 23, 0, minute, tzinfo=timezone.utc)
+        def scheduled_fetch(url):
+            source_calls.append((minute, url))
+            if minute < first_success_minute:
+                raise TimeoutError("provider unavailable")
+            return feeds(url)
+        path = tmp_path / f"run-{minute}.json"
+        if minute < first_success_minute:
+            with pytest.raises(ValueError, match="empty capture"):
+                run_capture(store, now=now, fetcher=scheduled_fetch, public_path=path,
+                            run_id=801 + index, head_sha=SHA)
+            assert fake.puts == 0 and not path.exists()
+            continue
+        result = run_capture(store, now=now, fetcher=scheduled_fetch, public_path=path,
+                             run_id=801 + index, head_sha=SHA)
+        if baseline_bytes is None:
+            assert result.created
+            baseline_bytes = path.read_bytes()
+            creator = result.creator_run_id
+        else:
+            assert not result.created and result.creator_run_id == creator
+            assert path.read_bytes() == baseline_bytes
+        assert fake.puts == 1 and len(fake.files) == 1
+    assert [minute for minute, _ in source_calls].count(first_success_minute) == 2
+    assert all(minute <= first_success_minute for minute, _ in source_calls)
+    # A delayed schedule may restore the established baseline, never refresh it.
+    def forbidden_fetch(_):
+        raise AssertionError("delayed reuse must not fetch")
+    late = run_capture(store, now=LATER, fetcher=forbidden_fetch,
+                       public_path=tmp_path / "delayed.json", run_id=899, head_sha=SHA)
+    assert not late.created and late.creator_run_id == creator
+    assert (tmp_path / "delayed.json").read_bytes() == baseline_bytes and fake.puts == 1
+
+
+def test_all_staggered_runs_delayed_fail_closed_without_source_calls(tmp_path):
+    fake = FakeGitHub()
+    store = ReferenceCheckpointStore(fake, REPO)
+    def forbidden_fetch(_):
+        raise AssertionError("post-cutoff creates must not fetch")
+    for index in range(3):
+        with pytest.raises(CheckpointError, match="capture_after_cutoff"):
+            run_capture(store, now=LATER, fetcher=forbidden_fetch,
+                        public_path=tmp_path / f"late-{index}.json", run_id=801 + index, head_sha=SHA)
+    assert fake.puts == 0 and not fake.files and not list(tmp_path.iterdir())
+
+
+@pytest.mark.parametrize("conflict_status", [409, 422])
+def test_capture_competing_writer_preserves_winner(tmp_path, conflict_status):
+    winner = build_capture(collect(now=NOW, fetcher=feeds), captured_at="2026-09-23T00:10:00Z")
+    later = datetime(2026, 9, 23, 0, 13, tzinfo=timezone.utc)
+    loser = build_capture(collect(now=later, fetcher=feeds), captured_at="2026-09-23T00:13:00Z")
+    class CompetingGitHub(FakeGitHub):
+        def request(self, method, path, body=None):
+            if method == "PUT":
+                assert "sha" not in body  # Create-only request cannot update an existing file.
+                self.puts += 1
+                key = ReferenceCheckpointStore.dated_path("capture", "2026-09-23")
+                self.files[key] = canonical_bytes(winner)
+                self.messages[key] = store._message("capture", "2026-09-23", 801, SHA,
+                                                    hashlib.sha256(self.files[key]).hexdigest())
+                return conflict_status, None
+            return super().request(method, path, body)
+    fake = CompetingGitHub()
+    fake.run_workflow = ".github/workflows/daily_reference_capture.yml"
+    store = ReferenceCheckpointStore(fake, REPO)
+    result = store.create_or_get("capture", loser, run_id=802, head_sha=SHA)
+    assert not result.created and result.creator_run_id == 801 and result.payload == winner
+    assert list(fake.files.values()) == [canonical_bytes(winner)] and fake.puts == 1
+
+
+def _capture_cli(monkeypatch, store, output, now):
+    import src.daily_reference.checkpoint_cli as cli
+
+    class FixedClock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return now.astimezone(tz) if tz else now.replace(tzinfo=None)
+
+    monkeypatch.setattr(cli, "datetime", FixedClock)
+    monkeypatch.setattr(cli, "store_from_environment", lambda: store)
+    monkeypatch.setenv("GITHUB_RUN_ID", "801")
+    monkeypatch.setenv("GITHUB_SHA", SHA)
+    monkeypatch.setattr("sys.argv", ["checkpoint_cli", "capture", "--public-out", str(output)])
+    return cli
+
+
+def test_capture_cli_success_and_existing_checkpoint_reuse(monkeypatch, tmp_path, capsys):
+    fake = FakeGitHub()
+    store = ReferenceCheckpointStore(fake, REPO)
+    output = tmp_path / "capture.json"
+    cli = _capture_cli(monkeypatch, store, output, NOW)
+    monkeypatch.setattr(cli, "run_capture", lambda store, **kwargs:
+                        run_capture(store, now=NOW, fetcher=feeds, **kwargs))
+    cli.main()
+    captured = capsys.readouterr()
+    assert json.loads(captured.out)["created"] is True and captured.err == ""
+    original = output.read_bytes()
+    cli = _capture_cli(monkeypatch, store, output, LATER)
+    def no_fetch(_):
+        raise AssertionError("reuse must not fetch")
+    monkeypatch.setattr(cli, "run_capture", lambda store, **kwargs:
+                        run_capture(store, now=LATER, fetcher=no_fetch, **kwargs))
+    cli.main()
+    captured = capsys.readouterr()
+    assert json.loads(captured.out)["created"] is False and captured.err == ""
+    assert output.read_bytes() == original and fake.puts == 1
+
+
+def test_capture_cli_after_cutoff_logs_safe_reason_and_still_fails(monkeypatch, tmp_path, capsys):
+    fake = FakeGitHub()
+    output = tmp_path / "late.json"
+    cli = _capture_cli(monkeypatch, ReferenceCheckpointStore(fake, REPO), output, LATER)
+    def no_fetch(_):
+        raise AssertionError("late capture must not fetch")
+    monkeypatch.setattr(cli, "run_capture", lambda store, **kwargs:
+                        run_capture(store, now=LATER, fetcher=no_fetch, **kwargs))
+    with pytest.raises(SystemExit) as failure:
+        cli.main()
+    assert failure.value.code == "daily_reference_checkpoint_failed"
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert json.loads(captured.err) == {
+        "stage": "capture_window", "reason_code": "capture_after_cutoff",
+        "current_utc_timestamp": "2026-09-23T01:10:00Z",
+        "configured_cutoff": "2026-09-23T00:30:00Z",
+    }
+    assert fake.puts == 0 and not output.exists()
+
+
+@pytest.mark.parametrize("error,reason", [
+    (CheckpointError("github_api_unavailable"), "github_api_unavailable"),
+    (CheckpointError("secret=DO_NOT_LOG header=private response=raw /Users/private"), "checkpoint_failure"),
+    (ValueError("secret=DO_NOT_LOG header=private response=raw /Users/private"), "validation_failed"),
+    (KeyError("DO_NOT_LOG"), "required_field_missing"),
+])
+def test_capture_cli_never_logs_exception_payload(monkeypatch, tmp_path, capsys, error, reason):
+    cli = _capture_cli(monkeypatch, object(), tmp_path / "unused.json", NOW)
+    def fail(*args, **kwargs):
+        raise error
+    monkeypatch.setattr(cli, "run_capture", fail)
+    with pytest.raises(SystemExit) as failure:
+        cli.main()
+    assert failure.value.code == "daily_reference_checkpoint_failed"
+    captured = capsys.readouterr()
+    record = json.loads(captured.err)
+    assert record["reason_code"] == reason
+    assert set(record) == {"stage", "reason_code", "current_utc_timestamp", "configured_cutoff"}
+    assert all(text not in captured.out + captured.err for text in (
+        "DO_NOT_LOG", "header=", "response=", "/Users/private"))
+
+
+def test_morning_cli_binding_and_reuse_unchanged(monkeypatch, tmp_path, capsys):
+    import src.daily_reference.checkpoint_cli as cli
+    fake = FakeGitHub()
+    store = ReferenceCheckpointStore(fake, REPO)
+    now = datetime(2026, 9, 4, 0, 10, tzinfo=timezone.utc)
+    ecb = ECB.replace(b"2026-09-22", b"2026-09-03")
+    h15 = H15.replace(b"2026-09-22", b"2026-09-03").replace(b"September 22", b"September 03").replace(b"Sep<br>18", b"Sep<br>01").replace(b"Sep<br>21", b"Sep<br>02")
+    reference = collect(now=now, fetcher=lambda url: h15 if url == H15_URL else ecb)
+    store.create_or_get("capture", build_capture(reference, captured_at="2026-09-04T00:10:00Z"),
+                        run_id=801, head_sha=SHA)
+    report_path = tmp_path / "report.json"
+    report_path.write_bytes(canonical_bytes(morning_candidate()))
+    output = tmp_path / "sidecar.json"
+    monkeypatch.setattr(cli, "store_from_environment", lambda: store)
+    monkeypatch.setenv("GITHUB_RUN_ID", "900")
+    monkeypatch.setenv("GITHUB_SHA", SHA)
+    monkeypatch.setattr("sys.argv", ["checkpoint_cli", "morning", "--morning-report", str(report_path),
+                                    "--public-out", str(output)])
+    cli.main()
+    captured = capsys.readouterr()
+    assert json.loads(captured.out)["created"] is True and captured.err == ""
+    original = output.read_bytes()
+    cli.main()
+    captured = capsys.readouterr()
+    assert json.loads(captured.out)["created"] is False and captured.err == ""
+    assert output.read_bytes() == original and fake.puts == 2

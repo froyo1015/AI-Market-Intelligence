@@ -2,8 +2,9 @@ name: Daily Reference Pre-Cutoff Capture
 
 on:
   schedule:
-    # 00:10 UTC = 08:10 Asia/Taipei. Late runs after 08:30 fail closed.
-    - cron: "10 0 * * *"
+    # Three chances inside the unchanged 08:00–08:30 Asia/Taipei window.
+    # 08:03 / 08:13 / 08:23; existing checkpoints are reused, late creates fail closed.
+    - cron: "3,13,23 0 * * *"
   workflow_dispatch:
 
 permissions:
