@@ -4,7 +4,7 @@
   "compatibility_date": "2026-09-25",
   "preview_urls": false,
   "observability": {"enabled": true, "logs": {"enabled": true}},
-  "triggers": {"crons": ["55 0 * * *"]},
+  "triggers": {"crons": ["3 0 * * *", "13 0 * * *", "23 0 * * *", "55 0 * * *"]},
   "durable_objects": {
     "bindings": [{"name": "RECOVERY_LEDGER", "class_name": "RecoveryLedger"}]
   },

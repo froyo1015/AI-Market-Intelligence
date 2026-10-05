@@ -2,6 +2,8 @@
 import {DurableObject} from 'cloudflare:workers';
 import {decideRecovery, executeRecovery, sha256, taipeiDate,
   verifyCanonicalCheckpoint} from '../src/morning_report/watchdog_core.mjs';
+import {decideReference, executeReference, verifyReferenceCheckpoint}
+  from '../src/daily_reference/watchdog_core.mjs';
 
 const REPO = 'froyo1015/AI-Market-Intelligence';
 const WORKFLOW = '.github/workflows/daily_market_brief.yml';
@@ -93,6 +95,41 @@ export class RecoveryLedger extends DurableObject {
     this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS checks (
       report_date TEXT PRIMARY KEY, status TEXT NOT NULL,
       failure_code TEXT, observed_at TEXT NOT NULL)`);
+    this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS reference_attempts (
+      reference_date TEXT PRIMARY KEY, status TEXT NOT NULL,
+      last_slot INTEGER NOT NULL, workflow_run_id INTEGER)`);
+  }
+
+  async attemptReference(decision) {
+    if (decision.action !== 'dispatch' || decision.reason !== 'missing_checkpoint' ||
+        ![3, 13, 23].includes(decision.slot) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(decision.referenceDate)) return {status: 'invalid_decision', reason: 'invalid_decision'};
+    const result = await executeReference(decision, {
+      clock: () => new Date().toISOString(),
+      claimAttempt: async (day, slot) => this.ctx.storage.sql.exec(
+        `INSERT INTO reference_attempts (reference_date, status, last_slot) VALUES (?, ?, ?)
+         ON CONFLICT(reference_date) DO UPDATE SET status='claimed',
+         last_slot=excluded.last_slot, workflow_run_id=NULL
+         WHERE reference_attempts.status='dispatch_failed'
+         AND reference_attempts.last_slot < excluded.last_slot`,
+        day, 'claimed', slot).rowsWritten > 0,
+      dispatch: async () => {
+        const response = await fetch(`${API}/actions/workflows/daily_reference_capture.yml/dispatches`, {
+          method: 'POST', headers: {...HEADERS,
+            'Authorization': `Bearer ${this.env.GH_ACTIONS_TOKEN}`, 'Content-Type': 'application/json'},
+          body: JSON.stringify({ref: 'main'}),
+        });
+        if (!response.ok) throw new Error('dispatch_rejected');
+        const metadata = await response.json().catch(() => ({}));
+        return {workflowRunId: Number.isSafeInteger(metadata.workflow_run_id) ? metadata.workflow_run_id : null};
+      },
+    });
+    if (['dispatched', 'dispatch_failed', 'dispatch_unknown'].includes(result.status)) {
+      this.ctx.storage.sql.exec(`UPDATE reference_attempts SET status = ?, workflow_run_id = ?
+        WHERE reference_date = ? AND status='claimed' AND last_slot = ?`,
+        result.status, result.workflowRunId ?? null, decision.referenceDate, decision.slot);
+    }
+    return result;
   }
 
   async recordFailure(reportDate, failureCode, observedAt) {
@@ -146,8 +183,37 @@ export class RecoveryLedger extends DurableObject {
   }
 }
 
+async function referenceScheduled(env, slot) {
+  const day = taipeiDate(new Date().toISOString());
+  const log = result => console.log(JSON.stringify({subsystem: 'daily_reference',
+    status: result.status, reason_code: result.reason, reference_date: day,
+    workflow_run_id: result.workflowRunId ?? null, timestamp: new Date().toISOString()}));
+  if (!env.GH_ACTIONS_TOKEN || !env.RECOVERY_LEDGER) {
+    log({status: 'no_action', reason: 'missing_runtime_configuration'}); return;
+  }
+  try {
+    const path = `${day.slice(0, 4)}/${day}/daily_reference_capture_public.json`;
+    const branch = await api('/git/ref/heads/morning-reports');
+    if (branch?.ref !== 'refs/heads/morning-reports') throw new Error('checkpoint_invalid');
+    const record = await api(`/contents/${path}?ref=morning-reports`, {missingOk: true});
+    const checkpoint = await verifyReferenceCheckpoint(record, day, api);
+    const decision = decideReference({now: new Date().toISOString(), referenceDate: day,
+      checkpoint: checkpoint.state});
+    decision.slot = slot;
+    if (decision.action !== 'dispatch') { log({status: 'no_action', reason: decision.reason}); return; }
+    const id = env.RECOVERY_LEDGER.idFromName('ai-market-daily-reference');
+    log(await env.RECOVERY_LEDGER.get(id).attemptReference(decision));
+  } catch (error) {
+    const allowed = new Set(['github_read_unavailable', 'checkpoint_invalid']);
+    log({status: 'observation_failed', reason: allowed.has(error?.message) ? error.message : 'observation_failed'});
+  }
+}
+
 export default {
-  async scheduled(_controller, env) {
+  async scheduled(controller, env) {
+    if (['3 0 * * *', '13 0 * * *', '23 0 * * *'].includes(controller.cron)) {
+      await referenceScheduled(env, Number(controller.cron.split(' ')[0])); return;
+    }
     const now = new Date().toISOString();
     if (!env.GH_ACTIONS_TOKEN || !env.RECOVERY_LEDGER) {
       console.log(JSON.stringify({watchdog_status: 'missing_runtime_configuration'}));
