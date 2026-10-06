@@ -100,7 +100,12 @@ test('Python-validated canonical fixture requires hash, history and creator iden
 test('actual Worker routes reference Cron, uses isolated SQL claim and safe dispatch/logging', async () => {
   const originalDate = globalThis.Date, originalFetch = globalThis.fetch, originalLog = console.log;
   const writes = new Map(), logs = [], requests = [];
-  let instant = now, failPost = false, holdPost = null;
+  let instant = now, failPost = false, holdPost = null, throwPost = false, existing = false, failDiagnosticRead = false;
+  const captureRaw = execFileSync('.venv/bin/python', ['-c',
+    "import runpy; from src.daily_reference.checkpoint import build_capture; from src.daily_reference.model import canonical_bytes; t=runpy.run_path('tests/test_daily_market_reference.py'); print(canonical_bytes(build_capture(t['collect'](now=t['NOW'],fetcher=t['feeds']), captured_at='2026-09-23T00:10:00Z')).decode(),end='')"]);
+  const fixtureDigest = await sha256(captureRaw), head = 'a'.repeat(40);
+  const fixtureMessage = ['daily-reference-checkpoint:v1','capture',day,'froyo1015/AI-Market-Intelligence','main',
+    '.github/workflows/daily_reference_capture.yml','123',head,fixtureDigest].join('|');
   globalThis.Date = class extends originalDate {constructor(...args) {super(...(args.length ? args : [instant]));}};
   globalThis.__ReferenceTestDO = class {constructor(ctx, env) {this.ctx=ctx;this.env=env;}};
   let source = readFileSync(new URL('../../watchdog/morning_worker.mjs',import.meta.url),'utf8');
@@ -119,6 +124,10 @@ test('actual Worker routes reference Cron, uses isolated SQL claim and safe disp
         const prior = writes.get(args[2]);
         if (prior?.status==='claimed' && prior.slot===args[3]) prior.status=args[0];
       }
+      if (sql.startsWith('SELECT status FROM reference_attempts')) {
+        if (failDiagnosticRead) throw new Error('PRIVATE diagnostic read exception');
+        return {toArray:()=>writes.has(args[0]) ? [{status:writes.get(args[0]).status}] : []};
+      }
       return {rowsWritten:0};
     }}}}, {GH_ACTIONS_TOKEN:'SECRET_TEST_ONLY'});
     const names=[];
@@ -127,15 +136,20 @@ test('actual Worker routes reference Cron, uses isolated SQL claim and safe disp
       requests.push({url,method:options.method??'GET',body:options.body});
       if (options.method==='POST') {
         if (holdPost) await holdPost;
-        return new Response(null,{status:failPost ? 503 : 204});
+        if (throwPost) throw new Error('PRIVATE arbitrary exception SECRET_TEST_ONLY Authorization');
+        return new Response(failPost ? 'SECRET_RESPONSE_BODY' : null,{status:failPost ? 503 : 204});
       }
       if (url.includes('/git/ref/')) return Response.json({ref:'refs/heads/morning-reports'});
-      if (url.includes('/contents/')) return new Response(null,{status:404});
-      if (url.includes('/commits?')) return Response.json([]);
+      if (url.includes('/contents/')) return existing ? Response.json({path:`2026/${day}/daily_reference_capture_public.json`,
+        type:'file',encoding:'base64',content:captureRaw.toString('base64')}) : new Response(null,{status:404});
+      if (url.includes('/commits?')) return Response.json(existing ? [{commit:{message:fixtureMessage}}] : []);
+      if (url.includes('/actions/runs/123')) return Response.json({id:123,path:'.github/workflows/daily_reference_capture.yml',
+        head_branch:'main',head_sha:head,repository:{full_name:'froyo1015/AI-Market-Intelligence'},head_repository:{full_name:'froyo1015/AI-Market-Intelligence'}});
       throw new Error('PRIVATE transport text');
     };
     console.log = line => logs.push(JSON.parse(line));
-    for (const cron of ['3 0 * * *','13 0 * * *','23 0 * * *']) await worker.scheduled({cron},env);
+    for (const cron of ['3 0 * * *','13 0 * * *','23 0 * * *'])
+      await worker.scheduled({cron,scheduledTime:originalDate.parse(now)},env);
     assert.equal(requests.filter(r=>r.method==='POST').length,1);
     assert.equal(writes.get(day).status,'dispatched'); // duplicate check cannot overwrite success
     assert.ok(names.every(name=>name==='ai-market-daily-reference'));
@@ -143,12 +157,21 @@ test('actual Worker routes reference Cron, uses isolated SQL claim and safe disp
     assert.ok(post.url.endsWith('/daily_reference_capture.yml/dispatches'));
     assert.deepEqual(JSON.parse(post.body),{ref:'main'});
     assert.ok(!requests.some(r=>r.method==='PUT')); // checkpoint writes remain Python-only
-    assert.ok(logs.every(l=>Object.keys(l).sort().join() === ['subsystem','status','reason_code','reference_date','workflow_run_id','timestamp'].sort().join()));
+    const allowedKeys = ['subsystem','event','status','reason_code','reference_date','workflow_run_id','timestamp',
+      'scheduled_timestamp','slot','state','action','stage','http_status'];
+    assert.ok(logs.every(l=>Object.keys(l).every(k=>allowedKeys.includes(k))));
     assert.ok(!JSON.stringify(logs).includes('SECRET'));
+    assert.ok(logs.some(l=>l.event==='handler_entry' && originalDate.parse(l.scheduled_timestamp)===originalDate.parse(now)));
+    assert.ok(logs.some(l=>l.event==='checkpoint_observation' && l.reason_code==='checkpoint_missing'));
+    assert.ok(logs.some(l=>l.event==='decision' && l.action==='dispatch'));
+    assert.ok(logs.some(l=>l.event==='claim_result' && l.state==='claimed'));
+    assert.ok(logs.some(l=>l.reason_code==='already_dispatched'));
+    assert.ok(logs.some(l=>l.event==='dispatch_result' && l.reason_code==='dispatch_success' && l.http_status===204));
 
     writes.clear(); requests.length=0; failPost=true;
     await worker.scheduled({cron:'3 0 * * *'},env);
     assert.equal(writes.get(day).status,'dispatch_failed');
+    assert.ok(logs.some(l=>l.event==='dispatch_result' && l.status==='dispatch_failed' && l.http_status===503));
     await worker.scheduled({cron:'3 0 * * *'},env); // same-slot replay cannot retry
     assert.equal(requests.filter(r=>r.method==='POST').length,1);
     failPost=false; instant=`${day}T00:13:00Z`;
@@ -166,6 +189,7 @@ test('actual Worker routes reference Cron, uses isolated SQL claim and safe disp
     await worker.scheduled({cron:'13 0 * * *'},env);
     assert.equal(requests.filter(r=>r.method==='POST').length,1);
     release(); await first; holdPost=null;
+    assert.ok(logs.some(l=>l.reason_code==='already_claimed'));
     assert.equal(writes.get(day).status,'dispatched');
 
     writes.clear(); requests.length=0; instant=now; failPost=true;
@@ -174,6 +198,36 @@ test('actual Worker routes reference Cron, uses isolated SQL claim and safe disp
     await worker.scheduled({cron:'13 0 * * *'},env);
     assert.equal(requests.filter(r=>r.method==='POST').length,1);
     assert.equal(writes.get(day).status,'dispatch_failed');
+
+    writes.clear(); requests.length=0; instant=now; failPost=false; throwPost=true;
+    await worker.scheduled({cron:'3 0 * * *'},env);
+    assert.equal(writes.get(day).status,'dispatch_unknown');
+    assert.ok(logs.some(l=>l.event==='dispatch_result' && l.status==='dispatch_unknown'));
+    throwPost=false;
+    await worker.scheduled({cron:'13 0 * * *'},env);
+    assert.equal(requests.filter(r=>r.method==='POST').length,1);
+
+    writes.clear(); requests.length=0; existing=true; instant=`${day}T00:13:00Z`;
+    await worker.scheduled({cron:'13 0 * * *'},env);
+    assert.equal(requests.filter(r=>r.method==='POST').length,0);
+    assert.equal(writes.size,0);
+    assert.ok(logs.some(l=>l.event==='checkpoint_observation' && l.reason_code==='checkpoint_exists'));
+    assert.ok(logs.some(l=>l.event==='decision' && l.action==='no_action' && l.reason_code==='checkpoint_exists'));
+    existing=false;
+
+    // Logger and diagnostic SELECT failures cannot change retries, claims or dispatch.
+    console.log=()=>{throw new Error('LOGGER_FAILED SECRET_TEST_ONLY');};
+    instant=now; failPost=true; failDiagnosticRead=true;
+    await worker.scheduled({cron:'3 0 * * *'},env);
+    assert.equal(writes.get(day).status,'dispatch_failed');
+    failPost=false; instant=`${day}T00:13:00Z`;
+    await worker.scheduled({cron:'13 0 * * *'},env);
+    await worker.scheduled({cron:'23 0 * * *'},env);
+    assert.equal(writes.get(day).status,'dispatched');
+    assert.equal(requests.filter(r=>r.method==='POST').length,2);
+    failDiagnosticRead=false;
+    console.log=line=>logs.push(JSON.parse(line));
+    assert.ok(!/SECRET|Authorization|PRIVATE|arbitrary exception|headers|response.body/.test(JSON.stringify(logs)));
     requests.length=0;
     await worker.scheduled({cron:'55 0 * * *'},env);
     assert.ok(requests.some(r=>r.url.includes('morning_report_public.json')));

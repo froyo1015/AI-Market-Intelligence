@@ -38,7 +38,7 @@ Worker never writes a canonical file. A concurrent GitHub fallback may produce r
 
 ## Logging / credential boundary
 
-New subsystem logs only `subsystem`, `status`, `reason_code`, `reference_date`, nullable `workflow_run_id`, `timestamp`. Normalize errors via a closed allowlist. Credentials are runtime-only for a fixed workflow dispatch endpoint; GETs are public, no token/header/body/exception text is logged. A normal GitHub 204 returns no run ID; null is honest, not a manufactured identifier. Existing Morning logging/behavior is unchanged.
+Initial subsystem logging used `subsystem`, `status`, `reason_code`, `reference_date`, nullable `workflow_run_id`, `timestamp`; the observability-only follow-up below extends this explicit safe projection. Normalize errors via a closed allowlist. Credentials are runtime-only for a fixed workflow dispatch endpoint; GETs are public, no token/header/body/exception text is logged. A normal GitHub 204 returns no run ID; null is honest, not a manufactured identifier. Existing Morning logging/behavior is unchanged.
 
 ## Validation and release
 
@@ -47,3 +47,15 @@ Tests cover legal/missing and valid/no-op states, cutoff boundaries, removed or 
 Initial candidate results: full Python suite 716 passed / 1 skipped (717 collected; GnuPG unavailable locally), JavaScript 13 passed. Bounded-retry revision adds first-failure/next-slot retry, success lockout, cutoff stop, concurrent active POST exclusion, same-slot replay exclusion and unknown-outcome tests, including actual Worker/DO routing. Updated results are recorded after re-running validation. Existing unrelated working-tree changes (including `src/intelligence/pipeline.py`) are preserved and outside this candidate. No commit, push or deployment performed.
 
 Bounded-retry final validation: Python **716 passed, 1 skipped** (GnuPG), JavaScript **16 passed** including all Morning regressions. Direct in-memory SQLite execution of the actual UPSERT confirmed active exclusion, same-slot failure exclusion, later-slot retry and success lockout. Worker syntax and `git diff --check` passed. Capture contract, create-only/conflict validation, GitHub fallback schedule and Morning logic remain unchanged. Ready for commit review, not production-validated.
+
+## Observability-only follow-up candidate (not committed/deployed)
+
+Events: `handler_entry`, `checkpoint_read`, `checkpoint_observation`, `decision`, `claim_result`, `dispatch_started`, `dispatch_result`, `scheduler_result`.
+
+Every event uses a closed field projection: subsystem/event/status/reason_code/reference_date/runtime timestamp and nullable workflow_run_id. Optional fields are slot, scheduled_timestamp (Cloudflare controller timestamp, observational only), state, action, stage and numeric http_status. Controller time never replaces runtime time for cutoff decisions. Checkpoint read stages identify branch/contents/history/creator; `do_attempt` identifies RPC failures without claiming that a checkpoint read failed. Status/state/action/stage/reason are allowlisted. Received HTTP codes are recorded without body or headers. Unknown POST outcome gets normalized dispatch_result; a received rejection remains dispatch_failed and success remains dispatched.
+
+Claim-result diagnostics add a read-only SELECT only after a rejected atomic claim to distinguish already_dispatched / already_claimed / failed-or-unknown prior state. SELECT failure records unknown without changing the claim return value. Existing UPSERT, state update predicates, retry rules, dispatch request, schema and Morning path remain unchanged. No additional diagnostic state is persisted.
+
+Logging is synchronous best-effort with internal try/catch and cannot propagate failures. Tests cover a throwing logger and failing diagnostic SELECT, including continued retry and success lockout; secret-bearing response bodies and arbitrary exception text never appear in logs. Extra local computation/one optional local SELECT add minor overhead; unavailable logging can still leave evidence incomplete. Historical Cloudflare telemetry permission failure is not fixed by instrumentation. Production evidence remains pending until approval, deployment and a natural window with accessible invocation logs.
+
+Final local validation: Python **716 passed / 1 skipped** (GnuPG), JavaScript **16 passed**, syntax and diff checks passed. Source comparison verified unchanged Morning implementation, state-writing SQL, retry core, capture contract and both schedules. No commit/push/deployment or live dispatch performed.
